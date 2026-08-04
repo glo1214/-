@@ -1,0 +1,710 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<meta name="theme-color" content="#f1f2ec" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="default" />
+<meta name="apple-mobile-web-app-title" content="구동사" />
+<title>구동사 · 붙는 말이 뜻을 바꾼다</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,800&family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet" />
+<style>
+:root{
+  --ink:#16181f; --sub:#565b69; --faint:#8b909c;
+  --paper:#f1f2ec; --card:#fcfcfa; --line:#dcdfd5;
+  --title:"Bricolage Grotesque", sans-serif;
+  --body:"IBM Plex Sans KR", sans-serif;
+  --mono:"IBM Plex Mono", monospace;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+html,body{margin:0;padding:0;}
+body{
+  background:var(--paper); color:var(--ink);
+  font-family:var(--body); line-height:1.6;
+  -webkit-font-smoothing:antialiased;
+  padding-bottom:calc(84px + env(safe-area-inset-bottom));
+}
+/* ---- highlighter marker ---- */
+.mark{
+  position:relative; display:inline;
+  background-image:linear-gradient(120deg, var(--hl,#f7b267) 0%, var(--hl,#f7b267) 100%);
+  background-repeat:no-repeat;
+  background-size:100% 42%;
+  background-position:0 78%;
+  padding:0 .06em;
+  border-radius:2px;
+}
+.mark.soft{opacity:.45;}
+/* ---- header ---- */
+header{
+  position:sticky; top:0; z-index:20;
+  background:rgba(241,242,236,.92);
+  backdrop-filter:saturate(1.4) blur(8px);
+  border-bottom:1px solid var(--line);
+  padding-top:env(safe-area-inset-top);
+}
+.head-inner{max-width:680px;margin:0 auto;padding:14px 18px 10px;}
+.brand{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;}
+h1{
+  font-family:var(--title); font-weight:800; font-size:26px;
+  letter-spacing:-.01em; margin:0; line-height:1;
+}
+.brand .sub{font-family:var(--mono);font-size:12px;color:var(--faint);}
+nav{
+  display:flex; gap:8px; overflow-x:auto; -webkit-overflow-scrolling:touch;
+  margin-top:12px; padding-bottom:2px; scrollbar-width:none;
+}
+nav::-webkit-scrollbar{display:none;}
+.navchip{
+  flex:0 0 auto; font-family:var(--mono); font-size:13px;
+  border:1px solid var(--line); background:var(--card); color:var(--sub);
+  padding:7px 12px; border-radius:999px; cursor:pointer; white-space:nowrap;
+  min-height:34px;
+}
+.navchip .dot{display:inline-block;width:9px;height:9px;border-radius:2px;margin-right:6px;vertical-align:middle;}
+.navchip.active{color:var(--ink);border-color:var(--ink);}
+/* ---- mode switch ---- */
+.modes{display:flex;gap:6px;margin-top:12px;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:4px;}
+.modebtn{
+  flex:1; font-family:var(--body); font-weight:500; font-size:13px;
+  border:0; background:transparent; color:var(--sub);
+  padding:9px 4px; border-radius:9px; cursor:pointer; min-height:44px;
+}
+.modebtn.active{background:var(--ink);color:var(--paper);font-weight:700;}
+/* ---- layout ---- */
+main{max-width:680px;margin:0 auto;padding:18px;}
+section{margin-bottom:44px;scroll-margin-top:150px;}
+.sec-head{display:flex;align-items:center;gap:10px;margin-bottom:4px;}
+.sec-tag{
+  font-family:var(--title);font-weight:800;font-size:22px;letter-spacing:-.01em;
+  padding:2px 12px;border-radius:8px;color:var(--ink);
+}
+.sec-root{font-size:14.5px;color:var(--sub);margin:2px 0 2px;}
+.sec-sub{font-size:13.5px;color:var(--faint);margin:0 0 18px;}
+.step{font-family:var(--mono);font-size:12px;color:var(--faint);letter-spacing:.02em;
+  margin:26px 0 12px;text-transform:none;display:flex;align-items:center;gap:8px;}
+.step::after{content:"";flex:1;height:1px;background:var(--line);}
+/* ---- aha card ---- */
+.aha{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px;margin:22px 0;}
+.aha h3{font-family:var(--title);font-weight:800;font-size:17px;margin:0 0 8px;}
+.aha p{font-size:14px;color:var(--sub);margin:0 0 8px;}
+.contrast{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px;}
+.contrast .cc{border:1px solid var(--line);border-radius:12px;padding:12px;background:var(--paper);}
+.contrast .en{font-family:var(--mono);font-size:15px;font-weight:600;}
+.contrast .cnote{font-size:12px;color:var(--faint);margin-top:6px;}
+.contrast .full{grid-column:1 / -1;}
+/* ---- scene ---- */
+.scene{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px 16px 6px;}
+.scene .setup{font-size:13.5px;color:var(--sub);margin:0 0 6px;}
+/* ---- item card ---- */
+.item{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:15px;margin-bottom:12px;scroll-margin-top:150px;transition:border-color .2s;}
+.item.done{border-color:var(--line);}
+.ko{font-size:16px;font-weight:500;margin:0 0 4px;}
+.tag{display:inline-block;font-family:var(--mono);font-size:10.5px;color:var(--faint);border:1px solid var(--line);border-radius:6px;padding:1px 6px;margin-bottom:10px;}
+.answer-line{font-family:var(--mono);font-size:16px;font-weight:600;line-height:1.7;word-break:break-word;}
+/* pieces */
+.pieces{display:flex;flex-wrap:wrap;gap:8px;margin-top:4px;}
+.slotline{min-height:30px;font-family:var(--mono);font-size:16px;font-weight:600;margin-bottom:12px;color:var(--ink);word-break:break-word;}
+.slotline .ph{color:var(--faint);font-weight:400;}
+.piece{
+  font-family:var(--mono);font-size:15px;font-weight:600;
+  border:1px solid var(--line);background:var(--paper);color:var(--ink);
+  padding:9px 12px;border-radius:10px;cursor:pointer;min-height:40px;
+}
+.piece.used{opacity:0;pointer-events:none;height:0;padding:0;margin:0;border:0;width:0;overflow:hidden;}
+.piece.shake{animation:shake .35s;}
+@keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-5px)}40%{transform:translateX(5px)}60%{transform:translateX(-3px)}80%{transform:translateX(3px)}}
+/* typing */
+.typerow{display:flex;gap:8px;margin-top:4px;}
+input[type=text]{
+  flex:1;font-family:var(--body);font-size:16px;
+  border:1px solid var(--line);border-radius:10px;background:var(--paper);color:var(--ink);
+  padding:11px 13px;min-height:44px;
+}
+input[type=text]:focus{outline:none;border-color:var(--ink);}
+.btn{
+  font-family:var(--body);font-weight:700;font-size:14px;
+  border:1px solid var(--ink);background:var(--ink);color:var(--paper);
+  padding:0 16px;border-radius:10px;cursor:pointer;min-height:44px;white-space:nowrap;
+}
+.btn.ghost{background:var(--card);color:var(--ink);}
+.hint{font-family:var(--mono);font-size:13px;color:var(--sub);margin-top:9px;min-height:1px;}
+.hint b{color:var(--ink);}
+.fix{font-size:13px;color:var(--sub);margin-top:9px;}
+.fix b{color:var(--ink);font-family:var(--mono);}
+/* speaking */
+.speak-en{font-family:var(--mono);font-size:17px;font-weight:600;margin:6px 0 12px;}
+.speak-en.hidden{filter:blur(7px);}
+/* footer */
+.foot{
+  position:fixed;left:0;right:0;bottom:0;z-index:30;
+  background:rgba(241,242,236,.94);backdrop-filter:blur(8px);
+  border-top:1px solid var(--line);
+  padding:12px 18px calc(12px + env(safe-area-inset-bottom));
+}
+.foot-inner{max-width:680px;margin:0 auto;display:flex;gap:12px;align-items:center;}
+.progresswrap{flex:1;}
+.progresswrap .lab{font-family:var(--mono);font-size:11px;color:var(--faint);margin-bottom:5px;}
+.bar{height:8px;background:var(--line);border-radius:99px;overflow:hidden;}
+.bar > i{display:block;height:100%;background:var(--ink);border-radius:99px;transition:width .3s;width:0;}
+/* modal */
+.overlay{position:fixed;inset:0;background:rgba(22,24,31,.42);z-index:40;display:none;align-items:center;justify-content:center;padding:20px;}
+.overlay.on{display:flex;}
+.hwcard{background:var(--card);border:1px solid var(--line);border-radius:20px;max-width:360px;width:100%;padding:24px;}
+.hwcard h2{font-family:var(--title);font-weight:800;font-size:20px;margin:0 0 2px;}
+.hwcard .date{font-family:var(--mono);font-size:12px;color:var(--faint);margin-bottom:18px;}
+.hwrow{display:flex;justify-content:space-between;align-items:baseline;padding:10px 0;border-top:1px solid var(--line);}
+.hwrow .k{font-size:14px;color:var(--sub);}
+.hwrow .v{font-family:var(--mono);font-weight:600;font-size:16px;}
+.hwtotal .k{font-weight:700;color:var(--ink);}
+.hwtotal .v{font-size:19px;}
+.hwnote{font-size:12px;color:var(--faint);margin-top:16px;line-height:1.5;}
+.hwclose{margin-top:18px;width:100%;}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="head-inner">
+    <div class="brand">
+      <h1>구동사</h1>
+      <span class="sub">phrasal verbs · 붙는 말이 뜻을 바꾼다</span>
+    </div>
+    <nav id="nav"></nav>
+    <div class="modes" id="modes">
+      <button class="modebtn active" data-mode="piece">조각 맞추기</button>
+      <button class="modebtn" data-mode="type">직접 쓰기</button>
+      <button class="modebtn" data-mode="speak">말하기</button>
+    </div>
+  </div>
+</header>
+
+<main id="main"></main>
+
+<div class="foot">
+  <div class="foot-inner">
+    <div class="progresswrap">
+      <div class="lab" id="plab">0 / 0 완료</div>
+      <div class="bar"><i id="pbar"></i></div>
+    </div>
+    <button class="btn ghost" id="hwbtn">숙제 카드</button>
+  </div>
+</div>
+
+<div class="overlay" id="overlay">
+  <div class="hwcard">
+    <h2>오늘 숙제</h2>
+    <div class="date" id="hwdate"></div>
+    <div class="hwrow hwtotal"><span class="k">완료한 문장</span><span class="v" id="hw-total">0</span></div>
+    <div class="hwrow"><span class="k">스스로 맞힘</span><span class="v" id="hw-self">0</span></div>
+    <div class="hwrow"><span class="k">힌트 받고</span><span class="v" id="hw-hint">0</span></div>
+    <div class="hwrow"><span class="k">말하기</span><span class="v" id="hw-speak">0</span></div>
+    <p class="hwnote">이 화면을 캡처해서 선생님께 보내면 돼요. 힌트를 많이 쓴 건 표시일 뿐, 벌점이 아니에요.</p>
+    <button class="btn hwclose" id="hwclose">닫기</button>
+  </div>
+</div>
+
+<script>
+/* ============================================================
+   저장 (localStorage 우선, window.storage 도 함께 시도)
+   ============================================================ */
+const KEY = "phrasal-verbs-v1";
+function loadState(){
+  let raw = null;
+  try{ raw = localStorage.getItem(KEY); }catch(e){}
+  if(raw==null){ try{ raw = window.storage && window.storage.getItem && window.storage.getItem(KEY); }catch(e){} }
+  try{ return raw ? JSON.parse(raw) : {}; }catch(e){ return {}; }
+}
+function saveState(){
+  const raw = JSON.stringify(STATE);
+  try{ localStorage.setItem(KEY, raw); }catch(e){}
+  try{ window.storage && window.storage.setItem && window.storage.setItem(KEY, raw); }catch(e){}
+}
+let STATE = loadState();   // { itemId: "self" | "hint" | "speak" }
+
+/* ============================================================
+   데이터  ―  조사(particle)를 뿌리로 삼는다
+   ============================================================ */
+const DATA = [
+{v:"up", c:"#f7b267", root:"위로, 끝까지 — 위로 올라가다 끝에 닿으면 '완전히, 다'가 된다",
+ sub:"up은 위로. 그런데 위로 끝까지 가면 '다 끝냈다'는 느낌이 됩니다.",
+ blocks:[
+  {step:"1 · 그대로 옮기기", items:[
+    {ko:"일어나.", a:["get up"], t:"몸"},
+    {ko:"일어서.", a:["stand up"], t:"몸"},
+    {ko:"손 들어.", a:["put your hand up","hand up"], t:"몸"},
+    {ko:"그거 주워.", a:["pick it up"], t:"동작"},
+    {ko:"위를 봐.", a:["look up"], t:"몸"},
+  ]},
+  {step:"아하", note:{h:"up은 '위로'만이 아니에요",
+    p:["원래 뜻은 위로. 위로 끝까지 올라가면 더 갈 데가 없죠. 거기서 '완전히, 다'라는 뜻이 나옵니다.",
+       "eat = 먹다 / eat up = 다 먹다. 끝까지 갔다는 신호가 up이에요."],
+    contrast:[{en:"Eat.", note:"먹어"},{en:"Eat it up.", note:"다 먹어"}]}},
+  {step:"2 · 한 걸음 옆으로", items:[
+    {ko:"다 먹어.", a:["eat it up","eat up"], t:"완료"},
+    {ko:"다 마셔.", a:["drink it up","drink up"], t:"완료"},
+    {ko:"서둘러.", a:["hurry up"], t:"완료"},
+    {ko:"포기하지 마.", a:["don't give up"], t:"완료"},
+    {ko:"방 좀 치워.", a:["clean it up","clean up"], t:"집안일"},
+    {ko:"전화 받아.", a:["pick up","pick it up"], t:"전화"},
+    {ko:"소리 좀 키워.", a:["turn it up","turn up"], t:"소리"},
+  ]},
+ ]},
+
+{v:"out", c:"#7fd6c1", root:"밖으로 — 안에 있던 게 다 나오면 '바닥나고 사라진다'",
+ sub:"out은 밖으로. 안에 있던 게 다 나와 버리면 '바닥났다'가 됩니다.",
+ blocks:[
+  {step:"1 · 그대로 옮기기", items:[
+    {ko:"나가.", a:["get out"], t:"이동"},
+    {ko:"나와.", a:["come out"], t:"이동"},
+    {ko:"우리 나가자.", a:["let's go out"], t:"이동"},
+    {ko:"그거 꺼내.", a:["take it out"], t:"동작"},
+    {ko:"쓰레기 좀 버려.", a:["take out the trash","take the trash out"], t:"집안일"},
+  ]},
+  {step:"아하", note:{h:"out은 밖으로, 그리고 '바닥'",
+    p:["안에 있던 게 밖으로 다 나오면 안이 텅 비죠. 그래서 '다 떨어졌다'는 뜻이 나옵니다.",
+       "run out = 다 떨어지다. 우유가 밖으로 다 빠져나간 그림이에요."],
+    contrast:[{en:"Go out.", note:"밖에 나가다"},{en:"Run out.", note:"다 떨어지다"}]}},
+  {step:"2 · 한 걸음 옆으로", items:[
+    {ko:"우유가 다 떨어졌어.", a:["we ran out of milk","i ran out of milk"], t:"바닥"},
+    {ko:"한번 알아봐.", a:["find out"], t:"알다"},
+    {ko:"이것 좀 도와줘.", a:["help me out"], t:"부탁"},
+    {ko:"여기 좀 채워 줘.", a:["fill it out","fill out"], t:"서류"},
+    {ko:"잘될 거야.", a:["it'll work out","it will work out"], t:"일"},
+    {ko:"한번 써 봐.", a:["try it out","try out"], t:"시도"},
+  ]},
+ ]},
+
+{v:"on", c:"#8cb9ee", root:"붙어서 — 딱 붙어 떨어지지 않고 계속 이어진다",
+ sub:"on은 표면에 붙는 것. 붙어서 안 떨어지면 '계속'이 됩니다.",
+ blocks:[
+  {step:"1 · 그대로 옮기기", items:[
+    {ko:"불 켜.", a:["turn it on","turn on the light"], t:"전원"},
+    {ko:"재킷 입고 있어.", a:["keep your jacket on"], t:"옷"},
+    {ko:"신발 신어.", a:["put your shoes on"], t:"옷"},
+    {ko:"타.", a:["get on"], t:"이동"},
+    {ko:"계속해.", a:["go on"], t:"계속"},
+  ]},
+  {step:"아하", note:{h:"on은 붙어서 '계속'",
+    p:["표면에 딱 붙어 안 떨어지는 게 on. 안 떨어지고 이어지면 '계속하다'가 됩니다.",
+       "핵심 대비 하나만 기억하세요 ↓ 지금 한 번 입어라(put on)와 계속 입고 있어라(keep on)는 완전히 다릅니다."],
+    contrast:[{en:"Put your jacket on.", note:"지금 한 번 입어"},{en:"Keep your jacket on.", note:"계속 입고 있어"}]}},
+  {step:"2 · 한 걸음 옆으로", items:[
+    {ko:"잠깐만 기다려.", a:["hold on"], t:"전화"},
+    {ko:"얼른, 서둘러.", a:["come on"], t:"재촉"},
+    {ko:"나 지금 가고 있어.", a:["i'm on my way","im on my way"], t:"이동"},
+    {ko:"불 켜 놔.", a:["leave it on"], t:"전원"},
+    {ko:"무슨 일 있어?", a:["what's going on","whats going on"], t:"상황"},
+  ]},
+ ]},
+
+{v:"off", c:"#f58fa8", root:"떨어져서 — 붙어 있던 게 딱 떨어지면 '끄고, 벗고, 떠난다'",
+ sub:"off는 on의 반대. 붙어 있던 게 떨어져 나가면 '끄다, 벗다, 떠나다'가 됩니다.",
+ blocks:[
+  {step:"1 · 그대로 옮기기", items:[
+    {ko:"불 꺼.", a:["turn it off","turn off the light"], t:"전원"},
+    {ko:"재킷 벗어.", a:["take your jacket off"], t:"옷"},
+    {ko:"신발 벗어.", a:["take your shoes off"], t:"옷"},
+    {ko:"내려.", a:["get off"], t:"이동"},
+  ]},
+  {step:"아하", note:{h:"off는 떨어져서 '멈추고 떠남'",
+    p:["붙어 있던 게 딱 떨어지는 게 off. 전원이 떨어지면 '끄다', 몸에서 떨어지면 '벗다', 자리에서 떨어지면 '떠나다'.",
+       "turn on ↔ turn off, get on ↔ get off. 딱 반대예요."],
+    contrast:[{en:"Turn it on.", note:"켜"},{en:"Turn it off.", note:"꺼"}]}},
+  {step:"2 · 한 걸음 옆으로", items:[
+    {ko:"나 이제 갈게.", a:["i'm off","im off"], t:"출발"},
+    {ko:"오늘 하루 쉬어.", a:["take the day off","take a day off"], t:"휴식"},
+    {ko:"알람 좀 꺼.", a:["turn off the alarm","turn the alarm off"], t:"전원"},
+    {ko:"미루지 마.", a:["don't put it off"], t:"미루기"},
+  ]},
+ ]},
+
+{v:"down", c:"#c6a8e8", root:"아래로 — 내려가면 '줄고, 적어 두고, 자리를 잡는다'",
+ sub:"down은 아래로. 내려서 종이에 닿으면 '적다', 몸이 내려가면 '앉다·눕다'가 됩니다.",
+ blocks:[
+  {step:"1 · 그대로 옮기기", items:[
+    {ko:"앉아.", a:["sit down"], t:"몸"},
+    {ko:"누워.", a:["lie down"], t:"몸"},
+    {ko:"내려놔.", a:["put it down"], t:"동작"},
+    {ko:"소리 좀 줄여.", a:["turn it down","turn down the volume"], t:"소리"},
+  ]},
+  {step:"아하", note:{h:"down은 아래로, 그리고 '적어 두기'",
+    p:["펜이 종이 위로 내려와 닿으면 글씨가 남죠. 그래서 write down = 적어 두다.",
+       "마음이 아래로 가라앉으면 calm down = 진정하다."],
+    contrast:[{en:"Sit down.", note:"앉아"},{en:"Write it down.", note:"적어 둬"}]}},
+  {step:"2 · 한 걸음 옆으로", items:[
+    {ko:"그거 좀 적어 둬.", a:["write it down","write down"], t:"메모"},
+    {ko:"진정해.", a:["calm down"], t:"감정"},
+    {ko:"속도 좀 줄여.", a:["slow down"], t:"속도"},
+    {ko:"핸드폰 좀 내려놔.", a:["put your phone down"], t:"동작"},
+    {ko:"우리 앉아서 얘기하자.", a:["let's sit down and talk"], t:"대화"},
+  ]},
+ ]},
+
+{v:"back", c:"#a6d06a", root:"되돌려 — 왔던 쪽으로 돌아가고, 받은 걸 되돌려 준다",
+ sub:"back은 되돌리기. 자리로 돌아가고, 받은 것을 돌려주고, 나중에 다시 합니다.",
+ blocks:[
+  {step:"1 · 그대로 옮기기", items:[
+    {ko:"돌아와.", a:["come back"], t:"이동"},
+    {ko:"돌아가.", a:["go back"], t:"이동"},
+    {ko:"뒤로 좀.", a:["step back"], t:"몸"},
+    {ko:"그거 돌려줘.", a:["give it back"], t:"반환"},
+  ]},
+  {step:"아하", note:{h:"back은 '되돌려'",
+    p:["왔던 쪽으로 되돌아가는 게 back. 받은 걸 되돌려 주면 give back, 나중에 다시 전화하면 call back.",
+       "전화 '다시' 걸어 줄게 = I'll call you back."],
+    contrast:[{en:"Call me.", note:"전화해"},{en:"Call me back.", note:"다시 전화해 줘"}]}},
+  {step:"2 · 한 걸음 옆으로", items:[
+    {ko:"이따 다시 전화할게.", a:["i'll call you back","i will call you back"], t:"전화"},
+    {ko:"금방 올게.", a:["i'll be right back","im right back"], t:"이동"},
+    {ko:"그거 돌려받아.", a:["get it back"], t:"반환"},
+    {ko:"나한테 다시 전화해 줘.", a:["call me back"], t:"전화"},
+  ]},
+ ]},
+
+{v:"섞어 쓰기", c:"#565b69", root:"앞에서 나온 문장만 재등장 — 새 문장은 없습니다",
+ sub:"이제 상황 속에서 써 봅니다. 전부 앞에서 이미 친 문장이에요.",
+ blocks:[
+  {step:"상황 1 · 아침에 나가기 전", scene:{h:"상황 1", setup:"나갈 준비를 하는 아침.",
+    items:[
+      {ko:"일어나.", a:["get up"], t:"몸"},
+      {ko:"신발 신어.", a:["put your shoes on"], t:"옷"},
+      {ko:"재킷 입고 있어, 밖에 추워.", a:["keep your jacket on"], t:"옷"},
+      {ko:"나 이제 갈게.", a:["i'm off","im off"], t:"출발"},
+    ]}},
+  {step:"상황 2 · 전화 통화", scene:{h:"상황 2", setup:"친구랑 통화 중.",
+    items:[
+      {ko:"잠깐만 기다려.", a:["hold on"], t:"전화"},
+      {ko:"나 지금 가고 있어.", a:["i'm on my way","im on my way"], t:"이동"},
+      {ko:"이따 다시 전화할게.", a:["i'll call you back","i will call you back"], t:"전화"},
+      {ko:"포기하지 마.", a:["don't give up"], t:"응원"},
+    ]}},
+ ]},
+];
+
+/* ============================================================
+   정답 판정 유틸
+   ============================================================ */
+const CONTRACTIONS = {
+ "i'm":"i am","im":"i am","can't":"cannot","cant":"cannot","don't":"do not","dont":"do not",
+ "won't":"will not","wont":"will not","it's":"it is","let's":"let us","lets":"let us",
+ "i'll":"i will","ill":"i will","you're":"you are","youre":"you are","we're":"we are",
+ "they're":"they are","theyre":"they are","that's":"that is","thats":"that is","i've":"i have",
+ "ive":"i have","isn't":"is not","isnt":"is not","aren't":"are not","arent":"are not",
+ "doesn't":"does not","doesnt":"does not","didn't":"did not","didnt":"did not",
+ "what's":"what is","whats":"what is","i'd":"i would","you'll":"you will","youll":"you will",
+ "wanna":"want to","gonna":"going to","gotta":"got to","he's":"he is","hes":"he is",
+ "she's":"she is","shes":"she is","there's":"there is","theres":"there is"
+};
+function normalize(s){
+  s = (s||"").toLowerCase().trim();
+  s = s.replace(/[.,!?;:]/g," ");
+  s = s.replace(/\s+/g," ").trim();
+  s = s.split(" ").map(w => CONTRACTIONS[w] || w).join(" ");
+  s = s.replace(/[’']/g,"");
+  s = s.replace(/\s+/g," ").trim();
+  return s;
+}
+function lev(a,b){
+  const m=a.length,n=b.length;
+  if(!m) return n; if(!n) return m;
+  let prev=Array.from({length:n+1},(_,i)=>i), cur=new Array(n+1);
+  for(let i=1;i<=m;i++){
+    cur[0]=i;
+    for(let j=1;j<=n;j++){
+      const cost = a[i-1]===b[j-1]?0:1;
+      cur[j]=Math.min(prev[j]+1, cur[j-1]+1, prev[j-1]+cost);
+    }
+    [prev,cur]=[cur,prev];
+  }
+  return prev[n];
+}
+function judge(input, answers){
+  const nin = normalize(input);
+  if(!nin) return {ok:false};
+  for(const a of answers){ if(normalize(a)===nin) return {ok:true, exact:true}; }
+  let best=null;
+  for(const a of answers){ const d=lev(nin, normalize(a)); if(best===null||d<best.d) best={d,a}; }
+  if(best && best.d<=2) return {ok:true, exact:false, fix:best.a};
+  return {ok:false};
+}
+/* 표시용: 첫 글자 대문자, i → I, 문장부호는 ko가 결정 */
+function caseWord(w, first){
+  if(w==="i") return "I";
+  if(w.startsWith("i'")) return "I"+w.slice(1);
+  if(first) return w.charAt(0).toUpperCase()+w.slice(1);
+  return w;
+}
+function displaySentence(ans, ko){
+  const words = ans.split(" ").map((w,i)=>caseWord(w, i===0));
+  let s = words.join(" ");
+  const end = (ko||"").trim().slice(-1);
+  if(end==="?") s+="?";
+  else if(end==="!") s+="!";
+  else if(end===".") s+=".";
+  return s;
+}
+
+/* ============================================================
+   렌더링
+   ============================================================ */
+let MODE = "piece";
+const main = document.getElementById("main");
+const nav  = document.getElementById("nav");
+
+function allItems(){
+  const out=[];
+  DATA.forEach((sec,si)=>sec.blocks.forEach((b,bi)=>{
+    const items = b.items || (b.scene && b.scene.items) || [];
+    items.forEach((it,ii)=> out.push({it, id:si+"-"+bi+"-"+ii, color:sec.c}));
+  }));
+  return out;
+}
+
+function render(){
+  nav.innerHTML="";
+  DATA.forEach((sec,si)=>{
+    const chip=document.createElement("button");
+    chip.className="navchip";
+    chip.innerHTML = (sec.v==="섞어 쓰기"?"":`<span class="dot" style="background:${sec.c}"></span>`)+sec.v;
+    chip.onclick=()=>document.getElementById("sec-"+si).scrollIntoView({behavior:"smooth",block:"start"});
+    nav.appendChild(chip);
+  });
+
+  main.innerHTML="";
+  DATA.forEach((sec,si)=>{
+    const s=document.createElement("section");
+    s.id="sec-"+si;
+    const head=document.createElement("div");
+    head.className="sec-head";
+    head.innerHTML=`<span class="sec-tag" style="background:${hexA(sec.c,.28)}">${sec.v}</span>`;
+    s.appendChild(head);
+    s.insertAdjacentHTML("beforeend", `<p class="sec-root">${sec.root}</p><p class="sec-sub">${sec.sub}</p>`);
+
+    sec.blocks.forEach((b,bi)=>{
+      if(b.note){ s.appendChild(ahaCard(b.note, sec.c)); return; }
+      s.insertAdjacentHTML("beforeend", `<div class="step">${b.step}</div>`);
+      let host=s;
+      if(b.scene){
+        const sc=document.createElement("div"); sc.className="scene";
+        sc.innerHTML=`<p class="setup">${b.scene.setup}</p>`;
+        s.appendChild(sc); host=sc;
+      }
+      const items=b.items || b.scene.items;
+      items.forEach((it,ii)=> host.appendChild(itemCard(it, si+"-"+bi+"-"+ii, sec.c)));
+    });
+    main.appendChild(s);
+  });
+  updateProgress();
+}
+
+function ahaCard(note, color){
+  const el=document.createElement("div"); el.className="aha";
+  let html=`<h3>💡 ${note.h}</h3>`;
+  note.p.forEach(p=> html+=`<p>${p}</p>`);
+  if(note.contrast){
+    html+=`<div class="contrast">`;
+    note.contrast.forEach(c=>{
+      html+=`<div class="cc"><div class="en"><span class="mark" style="--hl:${hexA(color,.55)}">${c.en}</span></div><div class="cnote">${c.note}</div></div>`;
+    });
+    html+=`</div>`;
+  }
+  el.innerHTML=html;
+  return el;
+}
+
+function itemCard(it, id, color){
+  const el=document.createElement("div");
+  el.className="item"; el.id="item-"+id;
+  const status = STATE[id];
+  const koHtml = `<p class="ko">${it.ko}</p>` + (it.t?`<span class="tag">${it.t}</span>`:"");
+
+  if(status){ el.classList.add("done"); el.innerHTML = koHtml + doneLine(it, color, status); return el; }
+
+  el.innerHTML = koHtml;
+  if(MODE==="piece")      el.appendChild(pieceUI(it,id,color));
+  else if(MODE==="type")  el.appendChild(typeUI(it,id,color));
+  else                    el.appendChild(speakUI(it,id,color));
+  return el;
+}
+
+function doneLine(it, color, status){
+  const soft = status==="hint" ? " soft" : "";
+  const txt = displaySentence(it.a[0], it.ko);
+  return `<div class="answer-line"><span class="mark${soft}" style="--hl:${hexA(color,.6)}">${txt}</span></div>`;
+}
+
+/* ---- 조각 맞추기 ---- */
+function pieceUI(it,id,color){
+  const wrap=document.createElement("div");
+  const expected = it.a[0].split(" ");
+  const disp = expected.map((w,i)=>caseWord(w,i===0));
+  const order = shuffle(expected.map((_,i)=>i));
+  let placed=0;
+
+  const slot=document.createElement("div"); slot.className="slotline";
+  slot.innerHTML=`<span class="ph">여기에 순서대로 채워져요</span>`;
+  const pieces=document.createElement("div"); pieces.className="pieces";
+
+  order.forEach(idx=>{
+    const p=document.createElement("button");
+    p.className="piece"; p.textContent=disp[idx]; p.dataset.idx=idx;
+    p.onclick=()=>{
+      if(parseInt(p.dataset.idx,10)===placed){
+        p.classList.add("used");
+        placed++;
+        slot.textContent = disp.slice(0,placed).join(" ");
+        if(placed===expected.length){
+          slot.innerHTML = `<span class="mark" style="--hl:${hexA(color,.6)}">${displaySentence(it.a[0],it.ko)}</span>`;
+          complete(id,"self");
+        }
+      }else{
+        p.classList.remove("shake"); void p.offsetWidth; p.classList.add("shake");
+      }
+    };
+    pieces.appendChild(p);
+  });
+  wrap.appendChild(slot); wrap.appendChild(pieces);
+  return wrap;
+}
+
+/* ---- 직접 쓰기 ---- */
+function typeUI(it,id,color){
+  const wrap=document.createElement("div");
+  let hintLevel=0;
+  const row=document.createElement("div"); row.className="typerow";
+  const inp=document.createElement("input");
+  inp.type="text"; inp.placeholder="영어로 써 보세요";
+  inp.setAttribute("autocorrect","off"); inp.setAttribute("autocapitalize","off");
+  inp.setAttribute("autocomplete","off"); inp.setAttribute("spellcheck","false");
+  const btn=document.createElement("button"); btn.className="btn"; btn.textContent="확인";
+  row.appendChild(inp); row.appendChild(btn);
+  const hint=document.createElement("div"); hint.className="hint";
+  wrap.appendChild(row); wrap.appendChild(hint);
+
+  const words = it.a[0].split(" ").map((w,i)=>caseWord(w,i===0));
+  function openHint(){
+    hintLevel++;
+    if(hintLevel===1){
+      hint.innerHTML=`첫 단어는 <b>${words[0]}</b>`;
+    }else{
+      const half=Math.max(1, Math.ceil(words.length/2));
+      hint.innerHTML=`여기까지 <b>${words.slice(0,half).join(" ")} …</b>`;
+    }
+  }
+  function check(){
+    const r=judge(inp.value, it.a);
+    if(r.ok){
+      const status = hintLevel>0 ? "hint" : "self";
+      if(!r.exact){
+        wrap.innerHTML=`<div class="fix">맞았어요, 철자만 이렇게 → <b>${displaySentence(r.fix,it.ko)}</b></div>`;
+      }
+      complete(id,status,wrap.closest(".item"));
+    }else{
+      openHint();
+    }
+  }
+  btn.onclick=check;
+  inp.addEventListener("keydown",e=>{ if(e.key==="Enter") check(); });
+  return wrap;
+}
+
+/* ---- 말하기 ---- */
+function speakUI(it,id,color){
+  const wrap=document.createElement("div");
+  const en=document.createElement("div"); en.className="speak-en hidden";
+  en.textContent=displaySentence(it.a[0], it.ko);
+  const row=document.createElement("div"); row.className="typerow";
+  const reveal=document.createElement("button"); reveal.className="btn ghost"; reveal.textContent="문장 보기";
+  const done=document.createElement("button"); done.className="btn"; done.textContent="말했어요";
+  reveal.onclick=()=> en.classList.toggle("hidden");
+  done.onclick=()=> complete(id,"speak");
+  row.appendChild(reveal); row.appendChild(done);
+  wrap.appendChild(en); wrap.appendChild(row);
+  return wrap;
+}
+
+/* ---- 완료 처리 ---- */
+function complete(id, status, keepEl){
+  STATE[id]=status; saveState(); updateProgress();
+  const el=document.getElementById("item-"+id);
+  // 표시가 이미 바뀐 케이스(철자 교정, 조각완성)는 잠깐 두었다 다음으로
+  setTimeout(()=>{
+    if(el){ el.classList.add("done"); }
+    scrollToNext(id);
+  }, status==="self" || status==="speak" ? 550 : 900);
+}
+function scrollToNext(id){
+  const list=allItems();
+  const i=list.findIndex(x=>x.id===id);
+  for(let j=i+1;j<list.length;j++){
+    if(!STATE[list[j].id]){
+      const nx=document.getElementById("item-"+list[j].id);
+      if(nx){ nx.scrollIntoView({behavior:"smooth",block:"center"}); }
+      return;
+    }
+  }
+}
+
+/* ---- 진행률 ---- */
+function counts(){
+  let self=0,hint=0,speak=0;
+  Object.values(STATE).forEach(v=>{ if(v==="self")self++; else if(v==="hint")hint++; else if(v==="speak")speak++; });
+  return {self,hint,speak, total:self+hint+speak};
+}
+function updateProgress(){
+  const total=allItems().length;
+  const c=counts();
+  document.getElementById("plab").textContent = `${c.total} / ${total} 완료`;
+  document.getElementById("pbar").style.width = total? (c.total/total*100)+"%" : "0%";
+}
+
+/* ---- 유틸 ---- */
+function shuffle(arr){
+  const a=arr.slice();
+  for(let i=a.length-1;i>0;i--){
+    const j=Math.floor(pseudo()* (i+1));
+    [a[i],a[j]]=[a[j],a[i]];
+  }
+  return a;
+}
+let _seed = 0;
+function pseudo(){ _seed=(_seed*9301+49297)%233280; return _seed/233280; }
+_seed = (allItems().length*7 + 13) % 233280;
+function hexA(hex,a){
+  const h=hex.replace("#",""); const n=parseInt(h,16);
+  const r=(n>>16)&255,g=(n>>8)&255,b=n&255;
+  return `rgba(${r},${g},${b},${a})`;
+}
+
+/* ---- 모드 전환 ---- */
+document.getElementById("modes").addEventListener("click",e=>{
+  const b=e.target.closest(".modebtn"); if(!b) return;
+  MODE=b.dataset.mode;
+  document.querySelectorAll(".modebtn").forEach(x=>x.classList.toggle("active",x===b));
+  render();
+});
+
+/* ---- 숙제 카드 ---- */
+const overlay=document.getElementById("overlay");
+document.getElementById("hwbtn").onclick=()=>{
+  const c=counts();
+  const d=new Date();
+  const dd=`${d.getFullYear()}. ${d.getMonth()+1}. ${d.getDate()}`;
+  document.getElementById("hwdate").textContent=dd;
+  document.getElementById("hw-total").textContent=c.total;
+  document.getElementById("hw-self").textContent=c.self;
+  document.getElementById("hw-hint").textContent=c.hint;
+  document.getElementById("hw-speak").textContent=c.speak;
+  overlay.classList.add("on");
+};
+document.getElementById("hwclose").onclick=()=>overlay.classList.remove("on");
+overlay.addEventListener("click",e=>{ if(e.target===overlay) overlay.classList.remove("on"); });
+
+render();
+</script>
+</body>
+</html>
