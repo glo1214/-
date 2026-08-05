@@ -20,7 +20,7 @@ import {
   uid,
   wipeAll,
 } from "./lib/storage.js";
-import { SEED_WORDS, SEED_DECK_NAME } from "./lib/seed.js";
+import { SEED_WORDS, SEED_DECK_NAME, SEED_DECK_ID } from "./lib/seed.js";
 import { ddayFrom, todayKey } from "./lib/srs.js";
 import { todayCount, pickSessionWords, flattenWords } from "./lib/session.js";
 
@@ -71,9 +71,13 @@ export default function App() {
       s = { examDate: defaultExamDate(), dailyNew: 20, dailyReview: 200, sessionSize: 20 };
       saveSettings(s);
     }
-    if (!d || Object.keys(d).length === 0) {
-      const id = uid("deck");
-      d = { [id]: { id, name: SEED_DECK_NAME, words: makeWords(SEED_WORDS) } };
+    if (!d) d = {};
+    // 기본 단어장(사진에서 넣은 수능 어휘)을 항상 보장 — 기존 데이터가 있어도 없으면 추가
+    if (!d[SEED_DECK_ID]) {
+      d = {
+        ...d,
+        [SEED_DECK_ID]: { id: SEED_DECK_ID, name: SEED_DECK_NAME, words: makeWords(SEED_WORDS) },
+      };
       saveDecks(d);
     }
 
