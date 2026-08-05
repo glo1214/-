@@ -20,7 +20,7 @@ import {
   uid,
   wipeAll,
 } from "./lib/storage.js";
-import { SEED_WORDS, SEED_DECK_NAME, SEED_DECK_ID } from "./lib/seed.js";
+import { SEED_DECKS } from "./lib/seed.js";
 import { ddayFrom, todayKey } from "./lib/srs.js";
 import { todayCount, pickSessionWords, flattenWords } from "./lib/session.js";
 
@@ -72,14 +72,15 @@ export default function App() {
       saveSettings(s);
     }
     if (!d) d = {};
-    // 기본 단어장(사진에서 넣은 수능 어휘)을 항상 보장 — 기존 데이터가 있어도 없으면 추가
-    if (!d[SEED_DECK_ID]) {
-      d = {
-        ...d,
-        [SEED_DECK_ID]: { id: SEED_DECK_ID, name: SEED_DECK_NAME, words: makeWords(SEED_WORDS) },
-      };
-      saveDecks(d);
+    // 사진에서 넣은 단어장들을 보장 — 기존 데이터가 있어도 없는 것만 추가
+    let seedChanged = false;
+    for (const sd of SEED_DECKS) {
+      if (!d[sd.id]) {
+        d = { ...d, [sd.id]: { id: sd.id, name: sd.name, words: makeWords(sd.words) } };
+        seedChanged = true;
+      }
     }
+    if (seedChanged) saveDecks(d);
 
     setSettings(s);
     setDecks(d);
