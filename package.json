@@ -1,9 +1,9 @@
 {
-  "name": "reset-sheet",
+  "name": "word-reset",
   "private": true,
-  "version": "0.1.0",
+  "version": "1.0.0",
   "type": "module",
-  "description": "재수생 전용 리셋 시트 — 공부가 안 될 때 / 낮잠 / 밤에 잠이 안 올 때",
+  "description": "재수생용 영단어 암기 앱 — 진입 마찰 0, 틀린 단어 자동 재노출, Leitner 5박스 + D-day 역산",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
