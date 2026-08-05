@@ -19,13 +19,13 @@ export default function TabBar({ tab, onChange, dueCount }) {
               key={t.id}
               onClick={() => onChange(t.id)}
               className={`relative flex flex-col items-center gap-1 py-2.5 transition ${
-                active ? "text-accent" : "text-muted"
+                active ? "text-accent-deep" : "text-muted"
               }`}
             >
               <Icon active={active} />
               <span className="text-[11px] font-medium">{t.label}</span>
               {t.id === "home" && dueCount > 0 && (
-                <span className="absolute top-1.5 right-[26%] min-w-[16px] h-4 px-1 rounded-full bg-accent text-ink-900 text-[10px] font-bold flex items-center justify-center tnum">
+                <span className="absolute top-1.5 right-[26%] min-w-[16px] h-4 px-1 rounded-full bg-accent text-accent-ink text-[10px] font-bold flex items-center justify-center tnum">
                   {dueCount > 99 ? "99+" : dueCount}
                 </span>
               )}

@@ -168,7 +168,7 @@ export default function Study({ sessionWords, decks, progress, sentences, examDa
 
       {/* 단계 배지 */}
       <div className="flex items-center gap-2 mb-4">
-        <span className="text-xs font-medium text-accent-soft bg-accent/12 px-2.5 py-1 rounded-full">
+        <span className="text-xs font-medium text-accent-deep bg-accent/12 px-2.5 py-1 rounded-full">
           {q.stage}단계 · {STAGE_LABEL[q.stage]}
         </span>
         {q.reusedSentence && (

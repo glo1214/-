@@ -13,8 +13,8 @@ body,
 
 body {
   margin: 0;
-  background: #0f1115;
-  color: #f3f4f6;
+  background: #eef1f6;
+  color: #0f172a;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
   overscroll-behavior-y: none;
@@ -36,7 +36,7 @@ button {
 }
 
 ::selection {
-  background: rgba(251, 191, 36, 0.3);
+  background: rgba(245, 158, 11, 0.25);
 }
 
 @media (prefers-reduced-motion: reduce) {

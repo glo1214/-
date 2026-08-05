@@ -22,7 +22,7 @@ export function Button({ children, variant = "primary", className = "", ...rest 
   const base =
     "inline-flex items-center justify-center gap-2 font-semibold rounded-xl transition active:scale-[0.98] disabled:opacity-40 disabled:active:scale-100";
   const variants = {
-    primary: "bg-accent text-ink-900 hover:bg-accent-soft",
+    primary: "bg-accent text-accent-ink hover:bg-accent-soft",
     ghost: "bg-ink-700 text-gray-100 hover:bg-ink-600",
     subtle: "bg-transparent text-muted hover:text-gray-200",
     danger: "bg-bad/15 text-bad hover:bg-bad/25",
@@ -38,7 +38,7 @@ export function Button({ children, variant = "primary", className = "", ...rest 
 export function Pill({ children, tone = "neutral", className = "" }) {
   const tones = {
     neutral: "bg-ink-700 text-muted",
-    accent: "bg-accent/15 text-accent-soft",
+    accent: "bg-accent/15 text-accent-deep",
     good: "bg-good/15 text-good",
     bad: "bg-bad/15 text-bad",
   };

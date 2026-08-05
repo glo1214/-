@@ -16,7 +16,7 @@ export default function Home({ dday, dueCount, stats, examDate, onStart, onOpenS
         >
           <div>
             <div className="flex items-baseline gap-2">
-              <span className="text-3xl font-extrabold text-accent tnum">{ddayLabel}</span>
+              <span className="text-3xl font-extrabold text-accent-deep tnum">{ddayLabel}</span>
             </div>
             <div className="text-xs text-muted mt-0.5">
               {examDate ? `수능 ${examDate}` : "탭해서 시험일 설정"}

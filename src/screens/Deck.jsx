@@ -104,7 +104,7 @@ function AddSheet({ open, onClose, addWords }) {
             key={m}
             onClick={() => setMode(m)}
             className={`flex-1 py-2 rounded-lg text-sm font-medium transition ${
-              mode === m ? "bg-accent text-ink-900" : "bg-ink-700 text-muted"
+              mode === m ? "bg-accent text-accent-ink" : "bg-ink-700 text-muted"
             }`}
           >
             {label}
@@ -364,7 +364,7 @@ function PosSelect({ value, onChange }) {
           type="button"
           onClick={() => onChange(v)}
           className={`flex-1 py-2 rounded-lg text-sm transition ${
-            value === v ? "bg-accent text-ink-900 font-semibold" : "bg-ink-700 text-muted"
+            value === v ? "bg-accent text-accent-ink font-semibold" : "bg-ink-700 text-muted"
           }`}
         >
           {label}
