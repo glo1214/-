@@ -1,0 +1,10 @@
+# 정적 SPA 배포. 서버리스 함수 없음(v1). 데이터는 브라우저 localStorage.
+[build]
+  command = "npm run build"
+  publish = "dist"
+
+# 단일 페이지 앱 — 모든 경로를 index.html로
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
