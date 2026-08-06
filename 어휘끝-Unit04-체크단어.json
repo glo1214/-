@@ -1,0 +1,206 @@
+{
+  "id": "unit04",
+  "name": "어휘끝 Unit04 체크단어",
+  "words": [
+    {
+      "word": "magnitude",
+      "ipa": "/ˈmæɡnɪˌtjuːd/",
+      "ko": ["매", "그", "니", "튜드"],
+      "koStress": 0,
+      "splitBox": true,
+      "parts": [
+        { "text": "magn", "gloss": "큰(great)" },
+        { "text": "-itude", "gloss": "~한 상태(명사화)" }
+      ],
+      "story": "magn(큰) + itude(상태) → '큰 정도' → 규모·크기, 나아가 중요성.",
+      "mnemonic": "매그넘(magnum) 와인병은 어마어마하게 크다 → magnitude(엄청난 규모).",
+      "meanings": [
+        { "def": "규모, (큰) 크기", "pos": "n", "koSentence": "이번 지진의 ____는 무려 7.2로 기록됐다." },
+        { "def": "중요성, 중대함", "pos": "n", "koSentence": "그는 이 사태의 ____를 뒤늦게야 깨달았다." }
+      ]
+    },
+    {
+      "word": "spare",
+      "ipa": "/spɛər/",
+      "ko": ["스페어"],
+      "koStress": 0,
+      "splitBox": true,
+      "parts": [
+        { "text": "spar", "gloss": "아껴 두다(save)" },
+        { "text": "-e", "gloss": "어미" }
+      ],
+      "story": "'따로 아껴 둔' → 남는·여분의, 그리고 '떼어 내주다' → 시간을 할애하다.",
+      "mnemonic": "스페어타이어는 '여분의' 타이어. 여분이 있으니 남에게 '내줄' 수도 있다.",
+      "meanings": [
+        { "def": "여분의, 남는", "pos": "a", "koSentence": "혹시 ____ 열쇠 하나 있으면 빌려줄래?" },
+        { "def": "(시간·돈을) 내주다, 할애하다", "pos": "v", "koSentence": "잠깐 5분만 나에게 ____ 수 있어?" }
+      ]
+    },
+    {
+      "word": "vague",
+      "ipa": "/veɪɡ/",
+      "ko": ["베이그"],
+      "koStress": 0,
+      "splitBox": true,
+      "parts": [
+        { "text": "vag", "gloss": "떠돌다(wander)" },
+        { "text": "-ue", "gloss": "어미" }
+      ],
+      "story": "이리저리 '떠도는' → 딱 잡히지 않는 → 모호한, 그리고 윤곽이 흐릿한.",
+      "mnemonic": "안개 속을 '떠도는(vag)' 듯 → 뭐가 뭔지 모호하고 희미하다.",
+      "meanings": [
+        { "def": "모호한, 막연한", "pos": "a", "koSentence": "그의 대답은 너무 ____해서 무슨 뜻인지 알 수 없었다." },
+        { "def": "(모습·기억이) 흐릿한, 희미한", "pos": "a", "koSentence": "어린 시절의 기억은 이제 ____하기만 하다." }
+      ]
+    },
+    {
+      "word": "abolish",
+      "ipa": "/əˈbɒlɪʃ/",
+      "ko": ["어", "발", "리시"],
+      "koStress": 1,
+      "splitBox": false,
+      "parts": [
+        { "text": "ab-", "gloss": "떨어져(away)" },
+        { "text": "ol", "gloss": "자라다(grow)" },
+        { "text": "-ish", "gloss": "동사화" }
+      ],
+      "story": "자라난 것을 '떼어 없애다' → (제도·법을) 폐지하다.",
+      "mnemonic": "'아, 벌리시(abolish)' 다 없애버리자 → 제도를 폐지하다.",
+      "meanings": [
+        { "def": "(제도·법을) 폐지하다", "pos": "v", "koSentence": "정부는 낡은 규제를 마침내 ____하기로 했다." }
+      ]
+    },
+    {
+      "word": "coincide",
+      "ipa": "/ˌkoʊɪnˈsaɪd/",
+      "ko": ["코", "인", "사이드"],
+      "koStress": 2,
+      "splitBox": false,
+      "parts": [
+        { "text": "co-", "gloss": "함께(together)" },
+        { "text": "in-", "gloss": "위에(on)" },
+        { "text": "cide", "gloss": "떨어지다(fall)" }
+      ],
+      "story": "'함께 같은 자리에 떨어지다' → 동시에 일어나다, 딱 들어맞다.",
+      "mnemonic": "두 사건이 같은 '코인(coin)' 자리에 떨어지면 → 우연히 일치하다.",
+      "meanings": [
+        { "def": "동시에 일어나다, 일치하다", "pos": "v", "koSentence": "내 방학이 마침 그의 출장과 ____했다." }
+      ]
+    },
+    {
+      "word": "deliberate",
+      "ipa": "/dɪˈlɪbərət/",
+      "ko": ["딜", "리", "버", "럿"],
+      "koStress": 1,
+      "splitBox": false,
+      "parts": [
+        { "text": "de-", "gloss": "완전히(fully)" },
+        { "text": "liber", "gloss": "저울질하다(weigh)" },
+        { "text": "-ate", "gloss": "형용사화" }
+      ],
+      "story": "'충분히 저울질한' → 신중히 따진 → 의도적인, 고의적인.",
+      "mnemonic": "저울(libra)로 무게를 재듯 신중히 → 의도적인 결정.",
+      "meanings": [
+        { "def": "고의적인, 의도적인; 신중한", "pos": "a", "koSentence": "그 실수는 우연이 아니라 ____인 것으로 드러났다." }
+      ]
+    },
+    {
+      "word": "prominent",
+      "ipa": "/ˈprɒmɪnənt/",
+      "ko": ["프라", "미", "넌트"],
+      "koStress": 0,
+      "splitBox": false,
+      "parts": [
+        { "text": "pro-", "gloss": "앞으로(forward)" },
+        { "text": "min", "gloss": "튀어나오다(project)" },
+        { "text": "-ent", "gloss": "형용사화" }
+      ],
+      "story": "'앞으로 튀어나온' → 눈에 확 띄는 → 두드러진, 저명한.",
+      "mnemonic": "앞으로(pro) 툭 튀어나오니(min) 다들 알아본다 → 저명한.",
+      "meanings": [
+        { "def": "두드러진, 저명한", "pos": "a", "koSentence": "그녀는 이 분야에서 가장 ____한 학자 중 하나다." }
+      ]
+    },
+    {
+      "word": "reluctant",
+      "ipa": "/rɪˈlʌktənt/",
+      "ko": ["릴", "럭", "턴트"],
+      "koStress": 1,
+      "splitBox": false,
+      "parts": [
+        { "text": "re-", "gloss": "뒤로(back)" },
+        { "text": "luct", "gloss": "몸부림치다(struggle)" },
+        { "text": "-ant", "gloss": "형용사화" }
+      ],
+      "story": "'뒤로 버티며 몸부림치는' → 하기 싫어 꺼리는, 마지못한.",
+      "mnemonic": "자꾸 뒤로(re) 빼며 버티니 → 마지못해 하는.",
+      "meanings": [
+        { "def": "꺼리는, 마지못한", "pos": "a", "koSentence": "그는 그 제안을 받아들이기를 몹시 ____해했다." }
+      ]
+    },
+    {
+      "word": "tremendous",
+      "ipa": "/trɪˈmɛndəs/",
+      "ko": ["트리", "멘", "더스"],
+      "koStress": 1,
+      "splitBox": false,
+      "parts": [
+        { "text": "trem", "gloss": "떨다(tremble)" },
+        { "text": "-endous", "gloss": "형용사화" }
+      ],
+      "story": "'떨릴(trem) 만큼' 대단한 → 엄청난, 굉장한.",
+      "mnemonic": "너무 커서 몸이 떨릴(tremble) 정도 → 엄청난 규모.",
+      "meanings": [
+        { "def": "엄청난, 굉장한", "pos": "a", "koSentence": "우리 팀은 올해 ____한 성과를 거두었다." }
+      ]
+    },
+    {
+      "word": "verify",
+      "ipa": "/ˈvɛrɪfaɪ/",
+      "ko": ["베", "리", "파이"],
+      "koStress": 0,
+      "splitBox": false,
+      "parts": [
+        { "text": "ver", "gloss": "참된(true)" },
+        { "text": "-ify", "gloss": "~하게 하다(동사화)" }
+      ],
+      "story": "'참임을 밝히다' → 입증하다, 사실인지 확인하다.",
+      "mnemonic": "진실(ver)을 만들어(-ify) 확인 → 사실을 검증하다.",
+      "meanings": [
+        { "def": "입증하다, (사실인지) 확인하다", "pos": "v", "koSentence": "우리는 그 주장을 실험으로 직접 ____해야 한다." }
+      ]
+    },
+    {
+      "word": "plausible",
+      "ipa": "/ˈplɔːzəbl/",
+      "ko": ["플로", "저", "블"],
+      "koStress": 0,
+      "splitBox": false,
+      "parts": [
+        { "text": "plaus", "gloss": "박수치다(applaud)" },
+        { "text": "-ible", "gloss": "~할 만한" }
+      ],
+      "story": "'박수받을 만한' → 그럴듯한, 받아들일 만해 보이는.",
+      "mnemonic": "박수(applause)가 나올 만큼 설득력 있는 → 그럴듯한 변명.",
+      "meanings": [
+        { "def": "그럴듯한, 타당해 보이는", "pos": "a", "koSentence": "그의 변명은 제법 ____하게 들렸다." }
+      ]
+    },
+    {
+      "word": "sustain",
+      "ipa": "/səˈsteɪn/",
+      "ko": ["서", "스테인"],
+      "koStress": 1,
+      "splitBox": false,
+      "parts": [
+        { "text": "sus-", "gloss": "아래에서(under)" },
+        { "text": "tain", "gloss": "붙잡다(hold)" }
+      ],
+      "story": "'아래에서 떠받쳐 붙잡다' → 지탱하다, 계속 유지하다.",
+      "mnemonic": "아래(sus)에서 계속 붙잡아(tain) 줌 → 지속·지탱하다.",
+      "meanings": [
+        { "def": "지속하다, 지탱하다", "pos": "v", "koSentence": "이 정도 속도를 끝까지 ____하기는 어렵다." }
+      ]
+    }
+  ]
+}

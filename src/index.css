@@ -1,55 +1,299 @@
-@import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css");
-@import url("https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&display=swap");
+:root {
+  --bg: #0f1115;
+  --panel: #171a21;
+  --panel2: #1f232c;
+  --line: #2a2f3a;
+  --text: #e8eaed;
+  --muted: #9aa3b2;
+  --accent: #fbbf24;
+  --accent-ink: #1a1400;
+  --good: #34d399;
+  --bad: #f87171;
+  --stress: #fbbf24;
+}
 
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
+* {
+  box-sizing: border-box;
+}
 html,
 body,
 #root {
   height: 100%;
 }
-
 body {
   margin: 0;
-  background: #0f1115;
-  color: #f3f4f6;
+  background: var(--bg);
+  color: var(--text);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Apple SD Gothic Neo",
+    "Malgun Gothic", sans-serif;
   -webkit-font-smoothing: antialiased;
-  text-rendering: optimizeLegibility;
-  overscroll-behavior-y: none;
 }
 
-/* 숫자를 표처럼 정렬 */
-.tnum {
-  font-variant-numeric: tabular-nums;
-  font-feature-settings: "tnum";
+.app {
+  max-width: 480px;
+  margin: 0 auto;
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+  padding-bottom: 68px;
+}
+.screen {
+  padding: 20px 16px 24px;
+  flex: 1;
 }
 
-/* 탭 하이라이트 제거 */
-* {
-  -webkit-tap-highlight-color: transparent;
+h1,
+h2,
+h3 {
+  margin: 0 0 12px;
+}
+.muted {
+  color: var(--muted);
+}
+.small {
+  font-size: 13px;
 }
 
-button {
+.card {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 18px;
+  margin-bottom: 14px;
+}
+
+.btn {
+  appearance: none;
+  border: 1px solid var(--line);
+  background: var(--panel2);
+  color: var(--text);
+  border-radius: 12px;
+  padding: 12px 16px;
+  font-size: 15px;
+  cursor: pointer;
+  width: 100%;
+}
+.btn:active {
+  transform: translateY(1px);
+}
+.btn.primary {
+  background: var(--accent);
+  color: var(--accent-ink);
+  border-color: var(--accent);
+  font-weight: 800;
+  font-size: 18px;
+  padding: 16px;
+}
+.btn.ghost {
+  background: transparent;
+}
+.btn.small {
+  width: auto;
+  padding: 8px 12px;
+  font-size: 13px;
+}
+.btn.danger {
+  color: var(--bad);
+}
+.row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+.row.wrap {
+  flex-wrap: wrap;
+}
+.spacer {
+  flex: 1;
+}
+
+/* 선지 */
+.choice {
+  text-align: left;
+  margin-bottom: 10px;
+  line-height: 1.4;
+  transition: border-color 0.1s;
+}
+.choice .exp {
+  display: block;
+  margin-top: 6px;
+  font-size: 12px;
+  color: var(--muted);
+}
+.choice.correct {
+  border-color: var(--good);
+  background: rgba(52, 211, 153, 0.12);
+}
+.choice.wrong {
+  border-color: var(--bad);
+  background: rgba(248, 113, 113, 0.12);
+}
+.choice.dim {
+  opacity: 0.55;
+}
+
+/* 발음 */
+.pron {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.ipa {
+  color: var(--muted);
+  font-size: 13px;
+}
+.ko {
+  font-size: 15px;
+  letter-spacing: 0.5px;
+}
+.ko .st {
+  color: var(--stress);
+  font-weight: 800;
+}
+.tts {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: 1px solid var(--line);
+  background: var(--panel2);
+  color: var(--text);
+  cursor: pointer;
+  font-size: 15px;
+  flex: 0 0 auto;
+}
+
+/* 어원/연상 */
+.etym .parts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 8px;
+}
+.chip {
+  background: var(--panel2);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 4px 8px;
+  font-size: 13px;
+}
+.chip b {
+  color: var(--accent);
+}
+.mnemonic {
+  border-left: 3px solid var(--accent);
+  padding-left: 10px;
+  color: var(--text);
+}
+
+/* 진행 바 */
+.progressbar {
+  height: 6px;
+  background: var(--panel2);
+  border-radius: 4px;
+  overflow: hidden;
+  margin-bottom: 6px;
+}
+.progressbar > div {
+  height: 100%;
+  background: var(--accent);
+}
+
+/* 배지 */
+.badge {
+  display: inline-block;
+  font-size: 11px;
+  padding: 2px 7px;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  color: var(--muted);
+}
+.badge.box {
+  color: var(--accent);
+  border-color: var(--accent);
+}
+
+/* 입력 */
+label.field {
+  display: block;
+  margin-bottom: 14px;
+}
+label.field > span {
+  display: block;
+  font-size: 13px;
+  color: var(--muted);
+  margin-bottom: 6px;
+}
+input,
+select,
+textarea {
+  width: 100%;
+  background: var(--panel2);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  color: var(--text);
+  padding: 10px 12px;
+  font-size: 15px;
   font-family: inherit;
 }
-
-::selection {
-  background: rgba(251, 191, 36, 0.3);
+.toggle {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+}
+.toggle input {
+  width: auto;
 }
 
-@media (prefers-reduced-motion: reduce) {
-  * {
-    animation: none !important;
-    transition: none !important;
-  }
+/* 하단 탭 */
+.nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 60px;
+  background: var(--panel);
+  border-top: 1px solid var(--line);
+  display: flex;
+}
+.nav > button {
+  flex: 1;
+  background: none;
+  border: none;
+  color: var(--muted);
+  font-size: 12px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+}
+.nav > button.active {
+  color: var(--accent);
+}
+.nav .ic {
+  font-size: 18px;
 }
 
-/* 안전영역 (아이폰 노치/홈바) */
-.safe-b {
-  padding-bottom: env(safe-area-inset-bottom);
+.dday {
+  font-size: 44px;
+  font-weight: 800;
+  line-height: 1;
 }
-.safe-t {
-  padding-top: env(safe-area-inset-top);
+.big-en {
+  font-size: 40px;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+}
+.deck-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--line);
+}
+.deck-item .en {
+  font-weight: 700;
 }
