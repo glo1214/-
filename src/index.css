@@ -1,15 +1,15 @@
 :root {
-  --bg: #0f1115;
-  --panel: #171a21;
-  --panel2: #1f232c;
-  --line: #2a2f3a;
-  --text: #e8eaed;
-  --muted: #9aa3b2;
-  --accent: #fbbf24;
-  --accent-ink: #1a1400;
-  --good: #34d399;
-  --bad: #f87171;
-  --stress: #fbbf24;
+  --bg: #ffffff;
+  --panel: #ffffff;
+  --panel2: #eef6ee;
+  --line: #cfe6cf;
+  --text: #12692e; /* 녹색 글씨 */
+  --muted: #5a8a63;
+  --accent: #1f9d3f; /* 포인트 녹색 */
+  --accent-ink: #ffffff; /* 녹색 버튼 위 글씨 */
+  --good: #1f9d3f;
+  --bad: #d64545;
+  --stress: #0f7a2e;
 }
 
 * {

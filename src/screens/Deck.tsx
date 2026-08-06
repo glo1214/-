@@ -1,6 +1,7 @@
 import { useRef, useState } from "react";
 import type { Deck, Meaning, Word } from "../types";
-import { importDeckJSON } from "../lib/storage";
+import { importDeckJSON, normalizeWord } from "../lib/storage";
+import { parseCandidates, recognizeImage, type WordCandidate } from "../lib/ocr";
 
 function emptyWord(): Word {
   return {
@@ -29,6 +30,7 @@ export function DeckScreen({
   const [edit, setEdit] = useState<EditTarget | null>(null);
   const [draft, setDraft] = useState<Word>(emptyWord);
   const [importMsg, setImportMsg] = useState<string | null>(null);
+  const [photo, setPhoto] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
 
   const q = query.trim().toLowerCase();
@@ -86,6 +88,10 @@ export function DeckScreen({
     });
   }
 
+  if (photo) {
+    return <PhotoAdd decks={decks} updateDecks={updateDecks} onClose={() => setPhoto(false)} />;
+  }
+
   if (edit) {
     return (
       <div className="screen">
@@ -108,8 +114,11 @@ export function DeckScreen({
       <div className="row" style={{ marginBottom: 12 }}>
         <h2 style={{ margin: 0 }}>단어장</h2>
         <span className="spacer" />
+        <button className="btn small" onClick={() => setPhoto(true)}>
+          📷 사진
+        </button>
         <button className="btn small" onClick={() => fileRef.current?.click()}>
-          JSON 임포트
+          JSON
         </button>
         <button className="btn small primary" onClick={startNew}>
           + 추가
@@ -172,6 +181,165 @@ export function DeckScreen({
           </div>
         );
       })}
+    </div>
+  );
+}
+
+function PhotoAdd({
+  decks,
+  updateDecks,
+  onClose,
+}: {
+  decks: Deck[];
+  updateDecks: (d: Deck[]) => void;
+  onClose: () => void;
+}) {
+  const [busy, setBusy] = useState(false);
+  const [progress, setProgress] = useState<string>("");
+  const [rows, setRows] = useState<WordCandidate[] | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  async function onPick(e: React.ChangeEvent<HTMLInputElement>) {
+    const f = e.target.files?.[0];
+    if (inputRef.current) inputRef.current.value = "";
+    if (!f) return;
+    setError(null);
+    setRows(null);
+    setBusy(true);
+    setProgress("사진 여는 중…");
+    try {
+      const text = await recognizeImage(f, (p, status) => {
+        const label = status === "recognizing text" ? "글자 읽는 중" : "준비 중";
+        setProgress(`${label}… ${Math.round(p * 100)}%`);
+      });
+      const cands = parseCandidates(text);
+      if (cands.length === 0) {
+        setError("사진에서 단어를 찾지 못했어요. 글자가 크고 또렷한 사진으로 다시 시도해 주세요.");
+      }
+      setRows(cands);
+    } catch (err) {
+      setError((err as Error).message);
+    } finally {
+      setBusy(false);
+      setProgress("");
+    }
+  }
+
+  function setRow(i: number, patch: Partial<WordCandidate>) {
+    setRows((rs) => (rs ? rs.map((r, j) => (j === i ? { ...r, ...patch } : r)) : rs));
+  }
+  function removeRow(i: number) {
+    setRows((rs) => (rs ? rs.filter((_, j) => j !== i) : rs));
+  }
+
+  function save() {
+    if (!rows) return;
+    const valid = rows.filter((r) => r.word.trim() && r.meaning.trim());
+    if (valid.length === 0) return;
+    const next = decks.map((d) => ({ ...d, words: [...d.words] }));
+    const target = next[0];
+    const byWord = new Map(target.words.map((w) => [w.word.toLowerCase(), w] as const));
+    for (const r of valid) {
+      const w = normalizeWord({
+        word: r.word.trim(),
+        meanings: [{ def: r.meaning.trim(), pos: "", koSentence: "" }],
+      });
+      const existing = byWord.get(w.word.toLowerCase());
+      if (existing) existing.meanings = w.meanings;
+      else {
+        target.words.push(w);
+        byWord.set(w.word.toLowerCase(), w);
+      }
+    }
+    updateDecks(next);
+    onClose();
+  }
+
+  return (
+    <div className="screen">
+      <div className="row" style={{ marginBottom: 12 }}>
+        <h2 style={{ margin: 0 }}>사진으로 단어 추가</h2>
+        <span className="spacer" />
+        <button className="btn small" onClick={onClose}>
+          닫기
+        </button>
+      </div>
+
+      <input
+        ref={inputRef}
+        type="file"
+        accept="image/*"
+        capture="environment"
+        style={{ display: "none" }}
+        onChange={onPick}
+      />
+
+      {!rows && !busy && (
+        <>
+          <button className="btn primary" onClick={() => inputRef.current?.click()}>
+            📷 사진 찍기 / 사진 고르기
+          </button>
+          <p className="small muted" style={{ marginTop: 12, lineHeight: 1.6 }}>
+            단어장·시험지 사진을 찍으면 앱이 글자를 읽어 단어 목록을 만들어 줍니다.
+            읽은 결과는 저장 전에 직접 고칠 수 있어요. (한 줄에 "영단어 뜻" 형태일 때 가장 정확합니다)
+          </p>
+        </>
+      )}
+
+      {busy && (
+        <div className="card" style={{ textAlign: "center" }}>
+          <div style={{ fontSize: 18, marginBottom: 6 }}>글자 읽는 중…</div>
+          <div className="muted small">{progress || "잠시만요"}</div>
+          <div className="muted small" style={{ marginTop: 8 }}>
+            처음엔 인식 기능을 내려받느라 몇십 초 걸릴 수 있어요.
+          </div>
+        </div>
+      )}
+
+      {error && (
+        <div className="card" style={{ borderColor: "var(--bad)" }}>
+          <div className="small" style={{ color: "var(--bad)" }}>{error}</div>
+          <button className="btn" style={{ marginTop: 10 }} onClick={() => inputRef.current?.click()}>
+            다시 찍기
+          </button>
+        </div>
+      )}
+
+      {rows && rows.length > 0 && (
+        <>
+          <div className="small muted" style={{ margin: "4px 0 10px" }}>
+            읽은 단어 {rows.length}개 — 확인하고 고친 뒤 저장하세요.
+          </div>
+          {rows.map((r, i) => (
+            <div className="card" key={i}>
+              <div className="row" style={{ marginBottom: 8 }}>
+                <b className="small">#{i + 1}</b>
+                <span className="spacer" />
+                <button className="btn small danger" onClick={() => removeRow(i)}>
+                  삭제
+                </button>
+              </div>
+              <label className="field">
+                <span>영단어</span>
+                <input value={r.word} onChange={(e) => setRow(i, { word: e.target.value })} />
+              </label>
+              <label className="field" style={{ marginBottom: 0 }}>
+                <span>뜻</span>
+                <input value={r.meaning} onChange={(e) => setRow(i, { meaning: e.target.value })} />
+              </label>
+            </div>
+          ))}
+          <div className="row" style={{ marginTop: 4 }}>
+            <button className="btn" onClick={() => inputRef.current?.click()}>
+              다시 찍기
+            </button>
+            <button className="btn primary" onClick={save}>
+              {rows.filter((r) => r.word.trim() && r.meaning.trim()).length}개 저장
+            </button>
+          </div>
+        </>
+      )}
     </div>
   );
 }
