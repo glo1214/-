@@ -1,9 +1,9 @@
 {
-  "name": "word-reset",
+  "name": "think-in-english",
   "private": true,
   "version": "1.0.0",
   "type": "module",
-  "description": "재수생용 영단어 암기 앱 — 진입 마찰 0, 틀린 단어 자동 재노출, Leitner 5박스 + D-day 역산",
+  "description": "Think in English — 한국어 사고를 영어 사고로 바꾸는 AI 영어 일기 학습 웹앱",
   "scripts": {
     "dev": "vite",
     "build": "vite build",

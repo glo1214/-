@@ -1,75 +1,110 @@
-# 단어 리셋 · 재수생 영단어 암기 앱
+# Think in English · 영어로 생각하기
 
-수능 D-day가 고정이라는 재수생의 장점을 살린 영단어 암기 웹앱입니다.
-복습을 *시작하는* 마찰을 없애는 데 초점을 맞췄습니다 — 홈은 `오늘 복습 27개 → [시작]`
-버튼 하나. 틀린 단어는 학생이 따로 체크할 필요 없이 알아서 다시 나옵니다.
+한국어 사고를 영어 사고로 바꾸는 **AI 영어 일기 학습 웹앱**.
+매일 영어로 일기를 쓰면 AI가 **원어민 표현으로 첨삭**하고, 단순히 정답을 주는 것을 넘어
+**"왜 영어는 이렇게 말하는지"** 사고방식까지 설명합니다.
 
-## 핵심 기능
+> 영어를 **번역하는 사람**이 아니라 **영어로 생각하는 사람**으로.
 
-- **단계 승급 문제 형식** — 같은 단어라도 맞힐수록 다음 단계로:
-  ① 영어→뜻 4지선다 → ② 뜻→영어 4지선다 → ③ 예문 빈칸 객관식 → ④ 빈칸 첫 글자 힌트 타이핑.
-  진입은 재인(recognition), 최종은 인출(recall)까지 훈련합니다.
-- **Leitner 5박스 SRS** — 맞으면 승급(1→3→7→16→35일), 틀리면 박스 1로 강등 + 같은 세션 안 4~6문제 뒤 즉시 재삽입.
-- **D-day 역산 상한** — D-30부터 복습 간격에 상한을 걸고 D-14 / D-7 등에 강제 노출해, 모든 단어가 시험 전 최소 1회 더 나오게 합니다.
-- **똑똑한 오답 선택지** — 과거에 헷갈렸던 단어 → 같은 품사 → 철자 유사 → 랜덤 순으로 골라 "아는 것 같은 착각"을 방지합니다.
-- **사진으로 단어장 추가** — 단어장/시험지 사진 → AI(OCR)가 단어를 추출 → 확인·편집 화면에서 수정 후 저장. 뜻이 없으면 자동 생성.
-- **AI 예문 + 재활용** — 오늘 틀린 단어로 예문을 만들고, 그 예문을 다음 세션의 빈칸 문제로 재사용합니다.
-- **밀린 복습 0** — 하루 빠지면 끊기는 스트릭 대신, 만회 가능한 "밀린 개수"로 복귀를 유도합니다.
-- **통계** — 자주 틀리는 단어 TOP 10, 박스별 분포.
+학생이 바로 쓸 수 있도록 설계했습니다. 회원가입·설치 없이 브라우저에서 즉시 사용하고,
+휴대폰에 **PWA로 설치**할 수도 있습니다.
 
-기본 단어장으로 수능 필수 60단어가 들어있어 바로 시작할 수 있습니다.
-모든 데이터(단어·진행도·예문·설정)는 브라우저 `localStorage`에만 저장됩니다.
+---
+
+## 핵심 기능 (기획서 반영)
+
+| # | 기능 | 설명 |
+|---|------|------|
+| ① | **AI 영어 일기 첨삭** | 내가 쓴 영어를 원어민 표현으로 자연스럽게 수정 + 문장별 수정 이유(한국어) |
+| ② | **영어식 사고 설명** | 이 일기에서 드러나는 한국어식↔영어식 사고 차이를 쉽게 설명 |
+| ③ | **Thinking Map** | 생각의 흐름(사건→연결→결과)을 시각화 |
+| ④ | **핵심 패턴 자동 추출** | `Now that + 주어 + have/has + p.p.` 같은 패턴과 오늘 배운 표현 |
+| ⑤ | **5번 읽기** | 원어민 문장을 1/5~5/5 반복해 읽으며 체화 |
+| ⑥ | **음성 학습** | 원어민 음성 듣기(TTS) + 따라 말하기 발음 채점(STT) |
+| ⑦ | **자동 복습** | 배운 표현을 Leitner 간격 복습으로 매일 자동 제공 |
+| ⑧ | **영어 습관 분석** | 강점·약점·문법 진단 점수 + "이번 주 목표" 추천 |
+
+화면 흐름: **캘린더 → 오늘의 일기 → AI 첨삭 → 영어식 사고 → Thinking Map → 핵심 패턴 → 5번 읽기 → 자동 복습**
+
+---
 
 ## 기술 스택
 
-- React 18 + Vite
-- Tailwind CSS
-- Netlify Functions (서버리스) — AI 기능(OCR·예문·뜻 생성)은 Claude API 프록시로 처리
+- **Frontend**: React 18 + Vite + Tailwind CSS
+- **AI**: Anthropic Claude (Netlify Functions에서 **서버 사이드** 호출)
+- **음성**: 브라우저 내장 Web Speech API (TTS/STT) — 별도 키 불필요
+- **저장**: 브라우저 localStorage (무설정, 오프라인 동작)
+- **PWA**: 매니페스트 + 서비스 워커 (휴대폰 설치 가능)
 
-## 실행
+### 왜 AI를 서버에서 호출하나요?
+
+API 키를 프런트엔드에 두면 학생 누구나 키를 훔쳐 쓸 수 있습니다.
+이 앱은 Netlify Function(`netlify/functions/correct.js`)에서만 키를 사용하므로
+**학생은 키를 절대 볼 수 없습니다.**
+
+---
+
+## 로컬 실행
 
 ```bash
 npm install
-npm run dev      # 개발 서버
-npm run build    # 프로덕션 빌드 (dist/)
-npm run preview  # 빌드 결과 미리보기
+npm run dev        # http://localhost:5173
 ```
 
-## 배포 (Netlify)
+> 로컬 `npm run dev`/`preview`에는 서버리스 함수가 없어 **오프라인 연습 모드**로 동작합니다.
+> (일기·5번 읽기·음성·복습은 모두 정상 작동, AI 첨삭만 규칙 기반 보조로 대체)
+> Netlify 함수까지 함께 돌리려면 `npx netlify dev` 를 사용하세요.
 
-`netlify.toml`에 빌드/함수 설정이 들어 있어 그대로 배포됩니다.
+빌드:
 
-- Build command: `npm run build`
-- Publish directory: `dist`
-- Functions directory: `netlify/functions`
-
-### AI 기능 켜기
-
-OCR·예문 생성은 서버리스 함수가 Claude API를 호출합니다. AI 기능을 쓰려면
-Netlify 프로젝트의 환경변수에 API 키를 넣어주세요.
-
-```
-ANTHROPIC_API_KEY = sk-ant-...
+```bash
+npm run build      # dist/ 생성
+npm run preview
 ```
 
-키가 없어도 앱은 정상 동작합니다 — 사진 대신 직접 입력/붙여넣기로 단어를 추가하고,
-예문은 품사별 기본 문장으로 대체됩니다(우아한 열화).
+---
 
-## 구조
+## 배포 & AI 켜기 (Netlify)
 
-| 경로 | 설명 |
-| --- | --- |
-| `src/App.jsx` | 앱 셸 — 상태·라우팅·저장·설정 |
-| `src/screens/` | 홈 / 학습 / 오늘의 문장 / 단어장 / 통계 |
-| `src/components/` | 공통 UI, 하단 탭바 |
-| `src/lib/srs.js` | Leitner 5박스 + D-day 역산 상한 |
-| `src/lib/distractors.js` | 오답 선택지 생성 |
-| `src/lib/session.js` | 오늘의 큐 구성 + 단계별 문제 생성 |
-| `src/lib/storage.js` | localStorage 배치 저장 계층 |
-| `src/lib/seed.js` | 기본 단어장(수능 필수 60) |
-| `netlify/functions/` | `ocr` · `sentences` · `meanings` 서버리스 함수 |
+1. 이 저장소를 Netlify 에 연결하면 `netlify.toml` 설정으로 자동 빌드됩니다.
+2. **AI 첨삭을 켜려면** Netlify 사이트의 환경변수에 API 키를 추가하세요:
+   - `Site settings → Environment variables`
+   - `ANTHROPIC_API_KEY = sk-ant-...`
+   - (선택) `THINK_MODEL` 로 모델 변경 가능 (기본: `claude-haiku-4-5`)
+3. 재배포하면 앱의 **설정 → AI 첨삭 상태**가 "켜짐"으로 바뀝니다.
 
-## 개발 순서 (기획서 기준)
+키가 없어도 앱은 오프라인 연습 모드로 정상 동작하므로, 먼저 배포해 학생에게
+나눠 주고 나중에 키를 추가해도 됩니다.
 
-v1 수동 입력 + 4지선다 + Leitner → v2 사진 OCR → v3 AI 예문/재활용 → v4 D-day 역산·통계 —
-네 단계를 모두 구현했습니다.
+---
+
+## 프로젝트 구조
+
+```
+index.html
+public/
+  manifest.webmanifest      # PWA 설치 정보
+  sw.js                     # 서비스 워커(오프라인 캐시)
+  icon-*.png                # 앱 아이콘
+src/
+  App.jsx                   # 탭 라우팅
+  main.jsx                  # 진입점 + SW 등록
+  screens/                  # Today / Review / Stats / Settings
+  components/               # Calendar, CorrectionView, ThinkingMap, ReadFive ...
+  lib/
+    ai.js                   # /correct 호출 + 오프라인 폴백
+    heuristic.js            # 키 없을 때 규칙 기반 보조 첨삭
+    storage.js              # localStorage(일기/복습/설정)
+    speech.js               # Web Speech API(TTS/STT) 래퍼
+    srs 로직은 storage.js 내 Leitner 박스
+netlify/functions/
+  correct.js                # AI 첨삭 엔드포인트(서버 사이드 키)
+  lib/anthropic.js          # Anthropic Messages API 헬퍼
+```
+
+---
+
+## 개인정보
+
+모든 일기·복습 기록은 **학생 기기(브라우저)에만** 저장됩니다. 서버 DB가 없습니다.
+설정 화면에서 데이터를 JSON으로 **백업**하거나 **초기화**할 수 있습니다.
