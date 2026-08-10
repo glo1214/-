@@ -1,5 +1,4 @@
 @import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css");
-@import url("https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&display=swap");
 
 @tailwind base;
 @tailwind components;
@@ -13,43 +12,49 @@ body,
 
 body {
   margin: 0;
-  background: #0f1115;
-  color: #f3f4f6;
+  background: #fdfbf6;
+  color: #2a2622;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
   overscroll-behavior-y: none;
 }
 
-/* 숫자를 표처럼 정렬 */
-.tnum {
-  font-variant-numeric: tabular-nums;
-  font-feature-settings: "tnum";
-}
-
-/* 탭 하이라이트 제거 */
 * {
   -webkit-tap-highlight-color: transparent;
 }
 
-button {
+button,
+input,
+textarea,
+select {
   font-family: inherit;
 }
 
 ::selection {
-  background: rgba(251, 191, 36, 0.3);
+  background: rgba(192, 138, 46, 0.18);
 }
 
-@media (prefers-reduced-motion: reduce) {
-  * {
-    animation: none !important;
-    transition: none !important;
-  }
+/* 노트 줄 느낌의 옅은 가로선 (글쓰기 화면 헤더 등에 소량 사용) */
+.rule-soft {
+  background-image: linear-gradient(#e9e2d4 1px, transparent 1px);
+  background-size: 100% 2rem;
 }
 
-/* 안전영역 (아이폰 노치/홈바) */
-.safe-b {
-  padding-bottom: env(safe-area-inset-bottom);
+/* 스크롤바 — 종이 톤 */
+.thin-scroll::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
 }
-.safe-t {
-  padding-top: env(safe-area-inset-top);
+.thin-scroll::-webkit-scrollbar-thumb {
+  background: #e0d7c4;
+  border-radius: 8px;
+}
+.thin-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+/* 에디터 안에서 문단 간격 유지 */
+.editor {
+  line-height: 1.9;
+  tab-size: 2;
 }

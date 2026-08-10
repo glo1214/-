@@ -1,123 +1,157 @@
-import React from "react";
+/* 공통 UI — 종이 노트와 카드의 중간 감성, 포인트 색은 황토 하나 */
 
-/* 화면 전체 스크롤 컨테이너 (하단 탭바 여백 확보) */
-export function Screen({ children, className = "" }) {
-  return (
-    <div className={`min-h-full px-5 pt-6 pb-28 max-w-xl mx-auto ${className}`}>{children}</div>
-  );
-}
+import { forwardRef } from "react";
 
-export function Card({ children, className = "", ...rest }) {
-  return (
-    <div
-      className={`bg-ink-800 border border-line rounded-xl2 ${className}`}
-      {...rest}
-    >
-      {children}
-    </div>
-  );
-}
-
-export function Button({ children, variant = "primary", className = "", ...rest }) {
+export function Button({
+  children,
+  variant = "primary",
+  size = "md",
+  className = "",
+  ...props
+}) {
   const base =
-    "inline-flex items-center justify-center gap-2 font-semibold rounded-xl transition active:scale-[0.98] disabled:opacity-40 disabled:active:scale-100";
+    "inline-flex items-center justify-center gap-1.5 rounded-xl2 font-medium transition-colors disabled:opacity-40 disabled:cursor-not-allowed";
+  const sizes = {
+    sm: "px-3 py-1.5 text-sm",
+    md: "px-4 py-2.5 text-[15px]",
+    lg: "px-5 py-3.5 text-base",
+  };
   const variants = {
-    primary: "bg-accent text-ink-900 hover:bg-accent-soft",
-    ghost: "bg-ink-700 text-gray-100 hover:bg-ink-600",
-    subtle: "bg-transparent text-muted hover:text-gray-200",
-    danger: "bg-bad/15 text-bad hover:bg-bad/25",
-    good: "bg-good/15 text-good hover:bg-good/25",
+    primary: "bg-ochre-500 text-white hover:bg-ochre-600 active:bg-ochre-700",
+    soft: "bg-ochre-50 text-ochre-700 hover:bg-ochre-100 border border-ochre-100",
+    ghost: "text-ink-700 hover:bg-paper-soft",
+    outline: "border border-line-strong text-ink-700 bg-paper-card hover:bg-paper-soft",
+    quiet: "text-ink-500 hover:text-ink-900 hover:bg-paper-soft",
   };
   return (
-    <button className={`${base} ${variants[variant]} ${className}`} {...rest}>
+    <button className={`${base} ${sizes[size]} ${variants[variant]} ${className}`} {...props}>
       {children}
     </button>
   );
 }
 
-export function Pill({ children, tone = "neutral", className = "" }) {
-  const tones = {
-    neutral: "bg-ink-700 text-muted",
-    accent: "bg-accent/15 text-accent-soft",
-    good: "bg-good/15 text-good",
-    bad: "bg-bad/15 text-bad",
-  };
+export function Card({ children, className = "", as: Tag = "div", ...props }) {
   return (
-    <span
-      className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium ${tones[tone]} ${className}`}
+    <Tag
+      className={`rounded-xl2 border border-line bg-paper-card shadow-card ${className}`}
+      {...props}
     >
       {children}
+    </Tag>
+  );
+}
+
+export function Chip({ children, active = false, className = "", ...props }) {
+  const Tag = props.onClick ? "button" : "span";
+  return (
+    <Tag
+      className={`inline-flex items-center rounded-full border px-3 py-1.5 text-sm transition-colors ${
+        active
+          ? "border-ochre-300 bg-ochre-50 text-ochre-700"
+          : "border-line bg-paper-card text-ink-700 hover:border-line-strong"
+      } ${className}`}
+      {...props}
+    >
+      {children}
+    </Tag>
+  );
+}
+
+export function Label({ children, hint }) {
+  return (
+    <div className="mb-1.5">
+      <span className="text-sm font-medium text-ink-700">{children}</span>
+      {hint ? <span className="ml-2 text-xs text-ink-400">{hint}</span> : null}
+    </div>
+  );
+}
+
+export function Input(props) {
+  return (
+    <input
+      {...props}
+      className={`w-full rounded-xl2 border border-line bg-paper-card px-3.5 py-2.5 text-[15px] text-ink-900 outline-none placeholder:text-ink-400 focus:border-ochre-300 ${
+        props.className || ""
+      }`}
+    />
+  );
+}
+
+/* 글쓰기 화면에서 커서 위치에 문장 시작점을 넣어야 해서 ref 를 넘긴다 */
+export const Textarea = forwardRef(function Textarea(props, ref) {
+  return (
+    <textarea
+      {...props}
+      ref={ref}
+      className={`w-full resize-none rounded-xl2 border border-line bg-paper-card px-3.5 py-3 text-[15px] leading-7 text-ink-900 outline-none placeholder:text-ink-400 focus:border-ochre-300 ${
+        props.className || ""
+      }`}
+    />
+  );
+});
+
+export function SectionTitle({ children, action }) {
+  return (
+    <div className="mb-3 flex items-baseline justify-between">
+      <h2 className="text-[15px] font-semibold text-ink-900">{children}</h2>
+      {action}
+    </div>
+  );
+}
+
+export function Empty({ title, description, action }) {
+  return (
+    <div className="rounded-xl2 border border-dashed border-line-strong bg-paper-soft/60 px-5 py-10 text-center">
+      <p className="text-[15px] font-medium text-ink-700">{title}</p>
+      {description ? <p className="mt-1.5 text-sm text-ink-500">{description}</p> : null}
+      {action ? <div className="mt-4 flex justify-center">{action}</div> : null}
+    </div>
+  );
+}
+
+export function Dots() {
+  return (
+    <span className="inline-flex gap-1">
+      {[0, 1, 2].map((i) => (
+        <span
+          key={i}
+          className="h-1.5 w-1.5 rounded-full bg-ink-400 animate-blink"
+          style={{ animationDelay: `${i * 0.16}s` }}
+        />
+      ))}
     </span>
   );
 }
 
-export function SectionTitle({ children, right }) {
-  return (
-    <div className="flex items-center justify-between mb-3 mt-7 first:mt-0">
-      <h2 className="text-sm font-semibold text-muted tracking-wide">{children}</h2>
-      {right}
-    </div>
-  );
-}
-
-/* 화면 상단 헤더 */
-export function Header({ title, sub, right }) {
-  return (
-    <div className="flex items-end justify-between mb-5">
-      <div>
-        <h1 className="text-2xl font-bold text-gray-50">{title}</h1>
-        {sub && <p className="text-sm text-muted mt-1">{sub}</p>}
-      </div>
-      {right}
-    </div>
-  );
-}
-
-/* 빈 상태 */
-export function Empty({ icon = "📭", title, desc, action }) {
-  return (
-    <div className="text-center py-14 px-6">
-      <div className="text-4xl mb-3">{icon}</div>
-      <p className="text-gray-200 font-semibold">{title}</p>
-      {desc && <p className="text-sm text-muted mt-1.5 leading-relaxed">{desc}</p>}
-      {action && <div className="mt-5">{action}</div>}
-    </div>
-  );
-}
-
-/* 간단한 모달 (하단 시트 스타일) */
-export function Sheet({ open, onClose, title, children }) {
+export function Modal({ open, onClose, title, children, footer }) {
   if (!open) return null;
   return (
-    <div
-      className="fixed inset-0 z-50 flex items-end sm:items-center sm:justify-center bg-black/60 animate-pop"
-      onClick={onClose}
-    >
+    <div className="fixed inset-0 z-50 flex items-end justify-center bg-ink-900/25 p-0 sm:items-center sm:p-6">
       <div
-        className="w-full sm:max-w-md bg-ink-800 border-t sm:border border-line rounded-t-3xl sm:rounded-3xl p-5 pb-8 safe-b animate-slideup max-h-[88vh] overflow-y-auto"
-        onClick={(e) => e.stopPropagation()}
+        className="max-h-[88vh] w-full max-w-lg overflow-y-auto rounded-t-3xl border border-line bg-paper-card p-5 shadow-lift animate-rise sm:rounded-xl2 thin-scroll"
+        role="dialog"
+        aria-modal="true"
       >
-        <div className="flex items-center justify-between mb-4">
-          <h3 className="text-lg font-bold text-gray-50">{title}</h3>
-          <button onClick={onClose} className="text-muted hover:text-gray-200 text-xl leading-none px-2">
-            ✕
-          </button>
+        {title ? <h3 className="mb-3 text-base font-semibold text-ink-900">{title}</h3> : null}
+        <div className="text-[15px] leading-7 text-ink-700">{children}</div>
+        <div className="mt-5 flex justify-end gap-2">
+          {footer || (
+            <Button variant="outline" onClick={onClose}>
+              닫기
+            </Button>
+          )}
         </div>
-        {children}
       </div>
     </div>
   );
 }
 
-export function Field({ label, children, hint }) {
+export function Notice({ children, tone = "info" }) {
+  const tones = {
+    info: "border-line bg-paper-soft text-ink-700",
+    warn: "border-ochre-200 bg-ochre-50 text-ochre-700",
+  };
   return (
-    <label className="block mb-4">
-      <span className="block text-sm font-medium text-gray-300 mb-1.5">{label}</span>
-      {children}
-      {hint && <span className="block text-xs text-muted mt-1">{hint}</span>}
-    </label>
+    <div className={`rounded-xl2 border px-3.5 py-3 text-sm leading-6 ${tones[tone]}`}>{children}</div>
   );
 }
-
-export const inputCls =
-  "w-full bg-ink-900 border border-line rounded-xl px-3.5 py-2.5 text-gray-100 placeholder-muted focus:border-accent/60 focus:outline-none transition";

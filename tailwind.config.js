@@ -4,22 +4,43 @@ export default {
   theme: {
     extend: {
       colors: {
+        /* 종이 — 아이보리 배경과 카드 */
+        paper: {
+          DEFAULT: "#FDFBF6",
+          card: "#FFFFFF",
+          soft: "#F7F2E7",
+          sand: "#F0E9DA",
+        },
+        line: {
+          DEFAULT: "#E9E2D4",
+          strong: "#D8CDB8",
+        },
+        /* 먹색에 가까운 짙은 회색 계열 */
         ink: {
-          900: "#0f1115",
-          800: "#161922",
-          700: "#1e2230",
-          600: "#2a2f40",
-          500: "#3a4054",
+          900: "#2A2622",
+          700: "#4B443C",
+          500: "#7B7268",
+          400: "#9C9389",
         },
-        line: "rgba(255,255,255,0.08)",
-        accent: {
-          DEFAULT: "#fbbf24",
-          soft: "#fcd34d",
-          deep: "#f59e0b",
+        /* 포인트 1 — 연한 노랑에서 황토까지 */
+        ochre: {
+          50: "#FCF6E6",
+          100: "#F6E7C2",
+          200: "#EDD59A",
+          300: "#DEB86A",
+          500: "#C08A2E",
+          600: "#A87422",
+          700: "#8A6019",
         },
-        good: "#34d399",
-        bad: "#fb7185",
-        muted: "#8b93a7",
+        /* 포인트 2 — 차분한 갈색 */
+        clay: {
+          100: "#EFE4D8",
+          500: "#8A6A48",
+          700: "#5E482F",
+        },
+        /* 상태 표시용(최소한으로만 사용) */
+        leaf: "#5A7A55",
+        rust: "#A5533C",
       },
       fontFamily: {
         sans: [
@@ -27,35 +48,37 @@ export default {
           "-apple-system",
           "BlinkMacSystemFont",
           "system-ui",
-          "Roboto",
           "'Apple SD Gothic Neo'",
           "'Noto Sans KR'",
           "sans-serif",
         ],
-        mono: ["'IBM Plex Mono'", "ui-monospace", "SFMono-Regular", "monospace"],
+        serif: ["'Nanum Myeongjo'", "'Apple SD Gothic Neo'", "serif"],
       },
       borderRadius: {
-        xl2: "1.25rem",
+        xl2: "1.125rem",
+      },
+      boxShadow: {
+        card: "0 1px 2px rgba(42,38,34,0.04), 0 4px 16px rgba(42,38,34,0.05)",
+        lift: "0 2px 6px rgba(42,38,34,0.06), 0 12px 28px rgba(42,38,34,0.08)",
       },
       keyframes: {
-        pop: {
-          "0%": { transform: "scale(0.96)", opacity: "0" },
-          "100%": { transform: "scale(1)", opacity: "1" },
-        },
-        slideup: {
-          "0%": { transform: "translateY(12px)", opacity: "0" },
+        rise: {
+          "0%": { transform: "translateY(8px)", opacity: "0" },
           "100%": { transform: "translateY(0)", opacity: "1" },
         },
-        shake: {
-          "0%,100%": { transform: "translateX(0)" },
-          "20%,60%": { transform: "translateX(-6px)" },
-          "40%,80%": { transform: "translateX(6px)" },
+        fade: {
+          "0%": { opacity: "0" },
+          "100%": { opacity: "1" },
+        },
+        blink: {
+          "0%,100%": { opacity: "0.25" },
+          "50%": { opacity: "1" },
         },
       },
       animation: {
-        pop: "pop 0.18s ease-out",
-        slideup: "slideup 0.22s ease-out",
-        shake: "shake 0.32s ease-in-out",
+        rise: "rise 0.24s ease-out",
+        fade: "fade 0.3s ease-out",
+        blink: "blink 1.2s ease-in-out infinite",
       },
     },
   },

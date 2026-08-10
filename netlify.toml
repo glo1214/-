@@ -5,8 +5,17 @@
 
 [functions]
   node_bundler = "esbuild"
+  # 어댑터 파일(_adapter.js)은 함수가 아니라 공용 모듈이다
+  included_files = ["shared/**"]
 
-# SPA fallback — 모든 경로를 index.html로
+# 클라이언트는 /api/* 한 경로만 호출한다.
+# Vercel 은 /api 를 그대로 쓰고, Netlify 는 여기서 함수로 이어준다.
+[[redirects]]
+  from = "/api/*"
+  to = "/.netlify/functions/:splat"
+  status = 200
+
+# SPA 폴백 — 나머지 경로는 index.html 로
 [[redirects]]
   from = "/*"
   to = "/index.html"

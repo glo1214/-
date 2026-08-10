@@ -1,9 +1,9 @@
 {
-  "name": "word-reset",
+  "name": "gloon-thinkon",
   "private": true,
   "version": "1.0.0",
   "type": "module",
-  "description": "재수생용 영단어 암기 앱 — 진입 마찰 0, 틀린 단어 자동 재노출, Leitner 5박스 + D-day 역산",
+  "description": "글로온 생각온 — 중학생이 기록하고, AI와 대화하며 생각을 발견해 스스로 글을 쓰는 웹앱",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
