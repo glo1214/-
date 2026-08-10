@@ -31,6 +31,7 @@ export function DeckScreen({
   const [draft, setDraft] = useState<Word>(emptyWord);
   const [importMsg, setImportMsg] = useState<string | null>(null);
   const [photo, setPhoto] = useState(false);
+  const [paste, setPaste] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
 
   const q = query.trim().toLowerCase();
@@ -92,6 +93,10 @@ export function DeckScreen({
     return <PhotoAdd decks={decks} updateDecks={updateDecks} onClose={() => setPhoto(false)} />;
   }
 
+  if (paste) {
+    return <PasteAdd decks={decks} updateDecks={updateDecks} onClose={() => setPaste(false)} />;
+  }
+
   if (edit) {
     return (
       <div className="screen">
@@ -111,17 +116,19 @@ export function DeckScreen({
 
   return (
     <div className="screen">
-      <div className="row" style={{ marginBottom: 12 }}>
-        <h2 style={{ margin: 0 }}>단어장</h2>
-        <span className="spacer" />
+      <h2 style={{ marginBottom: 10 }}>단어장</h2>
+      <div className="row wrap" style={{ marginBottom: 12, gap: 8 }}>
+        <button className="btn small primary" onClick={startNew}>
+          + 추가
+        </button>
+        <button className="btn small" onClick={() => setPaste(true)}>
+          ✏️ 붙여넣기
+        </button>
         <button className="btn small" onClick={() => setPhoto(true)}>
           📷 사진
         </button>
         <button className="btn small" onClick={() => fileRef.current?.click()}>
           JSON
-        </button>
-        <button className="btn small primary" onClick={startNew}>
-          + 추가
         </button>
         <input
           ref={fileRef}
@@ -213,9 +220,14 @@ function PhotoAdd({
         const label = status === "recognizing text" ? "글자 읽는 중" : "준비 중";
         setProgress(`${label}… ${Math.round(p * 100)}%`);
       });
-      const cands = parseCandidates(text);
+      // 잡음 제거: 모음이 있고 글자가 3자 이상인 그럴듯한 단어만
+      const cands = parseCandidates(text).filter(
+        (c) => /[A-Za-z]{3,}/.test(c.word) && /[aeiou]/i.test(c.word),
+      );
       if (cands.length === 0) {
-        setError("사진에서 단어를 찾지 못했어요. 글자가 크고 또렷한 사진으로 다시 시도해 주세요.");
+        setError(
+          "사진에서 단어를 잘 읽지 못했어요. 페이지 전체 말고 한 컬럼만 크게·밝게 찍거나, '✏️ 붙여넣기'를 이용해 보세요.",
+        );
       }
       setRows(cands);
     } catch (err) {
@@ -343,6 +355,100 @@ function PhotoAdd({
           </div>
         </>
       )}
+    </div>
+  );
+}
+
+/** 후보 단어들을 첫 번째 덱에 병합한다(같은 단어는 갱신). 추가된 개수를 반환. */
+function mergeCandidates(decks: Deck[], cands: WordCandidate[]): { next: Deck[]; added: number } {
+  const next = decks.map((d) => ({ ...d, words: [...d.words] }));
+  const target = next[0];
+  const byWord = new Map(target.words.map((w) => [w.word.toLowerCase(), w] as const));
+  let added = 0;
+  for (const c of cands) {
+    const word = c.word.trim();
+    if (!word) continue;
+    const w = normalizeWord({
+      word,
+      meanings: [{ def: c.meaning.trim(), pos: "", koSentence: "" }],
+    });
+    const existing = byWord.get(word.toLowerCase());
+    if (existing) existing.meanings = w.meanings;
+    else {
+      target.words.push(w);
+      byWord.set(word.toLowerCase(), w);
+      added++;
+    }
+  }
+  return { next, added };
+}
+
+function PasteAdd({
+  decks,
+  updateDecks,
+  onClose,
+}: {
+  decks: Deck[];
+  updateDecks: (d: Deck[]) => void;
+  onClose: () => void;
+}) {
+  const [text, setText] = useState("");
+  const [msg, setMsg] = useState<string | null>(null);
+
+  function add() {
+    const t = text.trim();
+    if (!t) return;
+    // JSON을 붙여넣은 경우도 지원
+    if (t.startsWith("{") || t.startsWith("[")) {
+      try {
+        updateDecks(importDeckJSON(t, decks));
+        onClose();
+      } catch (e) {
+        setMsg("JSON 형식이 올바르지 않아요: " + (e as Error).message);
+      }
+      return;
+    }
+    const cands = parseCandidates(t).filter((c) => c.word && c.meaning);
+    if (cands.length === 0) {
+      setMsg("추가할 단어를 찾지 못했어요. 한 줄에 '영단어 뜻' 형태로 넣어주세요.");
+      return;
+    }
+    const { next, added } = mergeCandidates(decks, cands);
+    updateDecks(next);
+    setMsg(`${added}개 추가했어요.`);
+    setText("");
+    setTimeout(onClose, 600);
+  }
+
+  return (
+    <div className="screen">
+      <div className="row" style={{ marginBottom: 12 }}>
+        <h2 style={{ margin: 0 }}>붙여넣기로 추가</h2>
+        <span className="spacer" />
+        <button className="btn small" onClick={onClose}>
+          닫기
+        </button>
+      </div>
+      <p className="small muted" style={{ lineHeight: 1.7, marginTop: 0 }}>
+        한 줄에 <b>영단어 [공백] 뜻</b> 형태로 붙여넣고 추가를 누르세요. 여러 줄 한꺼번에 됩니다.
+        <br />
+        예: <code>impartial 공정한, 공평한</code>
+      </p>
+      <textarea
+        rows={9}
+        value={text}
+        onChange={(e) => setText(e.target.value)}
+        placeholder={"impartial 공정한, 공평한\nmisdeed 나쁜 짓, 악행\nget over 극복하다"}
+        style={{ marginBottom: 12, resize: "vertical" }}
+      />
+      {msg && (
+        <div className="small" style={{ color: "var(--muted)", marginBottom: 10 }}>
+          {msg}
+        </div>
+      )}
+      <button className="btn primary" onClick={add}>
+        추가
+      </button>
     </div>
   );
 }
