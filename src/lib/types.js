@@ -5,14 +5,16 @@
 export const ENTRY_TYPES = [
   {
     id: "daily_emotion",
+    emoji: "🌤",
     label: "오늘의 감정과 일상",
     short: "일상",
-    hint: "오늘 있었던 일 중에 마음에 남은 장면 하나를 적어보세요.",
+    hint: "오늘 마음이 잠깐 멈췄던 순간 하나를 적어보세요.",
     placeholder: "예) 학원 끝나고 비 오는 길을 혼자 걸었다.",
     emotion: true,
   },
   {
     id: "attraction",
+    emoji: "✨",
     label: "마음이 끌린 것",
     short: "끌림",
     hint: "이유를 몰라도 괜찮아요. 눈이 오래 머문 것을 적어보세요.",
@@ -21,6 +23,7 @@ export const ENTRY_TYPES = [
   },
   {
     id: "thought",
+    emoji: "💭",
     label: "문득 떠오른 생각",
     short: "생각",
     hint: "한 문장이어도 괜찮아요.",
@@ -29,33 +32,37 @@ export const ENTRY_TYPES = [
   },
   {
     id: "book",
+    emoji: "📖",
     label: "책을 읽고 든 생각",
     short: "독서",
-    hint: "줄거리 요약 대신, 마음에 걸린 장면부터 적어보세요.",
+    hint: "줄거리는 안 적어도 돼요. 마음이 오래 머문 장면부터 적어보세요.",
     placeholder: "예) 주인공이 친구를 두고 먼저 도망친 장면",
     emotion: false,
     source: { titleLabel: "책 제목", extraLabel: "지은이" },
   },
   {
     id: "movie",
+    emoji: "🎬",
     label: "영화를 보고 든 생각",
     short: "영화",
-    hint: "가장 오래 기억에 남은 장면 하나면 충분해요.",
+    hint: "장면 하나면 충분해요. 자꾸 다시 떠오르는 그 장면.",
     placeholder: "예) 마지막에 아무 말 없이 돌아서던 장면",
     emotion: false,
     source: { titleLabel: "영화 제목", extraLabel: "감독 (몰라도 괜찮아요)" },
   },
   {
     id: "news",
+    emoji: "📰",
     label: "뉴스와 세상 이야기",
     short: "뉴스",
-    hint: "무슨 일이 있었는지, 그리고 어떤 부분이 걸렸는지 적어보세요.",
+    hint: "무슨 일이 있었는지, 그리고 어떤 부분에서 마음이 멈췄는지 적어보세요.",
     placeholder: "예) 길고양이 급식소를 두고 주민들이 갈라졌다는 기사",
     emotion: false,
     source: { titleLabel: "기사 제목", extraLabel: "언론사 / 날짜", url: true },
   },
   {
     id: "career",
+    emoji: "🧭",
     label: "나와 진로에 관한 생각",
     short: "진로",
     hint: "직업 이름이 아니어도 좋아요. 하고 있을 때 시간이 빨리 가는 일을 떠올려보세요.",
@@ -70,23 +77,27 @@ export function typeLabel(id) {
   return ENTRY_TYPE_MAP[id]?.short || "기록";
 }
 
+export function typeEmoji(id) {
+  return ENTRY_TYPE_MAP[id]?.emoji || "📝";
+}
+
 /* 감정 — 좋음/나쁨 2분법 대신 구체적인 단어로 (기획서 7.1) */
 export const EMOTIONS = [
-  { id: "joy", label: "기쁨", tone: "warm" },
-  { id: "calm", label: "편안함", tone: "warm" },
-  { id: "proud", label: "뿌듯함", tone: "warm" },
-  { id: "expect", label: "기대", tone: "warm" },
-  { id: "flutter", label: "설렘", tone: "warm" },
-  { id: "stuffy", label: "답답함", tone: "cool" },
-  { id: "hurt", label: "서운함", tone: "cool" },
-  { id: "unfair", label: "억울함", tone: "cool" },
-  { id: "envy", label: "질투", tone: "cool" },
-  { id: "anxious", label: "불안", tone: "cool" },
-  { id: "tense", label: "긴장", tone: "cool" },
-  { id: "lonely", label: "외로움", tone: "cool" },
-  { id: "empty", label: "허무함", tone: "cool" },
-  { id: "confused", label: "혼란스러움", tone: "cool" },
-  { id: "unknown", label: "아직 잘 모르겠음", tone: "neutral" },
+  { id: "joy", label: "기쁨", tone: "warm", emoji: "😊" },
+  { id: "calm", label: "편안함", tone: "warm", emoji: "🌿" },
+  { id: "proud", label: "뿌듯함", tone: "warm", emoji: "🌟" },
+  { id: "expect", label: "기대", tone: "warm", emoji: "🎈" },
+  { id: "flutter", label: "설렘", tone: "warm", emoji: "💫" },
+  { id: "stuffy", label: "답답함", tone: "cool", emoji: "😮‍💨" },
+  { id: "hurt", label: "서운함", tone: "cool", emoji: "🥺" },
+  { id: "unfair", label: "억울함", tone: "cool", emoji: "😤" },
+  { id: "envy", label: "질투", tone: "cool", emoji: "😒" },
+  { id: "anxious", label: "불안", tone: "cool", emoji: "😰" },
+  { id: "tense", label: "긴장", tone: "cool", emoji: "😬" },
+  { id: "lonely", label: "외로움", tone: "cool", emoji: "🌙" },
+  { id: "empty", label: "허무함", tone: "cool", emoji: "🍂" },
+  { id: "confused", label: "혼란스러움", tone: "cool", emoji: "🌀" },
+  { id: "unknown", label: "아직 잘 모르겠음", tone: "neutral", emoji: "❔" },
 ];
 
 export const EMOTION_MAP = Object.fromEntries(EMOTIONS.map((e) => [e.id, e]));
@@ -116,7 +127,7 @@ export const WRITING_FRAMES = {
   review_reflection: {
     label: "감상 글",
     sections: [
-      { label: "가장 기억에 남은 장면", guide: "그 장면을 본 그대로 적어보세요." },
+      { label: "마음이 오래 머문 장면", guide: "그 장면을 본 그대로 적어보세요." },
       { label: "인물의 선택", guide: "그 장면에서 인물이 무엇을 선택했는지 적어보세요." },
       { label: "그 선택에 대한 내 생각", guide: "나는 그 선택을 어떻게 보는지 적어보세요." },
       { label: "내 경험과의 연결", guide: "내 경험이나 주변에서 본 일과 이어지는 부분을 적어보세요." },
@@ -163,9 +174,11 @@ export const DAILY_PROMPTS = [
   "오늘 가장 오래 눈이 머문 것은 무엇이었어?",
   "오늘 하루 중에 다시 돌아가고 싶은 1분이 있다면 언제야?",
   "요즘 자꾸 떠오르는 질문이 있어?",
-  "다른 사람은 그냥 지나쳤는데 나만 걸렸던 일이 있었어?",
+  "다른 사람은 그냥 지나쳤는데 나만 눈에 들어온 게 있었어?",
   "최근에 시간이 빨리 갔던 순간은 언제였어?",
-  "말하지 못하고 삼킨 말이 있었다면 무엇이었어?",
+  "오늘 마음속으로만 하고 넘어간 말이 있어?",
   "요즘 나를 웃게 한 아주 사소한 것은 뭐야?",
-  "이번 주에 마음이 불편했던 장면 하나를 떠올려볼래?",
+  "이번 주에 자꾸 다시 떠오르는 장면이 하나 있어?",
+  "요즘 새로 좋아하게 된 게 있어?",
+  "오늘 고맙다고 생각한 순간이 있었어?",
 ];

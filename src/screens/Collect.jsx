@@ -4,7 +4,7 @@
 import { useState } from "react";
 import { navigate } from "../App.jsx";
 import { createEntry, listEntries } from "../lib/store.js";
-import { ENTRY_TYPES, typeLabel } from "../lib/types.js";
+import { ENTRY_TYPES, typeEmoji, typeLabel } from "../lib/types.js";
 import { detectRisk } from "../lib/safety.js";
 import { SafetyNotice } from "../components/SafetyNotice.jsx";
 import { Button, Card, Chip, Empty, SectionTitle, Textarea } from "../components/common.jsx";
@@ -33,9 +33,9 @@ export function Collect() {
   return (
     <div className="space-y-7">
       <header>
-        <h1 className="text-[20px] font-semibold tracking-tight text-ink-900">생각 수집함</h1>
+        <h1 className="text-[20px] font-semibold tracking-tight text-ink-900">점 모음</h1>
         <p className="mt-1.5 text-sm text-ink-500">
-          한 줄 메모, 마음에 남은 문장, 궁금한 질문 — 아직 글이 아니어도 괜찮아요.
+          찍어둔 점이 여기 모여요. 한 줄 메모, 오래 머문 문장, 궁금한 질문 — 아직 글이 아니어도 괜찮아요.
         </p>
       </header>
 
@@ -49,12 +49,12 @@ export function Collect() {
         <div className="mt-3 flex flex-wrap items-center gap-1.5">
           {QUICK_TYPES.map((id) => (
             <Chip key={id} active={type === id} onClick={() => setType(id)}>
-              {typeLabel(id)}
+              {typeEmoji(id)} {typeLabel(id)}
             </Chip>
           ))}
           <div className="flex-1" />
           <Button size="sm" onClick={quickSave} disabled={!note.trim()}>
-            담아두기
+            점 찍기
           </Button>
         </div>
         <button
@@ -72,11 +72,11 @@ export function Collect() {
               onClick={() => navigate("library")}
               className="text-sm text-ink-500 hover:text-ink-900"
             >
-              전체 보관함
+              전체 서랍
             </button>
           }
         >
-          모아둔 재료
+          찍어둔 점
         </SectionTitle>
 
         <div className="mb-3 flex flex-wrap gap-1.5">
@@ -99,7 +99,7 @@ export function Collect() {
                   className="w-full rounded-xl2 border border-line bg-paper-card px-4 py-3.5 text-left shadow-card hover:border-line-strong"
                 >
                   <div className="flex items-center gap-2 text-xs text-ink-400">
-                    <span>{typeLabel(e.type)}</span>
+                    <span>{typeEmoji(e.type)} {typeLabel(e.type)}</span>
                     <span>·</span>
                     <span>{new Date(e.createdAt).toLocaleDateString("ko-KR")}</span>
                     <StatusTag status={e.status} />
@@ -114,8 +114,9 @@ export function Collect() {
           </ul>
         ) : (
           <Empty
-            title="아직 담아둔 게 없어요"
-            description="위에 한 줄만 적어도 시작이에요."
+            title="아직 찍은 점이 없어요"
+            art="notebook"
+            description="위에 한 줄만 적어도 점 하나예요."
           />
         )}
       </section>

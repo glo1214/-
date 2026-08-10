@@ -32,7 +32,7 @@ const TABS = [
   { id: "map", label: "나의 지도" },
 ];
 
-const SIDE = [...TABS, { id: "library", label: "보관함" }, { id: "settings", label: "설정" }];
+const SIDE = [...TABS, { id: "library", label: "서랍" }, { id: "settings", label: "설정" }];
 
 export function TabBar({ current, onNavigate }) {
   return (

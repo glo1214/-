@@ -5,6 +5,9 @@ import { useState } from "react";
 import { navigate } from "../App.jsx";
 import { listCards, listEntries } from "../lib/store.js";
 import { buildInsights } from "../lib/insights.js";
+import { EMOTIONS } from "../lib/types.js";
+
+const EMOJI_BY_LABEL = Object.fromEntries(EMOTIONS.map((e) => [e.label, e.emoji]));
 import { Button, Card, Chip, Empty, Notice, SectionTitle } from "../components/common.jsx";
 
 const RANGES = [
@@ -25,8 +28,9 @@ export function InterestMap() {
         </header>
         <Empty
           title="아직 보여줄 게 없어요"
-          description="기록이 몇 개 쌓이면 반복해서 나타나는 주제가 보이기 시작해요."
-          action={<Button variant="soft" onClick={() => navigate("new")}>기록 남기기</Button>}
+          art="sprout"
+          description="점이 몇 개 모이면 이어지는 선이 보이기 시작해요."
+          action={<Button variant="soft" onClick={() => navigate("new")}>점 찍으러 가기</Button>}
         />
       </div>
     );
@@ -37,7 +41,9 @@ export function InterestMap() {
       <header>
         <h1 className="text-[20px] font-semibold tracking-tight text-ink-900">나의 관심 지도</h1>
         <p className="mt-1.5 text-sm text-ink-500">
-          {data.entryCount}개의 기록에서 반복해서 나타난 것들이에요.
+          {data.entryCount < 3
+            ? `지금까지 찍은 점 ${data.entryCount}개. 조금 더 모이면 이어지는 선이 보여요.`
+            : `지금까지 찍은 점 ${data.entryCount}개가 이어진 자리예요.`}
         </p>
         <div className="mt-3 flex gap-1.5">
           {RANGES.map((r) => (
@@ -53,11 +59,19 @@ export function InterestMap() {
           <SectionTitle>자주 나타난 관심</SectionTitle>
           <div className="space-y-2">
             {data.themes.map((t) => (
-              <Card key={t.id} className="px-4 py-3.5">
-                <p className="text-[15px] font-medium text-ink-900">{t.label}</p>
-                <p className="mt-1 text-sm text-ink-500">
-                  이 주제와 이어지는 표현이 {t.hits}번 나왔어요.
-                </p>
+              <Card key={t.id} className="flex items-center gap-3 px-4 py-3.5">
+                <span
+                  aria-hidden="true"
+                  className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl2 bg-ochre-50 text-[20px]"
+                >
+                  {t.emoji}
+                </span>
+                <span>
+                  <span className="block text-[15px] font-medium text-ink-900">{t.label}</span>
+                  <span className="mt-0.5 block text-sm text-ink-500">
+                    이 주제와 이어지는 표현이 {t.hits}번 나왔어요.
+                  </span>
+                </span>
               </Card>
             ))}
           </div>
@@ -86,7 +100,10 @@ export function InterestMap() {
               const max = data.topEmotions[0][1] || 1;
               return (
                 <li key={label} className="flex items-center gap-3">
-                  <span className="w-20 shrink-0 text-sm text-ink-700">{label}</span>
+                  <span className="w-24 shrink-0 text-sm text-ink-700">
+                    <span aria-hidden="true" className="mr-1">{EMOJI_BY_LABEL[label]}</span>
+                    {label}
+                  </span>
                   <span className="h-2 flex-1 overflow-hidden rounded-full bg-paper-sand">
                     <span
                       className="block h-full rounded-full bg-ochre-300"
@@ -142,7 +159,7 @@ export function InterestMap() {
       ) : null}
 
       <Notice>
-        이건 검사 결과가 아니에요. 지금까지 남긴 기록에서 자주 보인 것을 모아둔 것뿐이라,
+        이건 검사 결과가 아니에요. 지금까지 찍어둔 점에서 자주 보인 것을 모아둔 것뿐이라,
         직업이나 적성을 정해주지 않아요. 관심은 바뀔 수 있고, 바뀌어도 괜찮아요.
       </Notice>
     </div>

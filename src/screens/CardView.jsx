@@ -2,7 +2,7 @@
 
 import { navigate } from "../App.jsx";
 import { cardOfEntry, getEntry } from "../lib/store.js";
-import { typeLabel } from "../lib/types.js";
+import { typeEmoji, typeLabel } from "../lib/types.js";
 import { ThinkingCardView } from "../components/ThinkingCard.jsx";
 import { Button, Empty, Notice } from "../components/common.jsx";
 
@@ -18,6 +18,7 @@ export function CardView({ entryId }) {
     return (
       <Empty
         title="아직 생각 카드가 없어요"
+        art="cards"
         description="AI와 대화를 나누고 '대화 마치기'를 누르면 카드가 만들어져요."
         action={<Button variant="soft" onClick={() => navigate(`chat/${entryId}`)}>대화 시작하기</Button>}
       />
@@ -27,7 +28,7 @@ export function CardView({ entryId }) {
   return (
     <div className="space-y-5">
       <header>
-        <span className="text-xs text-ink-400">{typeLabel(entry.type)}</span>
+        <span className="text-xs text-ink-400">{typeEmoji(entry.type)} {typeLabel(entry.type)}</span>
         <h1 className="mt-0.5 text-[20px] font-semibold tracking-tight text-ink-900">
           네 말에서 뽑은 재료야
         </h1>

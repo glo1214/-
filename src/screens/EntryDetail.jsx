@@ -10,7 +10,7 @@ import {
   getEntry,
   updateEntry,
 } from "../lib/store.js";
-import { EMOTION_MAP, typeLabel } from "../lib/types.js";
+import { EMOTION_MAP, typeEmoji, typeLabel } from "../lib/types.js";
 import { Button, Card, Chip, Modal, SectionTitle, Textarea } from "../components/common.jsx";
 
 export function EntryDetail({ entryId }) {
@@ -24,7 +24,7 @@ export function EntryDetail({ entryId }) {
       <div className="py-10 text-center text-ink-500">
         <p>기록을 찾을 수 없어요.</p>
         <Button variant="soft" className="mt-4" onClick={() => navigate("collect")}>
-          수집함으로
+          점 모음으로
         </Button>
       </div>
     );
@@ -39,7 +39,7 @@ export function EntryDetail({ entryId }) {
       <header className="flex items-start justify-between gap-3">
         <div>
           <span className="text-xs text-ink-400">
-            {typeLabel(entry.type)} · {new Date(entry.createdAt).toLocaleDateString("ko-KR")}
+            {typeEmoji(entry.type)} {typeLabel(entry.type)} · {new Date(entry.createdAt).toLocaleDateString("ko-KR")}
           </span>
           <h1 className="mt-1 text-[20px] font-semibold tracking-tight text-ink-900">
             {entry.sourceTitle || "오늘의 기록"}
@@ -77,7 +77,10 @@ export function EntryDetail({ entryId }) {
             {entry.emotionTags?.length ? (
               <div className="mt-3 flex flex-wrap gap-1.5">
                 {entry.emotionTags.map((id) => (
-                  <Chip key={id}>{EMOTION_MAP[id]?.label || id}</Chip>
+                  <Chip key={id}>
+                    <span aria-hidden="true" className="mr-1">{EMOTION_MAP[id]?.emoji}</span>
+                    {EMOTION_MAP[id]?.label || id}
+                  </Chip>
                 ))}
               </div>
             ) : null}

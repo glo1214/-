@@ -19,7 +19,7 @@ import {
   saveDraft,
   snapshotDraft,
 } from "../lib/store.js";
-import { typeLabel } from "../lib/types.js";
+import { typeEmoji, typeLabel } from "../lib/types.js";
 import { proofread } from "../lib/ai.js";
 import { ThinkingCardView } from "../components/ThinkingCard.jsx";
 import {
@@ -52,7 +52,7 @@ function PickEntry() {
                 onClick={() => navigate(`write/${e.id}`)}
                 className="w-full rounded-xl2 border border-line bg-paper-card px-4 py-3.5 text-left shadow-card hover:border-ochre-200"
               >
-                <span className="text-xs text-ink-400">{typeLabel(e.type)}</span>
+                <span className="text-xs text-ink-400">{typeEmoji(e.type)} {typeLabel(e.type)}</span>
                 <p className="mt-0.5 line-clamp-2 text-sm leading-6 text-ink-700">{e.initialNote}</p>
               </button>
             </li>
@@ -61,6 +61,7 @@ function PickEntry() {
       ) : (
         <Empty
           title="아직 기록이 없어요"
+          art="paper"
           action={<Button variant="soft" onClick={() => navigate("new")}>기록 남기기</Button>}
         />
       )}
@@ -165,6 +166,7 @@ function Studio({ entryId }) {
   ) : (
     <Empty
       title="생각 카드가 아직 없어요"
+      art="cards"
       description="대화를 마치면 키워드와 글쓰기 구조가 만들어져요. 없어도 바로 쓸 수 있어요."
       action={<Button variant="soft" size="sm" onClick={() => navigate(`chat/${entryId}`)}>대화하러 가기</Button>}
     />
@@ -174,7 +176,7 @@ function Studio({ entryId }) {
     <div className="space-y-4">
       <header className="flex items-start justify-between gap-3">
         <div>
-          <span className="text-xs text-ink-400">{typeLabel(entry.type)}</span>
+          <span className="text-xs text-ink-400">{typeEmoji(entry.type)} {typeLabel(entry.type)}</span>
           <h1 className="mt-0.5 text-[20px] font-semibold tracking-tight text-ink-900">글쓰기 작업실</h1>
         </div>
         <div className="text-right text-xs text-ink-400">

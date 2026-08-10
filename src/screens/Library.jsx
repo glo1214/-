@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { navigate } from "../App.jsx";
 import { draftOfEntry, listEntries } from "../lib/store.js";
-import { ENTRY_TYPES, typeLabel } from "../lib/types.js";
+import { ENTRY_TYPES, typeEmoji, typeLabel } from "../lib/types.js";
 import { StatusTag } from "./Collect.jsx";
 import { Chip, Empty, Input } from "../components/common.jsx";
 
@@ -29,14 +29,14 @@ export function Library() {
   return (
     <div className="space-y-5">
       <header>
-        <h1 className="text-[20px] font-semibold tracking-tight text-ink-900">보관함</h1>
-        <p className="mt-1.5 text-sm text-ink-500">기록과 완성한 글이 시간순으로 쌓여요.</p>
+        <h1 className="text-[20px] font-semibold tracking-tight text-ink-900">서랍</h1>
+        <p className="mt-1.5 text-sm text-ink-500">찍어둔 점과 완성한 글이 여기 다 있어요.</p>
       </header>
 
       <Input
         value={query}
         onChange={(e) => setQuery(e.target.value)}
-        placeholder="기록 안에서 검색"
+        placeholder="서랍 안에서 찾기"
       />
 
       <div className="space-y-2">
@@ -70,7 +70,7 @@ export function Library() {
                   className="w-full rounded-xl2 border border-line bg-paper-card px-4 py-3.5 text-left shadow-card hover:border-line-strong"
                 >
                   <div className="flex items-center gap-2 text-xs text-ink-400">
-                    <span>{typeLabel(e.type)}</span>
+                    <span>{typeEmoji(e.type)} {typeLabel(e.type)}</span>
                     <span>·</span>
                     <span>{new Date(e.updatedAt).toLocaleDateString("ko-KR")}</span>
                     <StatusTag status={e.status} />
@@ -87,7 +87,7 @@ export function Library() {
           })}
         </ul>
       ) : (
-        <Empty title="조건에 맞는 기록이 없어요" description="필터를 바꾸거나 검색어를 지워보세요." />
+        <Empty title="여기에 해당하는 게 없어요" description="필터를 바꾸거나 검색어를 지워보세요." />
       )}
     </div>
   );

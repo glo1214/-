@@ -19,7 +19,7 @@ import {
   saveThinkingCard,
   startConversation,
 } from "../lib/store.js";
-import { EMOTION_MAP, defaultFrameFor, typeLabel } from "../lib/types.js";
+import { EMOTION_MAP, defaultFrameFor, typeEmoji, typeLabel } from "../lib/types.js";
 import { askCoach, askOptions, buildCard } from "../lib/ai.js";
 import { buildLocalCard, fallbackOptions, nextFallbackQuestion } from "../lib/fallback.js";
 import { detectRisk } from "../lib/safety.js";
@@ -59,7 +59,7 @@ function PickEntry() {
                 onClick={() => navigate(`chat/${e.id}`)}
                 className="w-full rounded-xl2 border border-line bg-paper-card px-4 py-3.5 text-left shadow-card hover:border-ochre-200"
               >
-                <span className="text-xs text-ink-400">{typeLabel(e.type)}</span>
+                <span className="text-xs text-ink-400">{typeEmoji(e.type)} {typeLabel(e.type)}</span>
                 <p className="mt-0.5 line-clamp-2 text-sm leading-6 text-ink-700">{e.initialNote}</p>
               </button>
             </li>
@@ -68,6 +68,7 @@ function PickEntry() {
       ) : (
         <Empty
           title="아직 기록이 없어요"
+          art="speech"
           description="짧은 기록을 하나 남기면 대화를 시작할 수 있어요."
           action={<Button variant="soft" onClick={() => navigate("new")}>기록 남기기</Button>}
         />
@@ -223,7 +224,7 @@ function ChatSession({ entryId }) {
     <div className="space-y-5">
       <header className="flex items-start justify-between gap-3">
         <div>
-          <span className="text-xs text-ink-400">{typeLabel(entry.type)}</span>
+          <span className="text-xs text-ink-400">{typeEmoji(entry.type)} {typeLabel(entry.type)}</span>
           <h1 className="mt-0.5 text-[19px] font-semibold tracking-tight text-ink-900">
             생각 대화
           </h1>
@@ -244,7 +245,12 @@ function ChatSession({ entryId }) {
         {messages.map((m) =>
           m.role === "assistant" ? (
             <div key={m.id} className="flex gap-2.5">
-              <span className="mt-1 h-6 w-6 shrink-0 rounded-full bg-ochre-100" />
+              <span
+                aria-hidden="true"
+                className="mt-1 flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-ochre-100 text-[13px]"
+              >
+                🌱
+              </span>
               <p className="max-w-[85%] rounded-xl2 rounded-tl-md bg-paper-card px-3.5 py-3 text-[15px] leading-7 text-ink-900 shadow-card">
                 {m.content}
               </p>
@@ -259,7 +265,12 @@ function ChatSession({ entryId }) {
         )}
         {busy ? (
           <div className="flex gap-2.5">
-            <span className="mt-1 h-6 w-6 shrink-0 rounded-full bg-ochre-100" />
+            <span
+                aria-hidden="true"
+                className="mt-1 flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-ochre-100 text-[13px]"
+              >
+                🌱
+              </span>
             <span className="rounded-xl2 bg-paper-card px-3.5 py-4 shadow-card">
               <Dots />
             </span>

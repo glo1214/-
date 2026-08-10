@@ -58,10 +58,18 @@ export function NewEntry({ initialType }) {
             <li key={t.id}>
               <button
                 onClick={() => setType(t.id)}
-                className="w-full rounded-xl2 border border-line bg-paper-card px-4 py-4 text-left shadow-card transition-colors hover:border-ochre-200 hover:bg-ochre-50/40"
+                className="flex w-full items-center gap-3 rounded-xl2 border border-line bg-paper-card px-4 py-4 text-left shadow-card transition-colors hover:border-ochre-200 hover:bg-ochre-50/40"
               >
-                <p className="text-[15px] font-medium text-ink-900">{t.label}</p>
-                <p className="mt-1 text-sm text-ink-500">{t.hint}</p>
+                <span
+                  aria-hidden="true"
+                  className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl2 bg-ochre-50 text-[21px]"
+                >
+                  {t.emoji}
+                </span>
+                <span className="min-w-0">
+                  <span className="block text-[15px] font-medium text-ink-900">{t.label}</span>
+                  <span className="mt-0.5 block text-sm text-ink-500">{t.hint}</span>
+                </span>
               </button>
             </li>
           ))}
@@ -74,10 +82,13 @@ export function NewEntry({ initialType }) {
     <div className="space-y-6">
       <header className="flex items-start justify-between gap-3">
         <div>
-          <h1 className="text-[20px] font-semibold tracking-tight text-ink-900">{meta.label}</h1>
+          <h1 className="text-[20px] font-semibold tracking-tight text-ink-900">
+            <span aria-hidden="true" className="mr-1.5">{meta.emoji}</span>
+            {meta.label}
+          </h1>
           <p className="mt-1 text-sm text-ink-500">{meta.hint}</p>
         </div>
-        <Button variant="quiet" size="sm" onClick={() => setType(null)}>
+        <Button variant="quiet" size="sm" className="shrink-0 whitespace-nowrap" onClick={() => setType(null)}>
           유형 바꾸기
         </Button>
       </header>
@@ -138,6 +149,7 @@ export function NewEntry({ initialType }) {
                   active={emotions.includes(e.id)}
                   onClick={() => toggle(emotions, setEmotions, e.id)}
                 >
+                  <span aria-hidden="true" className="mr-1">{e.emoji}</span>
                   {e.label}
                 </Chip>
               ))}

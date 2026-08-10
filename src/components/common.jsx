@@ -1,6 +1,7 @@
 /* 공통 UI — 종이 노트와 카드의 중간 감성, 포인트 색은 황토 하나 */
 
 import { forwardRef } from "react";
+import { Illustration } from "./Illustration.jsx";
 
 export function Button({
   children,
@@ -99,9 +100,14 @@ export function SectionTitle({ children, action }) {
   );
 }
 
-export function Empty({ title, description, action }) {
+export function Empty({ title, description, action, art = "tray" }) {
   return (
-    <div className="rounded-xl2 border border-dashed border-line-strong bg-paper-soft/60 px-5 py-10 text-center">
+    <div className="rounded-xl2 border border-dashed border-line-strong bg-paper-soft/60 px-5 py-9 text-center">
+      {art ? (
+        <div className="mb-3 flex justify-center">
+          <Illustration name={art} className="h-14 w-14 opacity-80" />
+        </div>
+      ) : null}
       <p className="text-[15px] font-medium text-ink-700">{title}</p>
       {description ? <p className="mt-1.5 text-sm text-ink-500">{description}</p> : null}
       {action ? <div className="mt-4 flex justify-center">{action}</div> : null}
