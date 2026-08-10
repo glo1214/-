@@ -15,14 +15,22 @@ const STATUSES = [
   { id: "completed", label: "완성" },
 ];
 
+const DRAWERS = [
+  { id: "", label: "두 서랍 모두" },
+  { id: "class", label: "수업 서랍" },
+  { id: "private", label: "내 서랍" },
+];
+
 export function Library() {
   const [type, setType] = useState("");
   const [status, setStatus] = useState("");
+  const [drawer, setDrawer] = useState("");
   const [query, setQuery] = useState("");
 
   const entries = listEntries({
     type: type || undefined,
     status: status || undefined,
+    visibility: drawer || undefined,
     query: query || undefined,
   });
 
@@ -36,7 +44,7 @@ export function Library() {
       <Input
         value={query}
         onChange={(e) => setQuery(e.target.value)}
-        placeholder="서랍 안에서 찾기"
+        placeholder="글·기록·키워드까지 한꺼번에 찾기"
       />
 
       <div className="space-y-2">
@@ -47,6 +55,13 @@ export function Library() {
           {ENTRY_TYPES.map((t) => (
             <Chip key={t.id} active={type === t.id} onClick={() => setType(t.id)}>
               {t.short}
+            </Chip>
+          ))}
+        </div>
+        <div className="flex flex-wrap gap-1.5">
+          {DRAWERS.map((d) => (
+            <Chip key={d.id} active={drawer === d.id} onClick={() => setDrawer(d.id)}>
+              {d.label}
             </Chip>
           ))}
         </div>
@@ -74,6 +89,11 @@ export function Library() {
                     <span>·</span>
                     <span>{new Date(e.updatedAt).toLocaleDateString("ko-KR")}</span>
                     <StatusTag status={e.status} />
+                    {(e.visibility || "class") === "private" ? (
+                      <span className="rounded-full bg-paper-sand px-1.5 py-0.5 text-[11px] text-ink-500">
+                        내 서랍
+                      </span>
+                    ) : null}
                   </div>
                   <p className="mt-1 text-[15px] font-medium text-ink-900">
                     {draft?.title || e.sourceTitle || "제목 없는 기록"}

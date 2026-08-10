@@ -4,7 +4,7 @@
 import { useState } from "react";
 import { navigate } from "../App.jsx";
 import { listCards, listEntries } from "../lib/store.js";
-import { buildInsights } from "../lib/insights.js";
+import { buildInsights, emotionVocabulary } from "../lib/insights.js";
 import { EMOTIONS } from "../lib/types.js";
 
 const EMOJI_BY_LABEL = Object.fromEntries(EMOTIONS.map((e) => [e.label, e.emoji]));
@@ -18,7 +18,10 @@ const RANGES = [
 
 export function InterestMap() {
   const [days, setDays] = useState(30);
-  const data = buildInsights({ entries: listEntries(), cards: listCards(), days });
+  const entries = listEntries();
+  const cards = listCards();
+  const data = buildInsights({ entries, cards, days });
+  const vocab = emotionVocabulary({ entries, cards, days });
 
   if (data.entryCount === 0) {
     return (
@@ -89,6 +92,36 @@ export function InterestMap() {
               </Chip>
             ))}
           </div>
+        </section>
+      ) : null}
+
+      {vocab.count ? (
+        <section>
+          <SectionTitle>내가 쓴 감정 말</SectionTitle>
+          <Card className="px-4 py-4">
+            <div className="flex items-baseline gap-2">
+              <span className="text-2xl font-semibold text-ink-900">{vocab.count}가지</span>
+              <span className="text-sm text-ink-500">를 썼어요</span>
+            </div>
+            <div className="mt-3 flex flex-wrap gap-1.5">
+              {vocab.used.map((w) => (
+                <Chip key={w} active={vocab.fresh.includes(w)}>
+                  {w}
+                  {vocab.fresh.includes(w) ? (
+                    <span className="ml-1 text-[11px] text-ochre-600">new</span>
+                  ) : null}
+                </Chip>
+              ))}
+            </div>
+            {vocab.fresh.length ? (
+              <p className="mt-3 text-sm text-ink-500">
+                이 중 {vocab.fresh.length}가지는 이번에 처음 써 본 말이에요.
+              </p>
+            ) : null}
+            <p className="mt-2 text-xs text-ink-400">
+              많이 쓰는 게 잘하는 건 아니에요. 마음을 더 자세히 부를 수 있게 되는 것뿐이에요.
+            </p>
+          </Card>
         </section>
       ) : null}
 

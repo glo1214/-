@@ -59,6 +59,15 @@ const ENTRY_TYPE_DEFS = [
     source: { titleLabel: "기사 제목", extraLabel: "언론사 / 날짜", url: true },
   },
   {
+    id: "image",
+    label: "그림·사진 보고 이야기하기",
+    short: "그림",
+    hint: "정답을 맞히는 게 아니에요. 보이는 것부터 천천히 말해보세요.",
+    placeholder: "예) 두 사람이 등을 돌리고 서 있고, 창밖은 어두웠다.",
+    emotion: false,
+    photoFirst: true,
+  },
+  {
     id: "career",
     label: "나와 진로에 관한 생각",
     short: "진로",
@@ -164,7 +173,8 @@ export function frameOf(frameType) {
 
 /* 유형별 기본 추천 구조 */
 export function defaultFrameFor(entryType) {
-  if (entryType === "book" || entryType === "movie") return "review_reflection";
+  if (entryType === "book" || entryType === "movie" || entryType === "image")
+    return "review_reflection";
   if (entryType === "news") return "news_opinion";
   if (entryType === "career") return "career_exploration";
   return "experience_reflection";

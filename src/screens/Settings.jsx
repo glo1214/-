@@ -38,9 +38,13 @@ export function Settings() {
         <SectionTitle>내 기록의 공개 범위</SectionTitle>
         <Card className="space-y-3 p-4 text-sm leading-6 text-ink-700">
           <p>
-            <strong className="font-medium text-ink-900">지금은 모든 기록이 나만 볼 수 있어요.</strong>{" "}
-            선생님이나 보호자에게 자동으로 공개되지 않아요. 나중에 공유 기능이 생기더라도,
-            어떤 글을 공유할지는 네가 하나씩 골라야 열려요.
+            <strong className="font-medium text-ink-900">서랍이 두 개예요.</strong>{" "}
+            <b className="font-medium">수업 서랍</b>에 넣은 기록은 나중에 선생님이 보게 돼요.
+            <b className="font-medium"> 내 서랍</b>에 넣은 것은 나만 봐요. 기록마다 언제든 옮길 수 있어요.
+          </p>
+          <p className="text-ink-500">
+            대화 원문은 어느 서랍에 있든 선생님에게 가지 않아요. 선생님이 보는 건 글과 생각 카드예요.
+            지금 버전에는 아직 선생님 화면이 없어서, 실제로는 아무 데도 전달되지 않아요.
           </p>
           <label className="flex items-start gap-2.5">
             <input

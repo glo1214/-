@@ -16,6 +16,7 @@ import { EntryDetail } from "./screens/EntryDetail.jsx";
 import { Chat } from "./screens/Chat.jsx";
 import { CardView } from "./screens/CardView.jsx";
 import { Write } from "./screens/Write.jsx";
+import { Submit } from "./screens/Submit.jsx";
 import { Library } from "./screens/Library.jsx";
 import { InterestMap } from "./screens/InterestMap.jsx";
 import { Settings } from "./screens/Settings.jsx";
@@ -60,6 +61,7 @@ export default function App() {
     chat: "chat",
     card: "chat",
     write: "write",
+    submit: "write",
     map: "map",
     library: "collect",
     settings: "home",
@@ -103,6 +105,8 @@ function renderScreen(route, user) {
       return <CardView entryId={route.id} />;
     case "write":
       return <Write entryId={route.id} />;
+    case "submit":
+      return <Submit entryId={route.id} />;
     case "library":
       return <Library />;
     case "map":

@@ -130,6 +130,45 @@ export function buildInsights({ entries = [], cards = [], days = 30 } = {}) {
   };
 }
 
+/**
+ * 감정 어휘의 다양성 (기획서 17절 지표)
+ *
+ * 감정 구성주의에서 말하는 감정 입자도(granularity) — 감정을 더 세밀한 말로
+ * 구분할수록 스스로 다루기 쉬워진다 — 를 '성장 기록'으로만 보여준다.
+ * 좋다/나쁘다를 매기지 않고, 몇 가지 말을 썼는지와 새로 쓴 말만 센다.
+ */
+export function emotionVocabulary({ entries = [], cards = [], days = 30 } = {}) {
+  const inWindow = entries.filter((e) => inRange(e.createdAt, days));
+  const idsInWindow = new Set(inWindow.map((e) => e.id));
+
+  const wordsOf = (list, cardList) => {
+    const fromTags = list.flatMap((e) =>
+      (e.emotionTags || []).map((id) => EMOTION_MAP[id]?.label).filter(Boolean)
+    );
+    const fromCards = cardList.flatMap((c) =>
+      (c.studentWords?.emotionFlow || []).map((f) => f.emotion)
+    );
+    return [...fromTags, ...fromCards].filter((w) => w && w !== "아직 잘 모르겠음");
+  };
+
+  const recent = new Set(wordsOf(inWindow, cards.filter((c) => idsInWindow.has(c.entryId))));
+  const older = new Set(
+    wordsOf(
+      entries.filter((e) => !idsInWindow.has(e.id)),
+      cards.filter((c) => !idsInWindow.has(c.entryId))
+    )
+  );
+
+  const fresh = [...recent].filter((w) => !older.has(w));
+  return {
+    used: [...recent],
+    count: recent.size,
+    fresh, // 이 기간에 처음 써 본 감정 단어
+    everCount: new Set([...recent, ...older]).size,
+    days,
+  };
+}
+
 /* 홈에 쓰는 가벼운 요약 */
 export function weeklySummary(entries = []) {
   const week = entries.filter((e) => inRange(e.createdAt, 7));

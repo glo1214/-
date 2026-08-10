@@ -6,6 +6,7 @@ import { createEntry } from "../lib/store.js";
 import { BODY_FEELINGS, EMOTIONS, ENTRY_TYPES, ENTRY_TYPE_MAP } from "../lib/types.js";
 import { detectRisk } from "../lib/safety.js";
 import { SafetyNotice } from "../components/SafetyNotice.jsx";
+import { PhotoField } from "../components/Photos.jsx";
 import { Button, Card, Chip, Input, Label, SectionTitle, Textarea } from "../components/common.jsx";
 
 export function NewEntry({ initialType }) {
@@ -16,6 +17,8 @@ export function NewEntry({ initialType }) {
   const [emotions, setEmotions] = useState([]);
   const [feelings, setFeelings] = useState([]);
   const [source, setSource] = useState({ title: "", extra: "", url: "" });
+  const [photoIds, setPhotoIds] = useState([]);
+  const [visibility, setVisibility] = useState("class");
   const [risk, setRisk] = useState(false);
   const [error, setError] = useState("");
 
@@ -40,6 +43,8 @@ export function NewEntry({ initialType }) {
       emotionTags: emotions,
       bodyFeelings: feelings,
       source,
+      photoIds,
+      visibility,
     });
     navigate(`entry/${entry.id}`);
   }
@@ -124,6 +129,17 @@ export function NewEntry({ initialType }) {
         </Card>
       ) : null}
 
+      {meta.photoFirst ? (
+        <div>
+          <Label hint="그림이나 사진을 넣고 보이는 대로 적어보세요">사진</Label>
+          <PhotoField
+            photoIds={photoIds}
+            onChange={setPhotoIds}
+            hint="수업에서 함께 볼 그림이나 직접 찍은 장면을 넣어보세요."
+          />
+        </div>
+      ) : null}
+
       <div>
         <Label hint="맞춤법은 신경 쓰지 않아도 돼요">기록</Label>
         <Textarea
@@ -172,6 +188,44 @@ export function NewEntry({ initialType }) {
           </section>
         </>
       ) : null}
+
+      {!meta.photoFirst ? (
+        <div>
+          <Label hint="선택">사진</Label>
+          <PhotoField photoIds={photoIds} onChange={setPhotoIds} />
+        </div>
+      ) : null}
+
+      <section>
+        <SectionTitle>어느 서랍에 넣을까?</SectionTitle>
+        <div className="grid gap-2 sm:grid-cols-2">
+          {[
+            {
+              id: "class",
+              title: "수업 서랍",
+              desc: "선생님이 보게 될 기록이에요",
+            },
+            {
+              id: "private",
+              title: "내 서랍",
+              desc: "나만 봐요. 선생님에게 가지 않아요",
+            },
+          ].map((o) => (
+            <button
+              key={o.id}
+              onClick={() => setVisibility(o.id)}
+              className={`rounded-xl2 border px-4 py-3 text-left transition-colors ${
+                visibility === o.id
+                  ? "border-ochre-300 bg-ochre-50"
+                  : "border-line bg-paper-card hover:border-line-strong"
+              }`}
+            >
+              <span className="block text-[15px] font-medium text-ink-900">{o.title}</span>
+              <span className="mt-0.5 block text-sm text-ink-500">{o.desc}</span>
+            </button>
+          ))}
+        </div>
+      </section>
 
       {error ? <p className="text-sm text-rust">{error}</p> : null}
 

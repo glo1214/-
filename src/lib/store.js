@@ -16,6 +16,7 @@
 
 import { useSyncExternalStore } from "react";
 import { uid, nowIso } from "./id.js";
+import { deletePhotos, deletePhotosOfOwner } from "./photos.js";
 
 const KEY = "gloon.v1";
 const CONSENT_VERSION = "2026-01";
@@ -169,6 +170,7 @@ export function updateProfile(patch) {
 /* 계정과 그 계정의 모든 기록을 지운다 (기획서 16절) */
 export function deleteAccountAndData() {
   const me = requireUser();
+  deletePhotosOfOwner(me.uid);
   const keep = (coll) =>
     Object.fromEntries(Object.entries(coll).filter(([, doc]) => doc.ownerId !== me.uid));
   const users = { ...state.users };
@@ -188,6 +190,7 @@ export function deleteAccountAndData() {
 /* 기록만 전부 삭제 (계정은 유지) */
 export function deleteAllRecords() {
   const me = requireUser();
+  deletePhotosOfOwner(me.uid);
   const keep = (coll) =>
     Object.fromEntries(Object.entries(coll).filter(([, doc]) => doc.ownerId !== me.uid));
   commit({
@@ -216,7 +219,7 @@ function own(doc) {
 
 /* ---------------- entries ---------------- */
 
-export function createEntry({ type, initialNote, emotionTags, bodyFeelings, source }) {
+export function createEntry({ type, initialNote, emotionTags, bodyFeelings, source, visibility, photoIds }) {
   const me = requireUser();
   const id = uid("e_");
   const entry = {
@@ -231,8 +234,13 @@ export function createEntry({ type, initialNote, emotionTags, bodyFeelings, sour
     emotionTags: emotionTags || [],
     bodyFeelings: bodyFeelings || [],
     notes: [], // 대화 중 저장한 생각 메모
+    photoIds: photoIds || [], // 손글씨·장면 사진 (IndexedDB 에 따로 저장)
     status: "idea", // idea | chatting | writing | completed
-    visibility: "private", // private | shared_teacher (MVP 에서는 private 고정)
+    /* 서랍이 둘이다 (기획서 16절의 '공개 범위'를 학생이 고르는 형태)
+       class   — 수업 서랍. 선생님이 보게 될 자리
+       private — 내 서랍. 나만 본다
+       잠그는 게 아니라 처음부터 공간을 나눠서, 비공개가 특별한 행동이 되지 않게 한다. */
+    visibility: visibility === "private" ? "private" : "class",
     createdAt: nowIso(),
     updatedAt: nowIso(),
   };
@@ -262,6 +270,7 @@ export function addEntryNote(id, text) {
 export function deleteEntry(id) {
   const cur = own(state.entries[id]);
   if (!cur) return;
+  deletePhotos(cur.photoIds || []); // 사진도 함께 지운다
   const entries = { ...state.entries };
   delete entries[id];
   const drop = (coll) =>
@@ -275,19 +284,44 @@ export function deleteEntry(id) {
   });
 }
 
-export function listEntries({ type, status, query } = {}) {
+export function listEntries({ type, status, query, visibility } = {}) {
   const me = currentUser();
   if (!me) return [];
   let rows = Object.values(state.entries).filter((e) => e.ownerId === me.uid);
   if (type) rows = rows.filter((e) => e.type === type);
   if (status) rows = rows.filter((e) => e.status === status);
+  if (visibility) rows = rows.filter((e) => (e.visibility || "class") === visibility);
   if (query) {
     const q = query.trim().toLowerCase();
-    rows = rows.filter((e) =>
-      [e.title, e.initialNote, e.sourceTitle].join(" ").toLowerCase().includes(q)
-    );
+    rows = rows.filter((e) => searchHaystack(e).includes(q));
   }
   return rows.sort((a, b) => (a.updatedAt < b.updatedAt ? 1 : -1));
+}
+
+/* 검색 대상: 기록 원문·출처뿐 아니라 대화 중 메모, 생각 카드 키워드,
+   쓰고 있는 글의 제목과 본문까지 함께 훑는다. */
+function searchHaystack(entry) {
+  const me = currentUser();
+  const card = Object.values(state.thinkingCards).find(
+    (c) => c.ownerId === me.uid && c.entryId === entry.id
+  );
+  const draft = Object.values(state.drafts).find(
+    (d) => d.ownerId === me.uid && d.entryId === entry.id
+  );
+  return [
+    entry.title,
+    entry.initialNote,
+    entry.sourceTitle,
+    entry.sourceExtra,
+    ...(entry.notes || []).map((n) => n.text),
+    ...(card?.studentWords?.coreKeywords || []),
+    ...(card?.studentWords?.memorableScenes || []),
+    draft?.title,
+    draft?.content,
+  ]
+    .filter(Boolean)
+    .join(" ")
+    .toLowerCase();
 }
 
 /* ---------------- conversations ---------------- */

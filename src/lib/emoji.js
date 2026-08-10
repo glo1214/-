@@ -14,6 +14,7 @@ export const ENTRY_TYPE_EMOJI = {
   book: "📖",
   movie: "🎬",
   news: "📰",
+  image: "🖼",
   career: "🧭",
 };
 

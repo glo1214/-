@@ -12,6 +12,7 @@ import {
 } from "../lib/store.js";
 import { EMOTION_MAP, typeEmoji, typeLabel } from "../lib/types.js";
 import { Button, Card, Chip, Modal, SectionTitle, Textarea } from "../components/common.jsx";
+import { PhotoField } from "../components/Photos.jsx";
 
 export function EntryDetail({ entryId }) {
   const entry = getEntry(entryId);
@@ -87,6 +88,13 @@ export function EntryDetail({ entryId }) {
             {entry.bodyFeelings?.length ? (
               <p className="mt-2 text-sm text-ink-500">몸의 느낌 · {entry.bodyFeelings.join(", ")}</p>
             ) : null}
+            <div className="mt-4">
+              <PhotoField
+                photoIds={entry.photoIds || []}
+                onChange={(ids) => updateEntry(entry.id, { photoIds: ids })}
+              />
+            </div>
+
             {entry.sourceUrl ? (
               <a
                 href={entry.sourceUrl}
@@ -121,6 +129,29 @@ export function EntryDetail({ entryId }) {
           </ul>
         </section>
       ) : null}
+
+      <section>
+        <SectionTitle>어느 서랍에 있나</SectionTitle>
+        <Card className="flex items-center justify-between gap-3 px-4 py-3.5">
+          <span className="text-sm text-ink-700">
+            {(entry.visibility || "class") === "private"
+              ? "내 서랍 — 나만 봐요"
+              : "수업 서랍 — 선생님이 보게 될 기록이에요"}
+          </span>
+          <Button
+            variant="outline"
+            size="sm"
+            className="shrink-0 whitespace-nowrap"
+            onClick={() =>
+              updateEntry(entry.id, {
+                visibility: (entry.visibility || "class") === "private" ? "class" : "private",
+              })
+            }
+          >
+            {(entry.visibility || "class") === "private" ? "수업 서랍으로" : "내 서랍으로"}
+          </Button>
+        </Card>
+      </section>
 
       <section className="space-y-2">
         <SectionTitle>다음으로 해볼 것</SectionTitle>

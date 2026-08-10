@@ -46,6 +46,15 @@ const QUESTION_BANK = {
     ["다른 사람들은 너에게 무엇을 자주 부탁해?", "부러워하는 사람이 있다면 어떤 모습이 부러워?"],
     ["힘들어도 계속하고 싶은 이유가 있어?", "더 알아보려면 무엇을 해볼 수 있을까?"],
   ],
+  /* VTS(Visual Thinking Strategies) — 관찰 → 근거 → 확장.
+     진행자는 해석을 주지 않고, 학생이 말한 것을 되비추며 근거만 묻는다. */
+  image: [
+    ["여기서 무슨 일이 일어나고 있는 것 같아?", "가장 먼저 눈에 들어온 건 뭐야?"],
+    ["그걸 보니까 어떤 기분이 들어?", "화면에서 제일 조용해 보이는 곳은 어디야?"],
+    ["어디를 보고 그렇게 생각했어?", "그렇게 생각한 단서가 그림 어디에 있어?"],
+    ["또 뭐가 더 보여?", "처음엔 못 봤는데 지금 보이는 게 있어?"],
+    ["이 장면 바로 앞에는 무슨 일이 있었을 것 같아?", "제목을 붙인다면 뭐라고 할래?"],
+  ],
   attraction: [
     ["그중에서 가장 먼저 눈에 들어온 부분은 뭐야?", "그걸 처음 본 게 언제였어?"],
     ["그걸 볼 때 마음이 어때?", "끌리면서도 불편했던 부분이 있었어?"],
@@ -113,6 +122,16 @@ function looksLikeVerb(word) {
   return VERBISH.test(word) || (word.length > 2 && VERB_TAIL.test(word));
 }
 
+/* 조사를 뗀다. 형태소 분석기가 없으니 흔한 것만 대략 떼되,
+   두 글자 이하로 줄어들면 원래 말을 그대로 둔다. */
+const JOSA = /(으로|에서|에게|한테|까지|부터|이라|라고|이나|이며|은|는|이|가|을|를|의|도|과|와|만|랑|께)$/;
+
+function stripJosa(word) {
+  if (word.length < 3) return word;
+  const cut = word.replace(JOSA, "");
+  return cut.length >= 2 ? cut : word;
+}
+
 function topWords(text, limit = 5) {
   const counts = new Map();
   for (const raw of String(text).split(/[^가-힣a-zA-Z0-9]+/)) {
@@ -120,7 +139,9 @@ function topWords(text, limit = 5) {
     if (w.length < 2 || w.length > 12) continue;
     if (STOP_WORDS.has(w)) continue;
     if (looksLikeVerb(w)) continue;
-    counts.set(w, (counts.get(w) || 0) + 1);
+    const key = stripJosa(w);
+    if (STOP_WORDS.has(key)) continue;
+    counts.set(key, (counts.get(key) || 0) + 1);
   }
   return [...counts.entries()]
     .sort((a, b) => b[1] - a[1] || b[0].length - a[0].length)

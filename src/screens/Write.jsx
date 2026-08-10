@@ -250,21 +250,31 @@ function Studio({ entryId }) {
             </Button>
             <div className="flex-1" />
             {draft?.status === "completed" ? (
-              <Button variant="outline" size="sm" onClick={() => reopenDraft(draftId)}>
-                다시 쓰기
-              </Button>
+              <>
+                <Button variant="outline" size="sm" onClick={() => reopenDraft(draftId)}>
+                  다시 쓰기
+                </Button>
+                <Button size="sm" onClick={() => navigate(`submit/${entryId}`)}>
+                  숙제로 내기
+                </Button>
+              </>
             ) : (
-              <Button
-                size="sm"
-                onClick={() => {
-                  saveDraft(draftId, { title, content });
-                  snapshotDraft(draftId);
-                  completeDraft(draftId);
-                }}
-                disabled={!content.trim()}
-              >
-                다 썼어요
-              </Button>
+              <>
+                <Button variant="outline" size="sm" onClick={() => navigate(`submit/${entryId}`)} disabled={!content.trim()}>
+                  숙제로 내기
+                </Button>
+                <Button
+                  size="sm"
+                  onClick={() => {
+                    saveDraft(draftId, { title, content });
+                    snapshotDraft(draftId);
+                    completeDraft(draftId);
+                  }}
+                  disabled={!content.trim()}
+                >
+                  다 썼어요
+                </Button>
+              </>
             )}
           </div>
 
