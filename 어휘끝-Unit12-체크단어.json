@@ -1,0 +1,22 @@
+{
+  "id": "unit12-check",
+  "name": "어휘끝 Unit12 체크단어",
+  "words": [
+    { "word": "impersonal", "meanings": [{ "def": "1. 특정 개인과 상관없는, 일반적인 2. 인간미 없는", "pos": "a", "koSentence": "" }] },
+    { "word": "impartial", "meanings": [{ "def": "공정한, 공평한", "pos": "a", "koSentence": "" }] },
+    { "word": "irresistible", "meanings": [{ "def": "(매우 강력해서) 저항할 수 없는; 억누를 수 없는", "pos": "a", "koSentence": "" }] },
+    { "word": "unearth", "meanings": [{ "def": "1. 발굴하다, 파내다 2. 찾다, 밝혀내다", "pos": "v", "koSentence": "" }] },
+    { "word": "disapprove", "meanings": [{ "def": "찬성하지 않다, 못마땅하다", "pos": "v", "koSentence": "" }] },
+    { "word": "deform", "meanings": [{ "def": "(기형으로) 변형시키다; 흉하게 만들다", "pos": "v", "koSentence": "" }] },
+    { "word": "degenerate", "meanings": [{ "def": "(동) 악화하다 / (형) 1. 악화된 2. 퇴폐적인, 타락한", "pos": "v", "koSentence": "" }] },
+    { "word": "antisocial", "meanings": [{ "def": "1. 반사회적인 2. 사람들과 잘 어울리지 못하는, 비사교적인", "pos": "a", "koSentence": "" }] },
+    { "word": "counteract", "meanings": [{ "def": "(악영향에) 대응하다; (효력을) 없애다", "pos": "v", "koSentence": "" }] },
+    { "word": "counterclockwise", "meanings": [{ "def": "(형) 시계 반대 방향의, 왼쪽으로 도는 / (부) 시계 반대 방향으로", "pos": "a", "koSentence": "" }] },
+    { "word": "maladaptive", "meanings": [{ "def": "부적응의, 적응성이 없는", "pos": "a", "koSentence": "" }] },
+    { "word": "malfunction", "meanings": [{ "def": "(명) 오작동, 고장 / (동) 제대로 작동하지 않다", "pos": "n", "koSentence": "" }] },
+    { "word": "misdeed", "meanings": [{ "def": "나쁜 짓, 악행", "pos": "n", "koSentence": "" }] },
+    { "word": "get over", "meanings": [{ "def": "1. (불쾌한 상황·감정을) 극복하다 2. 처리하다, 해결하다", "pos": "v", "koSentence": "" }] },
+    { "word": "give over to", "meanings": [{ "def": "1. (~에게) 넘기다, 양도하다 2. (특정 목적을 위해) 사용하다", "pos": "v", "koSentence": "" }] },
+    { "word": "go over", "meanings": [{ "def": "1. 검토하다, 면밀히 살피다 2. (반복해서) 연습하다, 복습하다", "pos": "v", "koSentence": "" }] }
+  ]
+}
