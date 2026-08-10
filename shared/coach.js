@@ -12,6 +12,7 @@
 
 import { callClaude, extractJson, hasKey, ok, fail } from "./anthropic.js";
 import { COACH_SYSTEM } from "./prompts.js";
+import { CHAT_HARD_LIMIT, looksInterpretive } from "./guard.js";
 
 const TYPE_LABEL = {
   daily_emotion: "오늘의 감정과 일상",
@@ -105,6 +106,15 @@ export async function handleCoach(body) {
 
   if (!entry || typeof entry !== "object") return fail(400, "entry 필요");
 
+  /* 대화가 길어질수록 질문이 '무슨 일이 있었어'에서 멀어진다.
+     화면에서도 막지만, 서버에서도 막는다. */
+  const studentTurns = (Array.isArray(history) ? history : []).filter(
+    (m) => m && m.role === "student"
+  ).length;
+  if (studentTurns >= CHAT_HARD_LIMIT) {
+    return ok({ message: "", done: true });
+  }
+
   const messages = toMessages(entry, history);
 
   try {
@@ -136,6 +146,14 @@ export async function handleCoach(body) {
 
     const message = enforceOneQuestion(text);
     if (!message) return fail(502, "AI 응답이 비어 있어요.");
+
+    /* 학생을 규정하거나 해석하는 문장은 통째로 버린다.
+       화면은 준비된 질문으로 대화를 이어간다. */
+    if (looksInterpretive(message)) {
+      console.warn("해석성 응답 차단:", message.slice(0, 120));
+      return ok({ message: "", filtered: true });
+    }
+
     return ok({ message });
   } catch (e) {
     return fail(e.status || 502, e.message || "AI 요청 실패");

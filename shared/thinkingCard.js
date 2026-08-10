@@ -10,6 +10,8 @@
    validateThinkingCard 만 교체하면 된다.)
 ------------------------------------------------------------------ */
 
+import { dropInterpretive, looksInterpretive } from "./guard.js";
+
 const MAX_ITEM = 120; // 한 항목이 문단이 되어버리는 것을 막는다 (AI가 글을 대신 쓰지 못하게)
 const MAX_LIST = 8;
 
@@ -76,14 +78,16 @@ export function validateThinkingCard(raw, { fallbackFrameType = "experience_refl
      완성된 문장이 넘어오면 학생이 그대로 베낄 수 있으므로 버린다. */
   const sentenceStarters = strList(raw.sentenceStarters, 5, 80).filter((s) => /_{3,}/.test(s));
 
+  /* 학생이 어떤 사람인지 규정하는 문구는 카드에도 남기지 않는다.
+     특히 connections 는 해석이 섞이기 쉬운 자리다. */
   const card = {
     sessionType: str(raw.sessionType, 40) || "daily_emotion",
     studentWords: {
-      coreKeywords: strList(words.coreKeywords, MAX_LIST, 30),
-      emotionFlow,
-      memorableScenes: strList(words.memorableScenes, 4, MAX_ITEM),
-      studentQuestions: strList(words.studentQuestions, 4, MAX_ITEM),
-      connections: strList(words.connections, 4, MAX_ITEM),
+      coreKeywords: dropInterpretive(strList(words.coreKeywords, MAX_LIST, 30)),
+      emotionFlow: emotionFlow.filter((e) => !looksInterpretive(e.evidence)),
+      memorableScenes: dropInterpretive(strList(words.memorableScenes, 4, MAX_ITEM)),
+      studentQuestions: dropInterpretive(strList(words.studentQuestions, 4, MAX_ITEM)),
+      connections: dropInterpretive(strList(words.connections, 4, MAX_ITEM)),
     },
     writingFrame: { frameType, sections },
     sentenceStarters,

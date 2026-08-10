@@ -2,6 +2,7 @@
 
 import { Card, Chip } from "./common.jsx";
 import { frameOf } from "../lib/types.js";
+import { CARD_BLOCK_EMOJI as E } from "../lib/emoji.js";
 
 function Block({ title, emoji, children, empty }) {
   return (
@@ -38,7 +39,7 @@ export function ThinkingCardView({ card, compact = false, onInsert }) {
         ) : null}
       </div>
 
-      <Block emoji="🔑" title="핵심 키워드" empty="아직 뽑을 키워드가 부족해요.">
+      <Block emoji={E.keywords} title="핵심 키워드" empty="아직 뽑을 키워드가 부족해요.">
         {has(w.coreKeywords) ? (
           <div className="flex flex-wrap gap-1.5">
             {w.coreKeywords.map((k, i) => (
@@ -49,7 +50,7 @@ export function ThinkingCardView({ card, compact = false, onInsert }) {
       </Block>
 
       {has(w.emotionFlow) ? (
-        <Block emoji="🫧" title="감정의 흐름">
+        <Block emoji={E.emotionFlow} title="감정의 흐름">
           <ol className="space-y-2">
             {w.emotionFlow.map((f, i) => (
               <li key={i} className="flex gap-2 text-sm">
@@ -65,7 +66,7 @@ export function ThinkingCardView({ card, compact = false, onInsert }) {
       ) : null}
 
       {has(w.memorableScenes) ? (
-        <Block emoji="🖼" title="오래 머문 장면">
+        <Block emoji={E.scenes} title="오래 머문 장면">
           <ul className="space-y-2">
             {w.memorableScenes.map((s, i) => (
               <li key={i} className="rounded-xl2 bg-paper-soft px-3 py-2.5 text-sm leading-6 text-ink-700">
@@ -77,7 +78,7 @@ export function ThinkingCardView({ card, compact = false, onInsert }) {
       ) : null}
 
       {has(w.studentQuestions) ? (
-        <Block emoji="❓" title="내가 던진 질문">
+        <Block emoji={E.questions} title="내가 던진 질문">
           <ul className="space-y-1.5 text-sm text-ink-700">
             {w.studentQuestions.map((q, i) => (
               <li key={i}>· {q}</li>
@@ -87,7 +88,7 @@ export function ThinkingCardView({ card, compact = false, onInsert }) {
       ) : null}
 
       {has(w.connections) ? (
-        <Block emoji="🔗" title="연결할 수 있는 생각">
+        <Block emoji={E.connections} title="연결할 수 있는 생각">
           <ul className="space-y-1.5 text-sm text-ink-700">
             {w.connections.map((c, i) => (
               <li key={i}>· {c}</li>
@@ -96,7 +97,7 @@ export function ThinkingCardView({ card, compact = false, onInsert }) {
         </Block>
       ) : null}
 
-      <Block emoji="🧱" title={`추천 글쓰기 구조 · ${frameMeta.label}`}>
+      <Block emoji={E.frame} title={`추천 글쓰기 구조 · ${frameMeta.label}`}>
         <ol className="space-y-2.5">
           {sections.map((s, i) => (
             <li key={i} className="flex gap-2.5 text-sm">
@@ -113,7 +114,7 @@ export function ThinkingCardView({ card, compact = false, onInsert }) {
       </Block>
 
       {has(card.sentenceStarters) ? (
-        <Block emoji="✍️" title="문장 시작점">
+        <Block emoji={E.starters} title="문장 시작점">
           <p className="mb-2 text-xs text-ink-400">빈칸은 네 말로 채우면 돼.</p>
           <ul className="space-y-2">
             {card.sentenceStarters.map((s, i) => (

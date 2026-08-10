@@ -1,11 +1,14 @@
 /* ------------------------------------------------------------------
    기록 유형 · 감정 · 글쓰기 구조 정의 (기획서 5·6·7·9절)
+
+   이모지는 src/lib/emoji.js 에서 붙인다. (한곳에서 고칠 수 있게)
 ------------------------------------------------------------------ */
 
-export const ENTRY_TYPES = [
+import { EMOTION_EMOJI, ENTRY_TYPE_EMOJI, ENTRY_FALLBACK } from "./emoji.js";
+
+const ENTRY_TYPE_DEFS = [
   {
     id: "daily_emotion",
-    emoji: "🌤",
     label: "오늘의 감정과 일상",
     short: "일상",
     hint: "오늘 마음이 잠깐 멈췄던 순간 하나를 적어보세요.",
@@ -14,7 +17,6 @@ export const ENTRY_TYPES = [
   },
   {
     id: "attraction",
-    emoji: "✨",
     label: "마음이 끌린 것",
     short: "끌림",
     hint: "이유를 몰라도 괜찮아요. 눈이 오래 머문 것을 적어보세요.",
@@ -23,7 +25,6 @@ export const ENTRY_TYPES = [
   },
   {
     id: "thought",
-    emoji: "💭",
     label: "문득 떠오른 생각",
     short: "생각",
     hint: "한 문장이어도 괜찮아요.",
@@ -32,7 +33,6 @@ export const ENTRY_TYPES = [
   },
   {
     id: "book",
-    emoji: "📖",
     label: "책을 읽고 든 생각",
     short: "독서",
     hint: "줄거리는 안 적어도 돼요. 마음이 오래 머문 장면부터 적어보세요.",
@@ -42,7 +42,6 @@ export const ENTRY_TYPES = [
   },
   {
     id: "movie",
-    emoji: "🎬",
     label: "영화를 보고 든 생각",
     short: "영화",
     hint: "장면 하나면 충분해요. 자꾸 다시 떠오르는 그 장면.",
@@ -52,7 +51,6 @@ export const ENTRY_TYPES = [
   },
   {
     id: "news",
-    emoji: "📰",
     label: "뉴스와 세상 이야기",
     short: "뉴스",
     hint: "무슨 일이 있었는지, 그리고 어떤 부분에서 마음이 멈췄는지 적어보세요.",
@@ -62,7 +60,6 @@ export const ENTRY_TYPES = [
   },
   {
     id: "career",
-    emoji: "🧭",
     label: "나와 진로에 관한 생각",
     short: "진로",
     hint: "직업 이름이 아니어도 좋아요. 하고 있을 때 시간이 빨리 가는 일을 떠올려보세요.",
@@ -71,6 +68,8 @@ export const ENTRY_TYPES = [
   },
 ];
 
+export const ENTRY_TYPES = ENTRY_TYPE_DEFS.map((t) => ({ ...t, emoji: ENTRY_TYPE_EMOJI[t.id] || "" }));
+
 export const ENTRY_TYPE_MAP = Object.fromEntries(ENTRY_TYPES.map((t) => [t.id, t]));
 
 export function typeLabel(id) {
@@ -78,27 +77,29 @@ export function typeLabel(id) {
 }
 
 export function typeEmoji(id) {
-  return ENTRY_TYPE_MAP[id]?.emoji || "📝";
+  return ENTRY_TYPE_EMOJI[id] ?? ENTRY_FALLBACK;
 }
 
 /* 감정 — 좋음/나쁨 2분법 대신 구체적인 단어로 (기획서 7.1) */
-export const EMOTIONS = [
-  { id: "joy", label: "기쁨", tone: "warm", emoji: "😊" },
-  { id: "calm", label: "편안함", tone: "warm", emoji: "🌿" },
-  { id: "proud", label: "뿌듯함", tone: "warm", emoji: "🌟" },
-  { id: "expect", label: "기대", tone: "warm", emoji: "🎈" },
-  { id: "flutter", label: "설렘", tone: "warm", emoji: "💫" },
-  { id: "stuffy", label: "답답함", tone: "cool", emoji: "😮‍💨" },
-  { id: "hurt", label: "서운함", tone: "cool", emoji: "🥺" },
-  { id: "unfair", label: "억울함", tone: "cool", emoji: "😤" },
-  { id: "envy", label: "질투", tone: "cool", emoji: "😒" },
-  { id: "anxious", label: "불안", tone: "cool", emoji: "😰" },
-  { id: "tense", label: "긴장", tone: "cool", emoji: "😬" },
-  { id: "lonely", label: "외로움", tone: "cool", emoji: "🌙" },
-  { id: "empty", label: "허무함", tone: "cool", emoji: "🍂" },
-  { id: "confused", label: "혼란스러움", tone: "cool", emoji: "🌀" },
-  { id: "unknown", label: "아직 잘 모르겠음", tone: "neutral", emoji: "❔" },
+const EMOTION_DEFS = [
+  { id: "joy", label: "기쁨", tone: "warm" },
+  { id: "calm", label: "편안함", tone: "warm" },
+  { id: "proud", label: "뿌듯함", tone: "warm" },
+  { id: "expect", label: "기대", tone: "warm" },
+  { id: "flutter", label: "설렘", tone: "warm" },
+  { id: "stuffy", label: "답답함", tone: "cool" },
+  { id: "hurt", label: "서운함", tone: "cool" },
+  { id: "unfair", label: "억울함", tone: "cool" },
+  { id: "envy", label: "질투", tone: "cool" },
+  { id: "anxious", label: "불안", tone: "cool" },
+  { id: "tense", label: "긴장", tone: "cool" },
+  { id: "lonely", label: "외로움", tone: "cool" },
+  { id: "empty", label: "허무함", tone: "cool" },
+  { id: "confused", label: "혼란스러움", tone: "cool" },
+  { id: "unknown", label: "아직 잘 모르겠음", tone: "neutral" },
 ];
+
+export const EMOTIONS = EMOTION_DEFS.map((e) => ({ ...e, emoji: EMOTION_EMOJI[e.id] || "" }));
 
 export const EMOTION_MAP = Object.fromEntries(EMOTIONS.map((e) => [e.id, e]));
 

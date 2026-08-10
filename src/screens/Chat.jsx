@@ -23,8 +23,10 @@ import { EMOTION_MAP, defaultFrameFor, typeEmoji, typeLabel } from "../lib/types
 import { askCoach, askOptions, buildCard } from "../lib/ai.js";
 import { buildLocalCard, fallbackOptions, nextFallbackQuestion } from "../lib/fallback.js";
 import { detectRisk } from "../lib/safety.js";
+import { COACH_AVATAR } from "../lib/emoji.js";
 import { SafetyNotice } from "../components/SafetyNotice.jsx";
 import { validateThinkingCard } from "../../shared/thinkingCard.js";
+import { CHAT_HARD_LIMIT, CHAT_SOFT_LIMIT } from "../../shared/guard.js";
 import {
   Button,
   Card,
@@ -90,6 +92,7 @@ function ChatSession({ entryId }) {
   const [finishing, setFinishing] = useState(false);
   const asked = useRef([]);
   const bottom = useRef(null);
+  const started = useRef(false); // 첫 질문이 두 번 붙는 것을 막는다
 
   /* 대화 세션 준비 + 첫 질문 */
   useEffect(() => {
@@ -97,7 +100,10 @@ function ChatSession({ entryId }) {
     const c = startConversation(entryId);
     setConv(c);
     asked.current = c.messages.filter((m) => m.role === "assistant").map((m) => m.content);
-    if (c.messages.length === 0) ask(c, []);
+    if (c.messages.length === 0 && !started.current) {
+      started.current = true;
+      ask(c, []);
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [entryId]);
 
@@ -108,6 +114,7 @@ function ChatSession({ entryId }) {
   const live = conv ? conversationOfEntry(entryId) : null;
   const messages = live?.messages || [];
   const studentTurns = messages.filter((m) => m.role === "student").length;
+  const atLimit = studentTurns >= CHAT_HARD_LIMIT;
 
   if (!entry) {
     return (
@@ -119,6 +126,11 @@ function ChatSession({ entryId }) {
 
   /* 다음 질문 하나를 가져온다. AI 가 안 되면 질문 은행으로 이어간다. */
   async function ask(conversation, history) {
+    const turns = history.filter((m) => m.role === "student").length;
+    if (turns >= CHAT_HARD_LIMIT) {
+      setNotice("오늘 이 기록으로 나눌 이야기는 여기까지야. 이제 정리해서 카드로 만들어보자.");
+      return;
+    }
     setBusy(true);
     setOptions(null);
     try {
@@ -150,7 +162,7 @@ function ChatSession({ entryId }) {
 
   async function send(text) {
     const value = String(text ?? input).trim();
-    if (!value || busy || !conv) return;
+    if (!value || busy || !conv || atLimit) return;
     if (detectRisk(value)) {
       setRisk(true);
       setInput("");
@@ -249,7 +261,7 @@ function ChatSession({ entryId }) {
                 aria-hidden="true"
                 className="mt-1 flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-ochre-100 text-[13px]"
               >
-                🌱
+                {COACH_AVATAR}
               </span>
               <p className="max-w-[85%] rounded-xl2 rounded-tl-md bg-paper-card px-3.5 py-3 text-[15px] leading-7 text-ink-900 shadow-card">
                 {m.content}
@@ -269,7 +281,7 @@ function ChatSession({ entryId }) {
                 aria-hidden="true"
                 className="mt-1 flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-ochre-100 text-[13px]"
               >
-                🌱
+                {COACH_AVATAR}
               </span>
             <span className="rounded-xl2 bg-paper-card px-3.5 py-4 shadow-card">
               <Dots />
@@ -289,24 +301,31 @@ function ChatSession({ entryId }) {
         </div>
       ) : null}
 
+      {studentTurns >= CHAT_SOFT_LIMIT && studentTurns < CHAT_HARD_LIMIT ? (
+        <Notice>
+          여기까지만으로도 글 쓸 재료는 충분해. 더 이야기해도 되고, 지금 마쳐도 좋아.
+        </Notice>
+      ) : null}
+
       <div className="space-y-2">
         <Textarea
           rows={3}
           value={input}
           onChange={(e) => setInput(e.target.value)}
-          placeholder="한 단어만 적어도 괜찮아"
+          disabled={atLimit}
+          placeholder={atLimit ? "대화는 여기까지 하고, 이제 글로 옮겨보자" : "한 단어만 적어도 괜찮아"}
           onKeyDown={(e) => {
             if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) send();
           }}
         />
         <div className="flex flex-wrap items-center gap-1.5">
-          <Button onClick={() => send()} disabled={busy || !input.trim()}>
+          <Button onClick={() => send()} disabled={busy || atLimit || !input.trim()}>
             보내기
           </Button>
-          <Button variant="outline" size="sm" onClick={showOptions} disabled={busy}>
+          <Button variant="outline" size="sm" onClick={showOptions} disabled={busy || atLimit}>
             잘 모르겠어
           </Button>
-          <Button variant="ghost" size="sm" onClick={rephrase} disabled={busy}>
+          <Button variant="ghost" size="sm" onClick={rephrase} disabled={busy || atLimit}>
             다른 질문
           </Button>
           <Button variant="ghost" size="sm" onClick={() => setMemoOpen(true)}>
@@ -314,7 +333,7 @@ function ChatSession({ entryId }) {
           </Button>
           <div className="flex-1" />
           <Button
-            variant="soft"
+            variant={atLimit || studentTurns >= CHAT_SOFT_LIMIT ? "primary" : "soft"}
             size="sm"
             onClick={finish}
             disabled={finishing || studentTurns === 0}
@@ -325,6 +344,7 @@ function ChatSession({ entryId }) {
         </div>
         <p className="text-xs text-ink-400">
           대화를 마치면 완성된 글 대신 키워드와 글쓰기 구조를 정리해줄게.
+          {" "}이 대화는 {CHAT_HARD_LIMIT}번까지 주고받아. ({studentTurns}/{CHAT_HARD_LIMIT})
         </p>
       </div>
 

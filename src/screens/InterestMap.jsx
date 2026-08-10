@@ -24,7 +24,7 @@ export function InterestMap() {
     return (
       <div className="space-y-5">
         <header>
-          <h1 className="text-[20px] font-semibold tracking-tight text-ink-900">나의 관심 지도</h1>
+          <h1 className="text-[20px] font-semibold tracking-tight text-ink-900">커넥티드</h1>
         </header>
         <Empty
           title="아직 보여줄 게 없어요"
@@ -39,7 +39,7 @@ export function InterestMap() {
   return (
     <div className="space-y-7">
       <header>
-        <h1 className="text-[20px] font-semibold tracking-tight text-ink-900">나의 관심 지도</h1>
+        <h1 className="text-[20px] font-semibold tracking-tight text-ink-900">커넥티드</h1>
         <p className="mt-1.5 text-sm text-ink-500">
           {data.entryCount < 3
             ? `지금까지 찍은 점 ${data.entryCount}개. 조금 더 모이면 이어지는 선이 보여요.`

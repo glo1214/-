@@ -33,9 +33,9 @@ export function Collect() {
   return (
     <div className="space-y-7">
       <header>
-        <h1 className="text-[20px] font-semibold tracking-tight text-ink-900">점 모음</h1>
+        <h1 className="text-[20px] font-semibold tracking-tight text-ink-900">나의 닷</h1>
         <p className="mt-1.5 text-sm text-ink-500">
-          찍어둔 점이 여기 모여요. 한 줄 메모, 오래 머문 문장, 궁금한 질문 — 아직 글이 아니어도 괜찮아요.
+          찍어둔 점(dot)이 여기 모여요. 한 줄 메모, 오래 머문 문장, 궁금한 질문 — 아직 글이 아니어도 괜찮아요.
         </p>
       </header>
 

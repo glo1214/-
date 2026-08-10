@@ -29,7 +29,7 @@ const TABS = [
   { id: "collect", label: "기록" },
   { id: "chat", label: "대화" },
   { id: "write", label: "글쓰기" },
-  { id: "map", label: "나의 지도" },
+  { id: "map", label: "커넥티드" },
 ];
 
 const SIDE = [...TABS, { id: "library", label: "서랍" }, { id: "settings", label: "설정" }];

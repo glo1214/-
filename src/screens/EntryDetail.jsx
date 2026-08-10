@@ -24,7 +24,7 @@ export function EntryDetail({ entryId }) {
       <div className="py-10 text-center text-ink-500">
         <p>기록을 찾을 수 없어요.</p>
         <Button variant="soft" className="mt-4" onClick={() => navigate("collect")}>
-          점 모음으로
+          나의 닷으로
         </Button>
       </div>
     );

@@ -6,34 +6,31 @@ import { DAILY_PROMPTS, typeEmoji, typeLabel } from "../lib/types.js";
 import { weeklySummary } from "../lib/insights.js";
 import { Button, Card, Chip, Empty, SectionTitle } from "../components/common.jsx";
 import { Illustration } from "../components/Illustration.jsx";
+import { DAILY_PROMPT, HOME_ACTION_EMOJI } from "../lib/emoji.js";
 
 const ACTIONS = [
   {
     id: "new",
-    emoji: "✏️",
     title: "마음에 점 하나 찍기",
     desc: "한 줄이어도 괜찮아요",
     to: "new",
   },
   {
     id: "chat",
-    emoji: "💬",
     title: "AI와 이야기하며 생각 찾기",
     desc: "질문을 따라가며 발견하기",
     to: "chat",
   },
   {
     id: "media",
-    emoji: "📚",
     title: "책·영화·뉴스 기록하기",
     desc: "보고 읽은 것에 내 관점 붙이기",
     to: "new?type=book",
   },
   {
     id: "map",
-    emoji: "🗺️",
-    title: "나의 관심 지도 보기",
-    desc: "반복해서 나타난 주제 확인하기",
+    title: "점이 어떻게 이어졌는지 보기",
+    desc: "커넥티드 — 반복해서 나타난 것들",
     to: "map",
   },
 ];
@@ -74,7 +71,7 @@ export function Home({ user }) {
               aria-hidden="true"
               className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl2 bg-ochre-50 text-[21px]"
             >
-              {a.emoji}
+              {HOME_ACTION_EMOJI[a.id]}
             </span>
             <span className="min-w-0">
               <span className="block text-[15px] font-medium text-ink-900">{a.title}</span>
@@ -87,7 +84,7 @@ export function Home({ user }) {
       <section>
         <SectionTitle>오늘의 글쓰기 질문</SectionTitle>
         <Card className="flex gap-3 px-4 py-4">
-          <span aria-hidden="true" className="text-[19px] leading-7">🌱</span>
+          <span aria-hidden="true" className="text-[19px] leading-7">{DAILY_PROMPT}</span>
           <div>
             <p className="text-[15px] leading-7 text-ink-700">{dailyPrompt()}</p>
             <Button variant="soft" size="sm" className="mt-3" onClick={() => navigate("new")}>

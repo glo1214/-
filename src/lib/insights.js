@@ -9,54 +9,48 @@
 ------------------------------------------------------------------ */
 
 import { EMOTION_MAP, typeLabel } from "./types.js";
+import { THEME_EMOJI } from "./emoji.js";
 
 /* 관심 신호 — 키워드가 아니라 '탐색해볼 영역'으로 묶는다 */
 const THEMES = [
   {
     id: "life",
-    emoji: "🐾",
     label: "생명과 동물",
     words: ["동물", "강아지", "고양이", "생명", "반려", "유기견", "길고양이", "식물", "곤충"],
     activities: ["동물 복지 기사 한 편 읽고 사실과 의견 나눠보기", "생태 다큐멘터리 보고 기록 남기기", "가까운 보호소·수목원 방문 기록 쓰기"],
   },
   {
     id: "earth",
-    emoji: "🌏",
     label: "환경과 기후",
     words: ["환경", "기후", "쓰레기", "플라스틱", "재활용", "오염", "지구", "탄소", "날씨"],
     activities: ["우리 동네 분리배출 하루 관찰 기록", "기후 관련 기사 두 편 비교해서 읽기", "학교에서 할 수 있는 캠페인 한 가지 기획해보기"],
   },
   {
     id: "people",
-    emoji: "🤝",
     label: "사람과 관계",
     words: ["친구", "관계", "사이", "말투", "오해", "가족", "엄마", "아빠", "선생님", "마음", "감정", "서운", "위로"],
     activities: ["대화 한 장면을 두 사람 입장에서 각각 써보기", "인물의 감정이 중심인 소설·영화 기록하기", "가족에게 궁금했던 것 하나 인터뷰하기"],
   },
   {
     id: "fair",
-    emoji: "⚖️",
     label: "공정함과 규칙",
     words: ["공정", "불공정", "억울", "규칙", "차별", "권리", "정의", "법", "평등", "혐오"],
     activities: ["학교 규칙 하나를 정하고 찬반 근거 각각 세 가지 써보기", "같은 사건을 다룬 기사 두 편의 관점 비교하기", "반대 입장에서 글 한 편 써보기"],
   },
   {
     id: "make",
-    emoji: "🔧",
     label: "만들고 고치기",
     words: ["만들", "고치", "조립", "그리", "디자인", "코딩", "프로그램", "게임", "영상", "편집", "요리"],
     activities: ["직접 만든 것의 제작 과정을 단계별로 기록하기", "마음에 든 디자인 세 개 모으고 공통점 찾기", "작게 하나 만들어보고 바꾸고 싶은 점 적기"],
   },
   {
     id: "story",
-    emoji: "📚",
     label: "이야기와 표현",
     words: ["이야기", "소설", "책", "영화", "드라마", "노래", "가사", "글", "웹툰", "장면", "인물"],
     activities: ["좋아하는 장면의 앞뒤를 상상해서 써보기", "같은 이야기를 다른 인물 시점으로 바꿔 쓰기", "인상 깊은 문장을 모아 이유 적기"],
   },
   {
     id: "why",
-    emoji: "🔍",
     label: "원인과 구조 파헤치기",
     words: ["왜", "이유", "원인", "구조", "과학", "실험", "우주", "수학", "기술", "인공지능", "역사"],
     activities: ["궁금한 질문 하나를 골라 자료 두 개 찾아 비교하기", "직접 작은 실험이나 관찰 기록 남기기", "한 사건의 원인을 세 가지 이상 적어보기"],
@@ -104,12 +98,16 @@ export function buildInsights({ entries = [], cards = [], days = 30 } = {}) {
     .join(" ")
     .toLowerCase();
 
+  /* 한 번 속상했던 기록 하나로 "이 주제에 관심이 많다"고 말하지 않는다.
+     기록이 세 개는 쌓이고, 주제와 이어지는 표현이 두 번 이상 나와야 보여준다. */
+  const enoughEvidence = recentEntries.length >= 3;
   const themeHits = THEMES.map((t) => {
     const hits = t.words.filter((w) => haystack.includes(w)).length;
-    return { ...t, hits };
+    return { ...t, emoji: THEME_EMOJI[t.id] || "", hits };
   })
-    .filter((t) => t.hits > 0)
+    .filter((t) => t.hits >= 2)
     .sort((a, b) => b.hits - a.hits);
+  const themes = enoughEvidence ? themeHits : [];
 
   const byWeek = new Map();
   for (const e of recentEntries) {
@@ -126,8 +124,8 @@ export function buildInsights({ entries = [], cards = [], days = 30 } = {}) {
     topEmotions: countBy([...emotionsFromEntries, ...emotionsFromCards]).slice(0, 6),
     topKeywords: countBy(keywords).slice(0, 12),
     questions: questions.slice(0, 6),
-    themes: themeHits.slice(0, 3),
-    suggestions: themeHits.slice(0, 2).flatMap((t) => t.activities.slice(0, 2)),
+    themes: themes.slice(0, 3),
+    suggestions: themes.slice(0, 2).flatMap((t) => t.activities.slice(0, 2)),
     days,
   };
 }
