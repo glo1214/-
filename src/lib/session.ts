@@ -5,13 +5,15 @@
 ------------------------------------------------------------------ */
 import type { Deck, Profile, ProgressMap, Question, QueueItem, Word } from "../types";
 import { buildChoices } from "./distractors";
-import { isDue, meaningIndices, newProgress, pickCard, progressKey } from "./scheduler";
+import { isDue, isRetired, meaningIndices, newProgress, pickCard, progressKey } from "./scheduler";
 import { daysBetween } from "./date";
 
 export interface BuiltSession {
   queue: QueueItem[];
   /** 새로 만들어진 progress 항목들(도입된 새 단어). 저장에 반영해야 한다. */
   seeded: ProgressMap;
+  /** 이번에 도입한 '새 단어' 수(하루 상한 집계용). */
+  newWords: number;
 }
 
 interface WordRef {
@@ -31,10 +33,13 @@ export function buildSession(
   progress: ProgressMap,
   profile: Profile,
   today: string,
+  introducedToday = 0,
 ): BuiltSession {
   const refs = allWords(decks);
   const seeded: ProgressMap = {};
   const en = profile.cardsEnabled;
+  // 하루 상한 - 오늘 이미 도입한 수 = 남은 새 단어 예산
+  const newBudget = Math.max(0, profile.dailyNew - introducedToday);
 
   const reviews: QueueItem[] = [];
   const fresh: QueueItem[] = [];
@@ -54,7 +59,7 @@ export function buildSession(
     const isNew = !progress[firstKey];
 
     if (isNew) {
-      if (newWordCount >= profile.dailyNew) continue;
+      if (newWordCount >= newBudget) continue;
       newWordCount++;
       // 새 단어: 모든 뜻 인덱스에 progress 생성(오늘 due)
       indices.forEach((mi) => {
@@ -63,10 +68,12 @@ export function buildSession(
         fresh.push(item(ref, mi, p.box));
       });
     } else {
-      // 복습: due 인 뜻만
+      // 복습: due 이고 '제외'되지 않은 뜻만
       indices.forEach((mi) => {
         const p = progress[progressKey(ref.word.word, mi)];
-        if (p && isDue(p, today)) reviews.push(item(ref, mi, p.box));
+        if (p && isDue(p, today) && !isRetired(p, profile.retireAfter)) {
+          reviews.push(item(ref, mi, p.box));
+        }
       });
     }
   }
@@ -79,7 +86,7 @@ export function buildSession(
   });
   const cappedReviews = reviews.slice(0, profile.dailyReviewCap);
 
-  return { queue: [...cappedReviews, ...fresh], seeded };
+  return { queue: [...cappedReviews, ...fresh], seeded, newWords: newWordCount };
 }
 
 /** 재삽입 위치 오프셋: 현재로부터 4~6문제 뒤. */

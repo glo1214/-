@@ -137,6 +137,37 @@ describe("완료 기준 — 통합", () => {
     expect(strict.promoted).toBe(false);
   });
 
+  it("새 단어는 '하루' 상한을 지킨다 (세션마다 쏟아지지 않음)", () => {
+    const p = profile({ dailyNew: 5 });
+    // 오늘 이미 5개 도입했으면 더 이상 새 단어 없음
+    const full = buildSession(decks, {}, p, TODAY, 5);
+    expect(full.newWords).toBe(0);
+    // 3개 도입했으면 2개만 더
+    const partial = buildSession(decks, {}, p, TODAY, 3);
+    expect(partial.newWords).toBe(2);
+  });
+
+  it("반복(reps) 상한에 도달하면 제외되어 복습 큐에서 빠진다", () => {
+    const p = profile({ retireAfter: 3, dailyNew: 0 });
+    const prog: ProgressMap = {
+      "verify#0": {
+        box: 1,
+        nextDue: TODAY,
+        wrongCount: 3,
+        avgMs: 4000,
+        weak: true,
+        lastSeen: "2026-08-05",
+        confusedWith: {},
+        reps: 3, // 상한 도달 → 제외
+      },
+    };
+    const built = buildSession(decks, prog, p, TODAY, 0);
+    expect(built.queue.find((q) => q.key === "verify#0")).toBeUndefined();
+    // retireAfter=0(끔)이면 다시 나온다
+    const built2 = buildSession(decks, prog, profile({ retireAfter: 0, dailyNew: 0 }), TODAY, 0);
+    expect(built2.queue.find((q) => q.key === "verify#0")).toBeTruthy();
+  });
+
   it("[8] 박스 3 이상이면 한글 발음 표기가 사라진다", () => {
     expect(koPronVisible(2, true)).toBe(true);
     expect(koPronVisible(3, true)).toBe(false);

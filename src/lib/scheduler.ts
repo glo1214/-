@@ -30,7 +30,14 @@ export function newProgress(today: string = todayKey()): Progress {
     weak: false,
     lastSeen: null,
     confusedWith: {},
+    reps: 0,
   };
+}
+
+/** 반복(reps) 이 retireAfter 이상이면 학습에서 제외된 단어. */
+export function isRetired(p: Progress | undefined, retireAfter: number): boolean {
+  if (!p || retireAfter <= 0) return false;
+  return (p.reps ?? 0) >= retireAfter;
 }
 
 /** nextDue <= today 면 복습 대상. */
@@ -71,6 +78,7 @@ function avg(prev: number, ms: number): number {
 export function judge(p: Progress, input: JudgeInput): JudgeResult {
   const { answer, ms, selfWord, chosenWord, isReinsert, threshold, today } = input;
   const avgMs = avg(p.avgMs, ms);
+  const reps = (p.reps ?? 0) + 1; // 등장 횟수 누적
   const canPromote = !isReinsert && p.lastSeen !== today;
 
   if (answer === "wrong" || answer === "dunno") {
@@ -86,6 +94,7 @@ export function judge(p: Progress, input: JudgeInput): JudgeResult {
         weak: true,
         wrongCount: p.wrongCount + 1,
         avgMs,
+        reps,
         confusedWith,
         lastSeen: today,
         nextDue: addDays(today, BOX_INTERVAL[1]),
@@ -96,7 +105,7 @@ export function judge(p: Progress, input: JudgeInput): JudgeResult {
   }
 
   // ----- 정답 -----
-  const base: Progress = { ...p, avgMs, lastSeen: today };
+  const base: Progress = { ...p, avgMs, reps, lastSeen: today };
 
   // 재삽입분 / 오늘 이미 본 문제: 오답 표시만 풀고 박스는 그대로. 재삽입 없음.
   if (!canPromote) {

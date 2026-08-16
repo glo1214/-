@@ -1,6 +1,7 @@
 import { useRef, useState } from "react";
-import type { Deck, Meaning, Word } from "../types";
+import type { Deck, Meaning, ProgressMap, Word } from "../types";
 import { importDeckJSON, normalizeWord } from "../lib/storage";
+import { isRetired, meaningIndices, progressKey } from "../lib/scheduler";
 import { parseCandidates, recognizeImage, type WordCandidate } from "../lib/ocr";
 
 function emptyWord(): Word {
@@ -22,10 +23,19 @@ interface EditTarget {
 export function DeckScreen({
   decks,
   updateDecks,
+  progress,
+  retireAfter,
+  restoreWord,
 }: {
   decks: Deck[];
   updateDecks: (d: Deck[]) => void;
+  progress: ProgressMap;
+  retireAfter: number;
+  restoreWord: (word: string) => void;
 }) {
+  // 단어가 '제외됨'인지: 뜻 인덱스 중 하나라도 reps 상한 도달
+  const wordRetired = (w: Word): boolean =>
+    meaningIndices(w).some((mi) => isRetired(progress[progressKey(w.word, mi)], retireAfter));
   const [query, setQuery] = useState("");
   const [edit, setEdit] = useState<EditTarget | null>(null);
   const [draft, setDraft] = useState<Word>(emptyWord);
@@ -171,11 +181,17 @@ export function DeckScreen({
                   <div className="en">
                     {w.word}{" "}
                     {w.splitBox && <span className="badge">뜻 {w.meanings.length}</span>}
+                    {wordRetired(w) && <span className="badge">제외됨</span>}
                   </div>
                   <div className="small muted">
                     {w.meanings.map((m) => m.def).join(" / ")}
                   </div>
                 </div>
+                {wordRetired(w) && (
+                  <button className="btn small" onClick={() => restoreWord(w.word)}>
+                    다시 학습
+                  </button>
+                )}
                 <button className="btn small" onClick={() => startEdit(di, wi)}>
                   수정
                 </button>

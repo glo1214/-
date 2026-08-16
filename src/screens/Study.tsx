@@ -15,6 +15,7 @@ import {
   reinsertOffset,
 } from "../lib/session";
 import { todayKey } from "../lib/date";
+import { addNewWordsToday, newWordsToday } from "../lib/storage";
 import { Pronunciation, EtymologyCard } from "../components/ui";
 
 const CARD_LABEL: Record<number, string> = {
@@ -43,8 +44,11 @@ export function Study({
 }) {
   const today = todayKey();
 
-  // 세션 1회 구성. 새 단어 progress(seeded)를 즉시 반영·저장한다.
-  const initial = useMemo(() => buildSession(decks, progress, profile, today), []); // eslint-disable-line
+  // 세션 1회 구성. 새 단어는 '하루' 상한을 지킨다(세션마다 새로 쏟아지지 않게).
+  const initial = useMemo(
+    () => buildSession(decks, progress, profile, today, newWordsToday(today)),
+    [],
+  ); // eslint-disable-line
   const workRef = useRef<ProgressMap>({ ...progress, ...initial.seeded });
   const queueRef = useRef<QueueItem[]>(initial.queue);
   const answeredRef = useRef(0);
@@ -57,9 +61,12 @@ export function Study({
   const [done, setDone] = useState(initial.queue.length === 0);
   const [, force] = useState(0); // 큐 변경 강제 렌더
 
-  // 시작 시 seeded 저장(새로고침 대비)
+  // 시작 시 seeded 저장(새로고침 대비) + 오늘 도입한 새 단어 수 기록
   useEffect(() => {
-    if (Object.keys(initial.seeded).length) commitProgress(workRef.current);
+    if (Object.keys(initial.seeded).length) {
+      commitProgress(workRef.current);
+      addNewWordsToday(today, initial.newWords);
+    }
     // eslint-disable-next-line
   }, []);
 

@@ -20,6 +20,7 @@ export const DEFAULT_PROFILE: Profile = {
   useEtymology: true,
   useKoPron: true,
   timeThreshold: { fast: 2000, slow: 6000 },
+  retireAfter: 10,
 };
 
 /** 시드 덱 (어휘끝 Unit04). JSON 구조를 그대로 쓴다. */
@@ -58,6 +59,18 @@ export function loadProfile(): Profile {
 }
 export function saveProfile(p: Profile): void {
   write(K_PROFILE, p);
+}
+
+/* ---------- 오늘 도입한 새 단어 수 (하루 상한을 '세션'이 아니라 '하루' 기준으로) ---------- */
+const K_DAILY = "wr.daily";
+export function newWordsToday(today: string): number {
+  const d = read<{ date: string; count: number }>(K_DAILY, { date: "", count: 0 });
+  return d.date === today ? d.count : 0;
+}
+export function addNewWordsToday(today: string, n: number): void {
+  if (n <= 0) return;
+  const cur = newWordsToday(today);
+  write(K_DAILY, { date: today, count: cur + n });
 }
 
 /* ---------- decks ---------- */

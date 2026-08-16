@@ -43,6 +43,7 @@ export interface Progress {
   weak: boolean; // 정답이지만 느렸던 이력
   lastSeen: string | null; // "YYYY-MM-DD" — 오늘이면 승급 판정 안 함
   confusedWith: Record<string, number>; // 고른 오답 단어 -> 횟수
+  reps?: number; // 총 등장(응답) 횟수 — retireAfter 이상이면 자동 제외
 }
 
 export type ProgressMap = Record<string, Progress>;
@@ -55,6 +56,7 @@ export interface Profile {
   useEtymology: boolean; // 어원 카드 표시
   useKoPron: boolean; // 한글 발음 표기 표시
   timeThreshold: { fast: number; slow: number }; // ms 판정 임계값
+  retireAfter: number; // 반복(reps) 이 값 이상이면 자동 제외. 0이면 끔
 }
 
 /* ---------- 학습 세션 ---------- */

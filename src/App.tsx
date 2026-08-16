@@ -8,6 +8,7 @@ import {
   saveProfile,
   saveProgress,
 } from "./lib/storage";
+import { todayKey } from "./lib/date";
 import { Nav } from "./components/Nav";
 import { Home } from "./screens/Home";
 import { Study } from "./screens/Study";
@@ -37,6 +38,19 @@ export default function App() {
     saveProgress(m);
   };
 
+  // 제외된 단어를 다시 학습으로 (reps 초기화 + 오늘 due)
+  const restoreWord = (word: string) => {
+    const next: ProgressMap = { ...progress };
+    let changed = false;
+    Object.keys(next).forEach((k) => {
+      if (k.startsWith(word + "#")) {
+        next[k] = { ...next[k], reps: 0, nextDue: todayKey() };
+        changed = true;
+      }
+    });
+    if (changed) commitProgress(next);
+  };
+
   const startStudy = () => {
     setSessionKey((k) => k + 1);
     setScreen("study");
@@ -57,7 +71,15 @@ export default function App() {
           onHome={() => setScreen("home")}
         />
       )}
-      {screen === "deck" && <DeckScreen decks={decks} updateDecks={updateDecks} />}
+      {screen === "deck" && (
+        <DeckScreen
+          decks={decks}
+          updateDecks={updateDecks}
+          progress={progress}
+          retireAfter={profile.retireAfter}
+          restoreWord={restoreWord}
+        />
+      )}
       {screen === "settings" && (
         <Settings profile={profile} updateProfile={updateProfile} />
       )}

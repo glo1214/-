@@ -46,6 +46,20 @@ export function Settings({
         </label>
       </div>
 
+      <label className="field">
+        <span>반복 제외 — 이 횟수 이상 나온 단어는 자동으로 목록에서 뺌 (0이면 끔)</span>
+        <input
+          type="number"
+          min={0}
+          value={profile.retireAfter}
+          onChange={(e) => set({ retireAfter: Math.max(0, Number(e.target.value)) })}
+        />
+      </label>
+      <div className="small muted" style={{ marginTop: -6, marginBottom: 14 }}>
+        많이 틀려서 계속 나오는 단어가 {profile.retireAfter || "N"}회에 도달하면 학습에서 빠집니다.
+        (단어장에서 언제든 다시 학습으로 되돌릴 수 있어요.) 설정은 자동 저장되고 다음 학습부터 적용됩니다.
+      </div>
+
       <h3 style={{ marginTop: 12 }}>응답시간 판정 (ms)</h3>
       <div className="small muted" style={{ marginBottom: 10 }}>
         fast 미만이면 바로 승급, fast~slow는 승급하되 weak 표시, slow 초과면 승급 보류.

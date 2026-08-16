@@ -1,6 +1,7 @@
 import type { Deck, Profile, ProgressMap } from "../types";
 import { buildSession } from "../lib/session";
-import { isDue } from "../lib/scheduler";
+import { isDue, isRetired } from "../lib/scheduler";
+import { newWordsToday } from "../lib/storage";
 import { dday, todayKey } from "../lib/date";
 
 /** 홈 — D-day, '오늘 복습 N개' 한 줄, [시작] 버튼 하나. 스트릭 없음. */
@@ -16,11 +17,13 @@ export function Home({
   onStart: () => void;
 }) {
   const today = todayKey();
-  const { queue } = buildSession(decks, progress, profile, today);
+  const { queue } = buildSession(decks, progress, profile, today, newWordsToday(today));
   const total = queue.length;
 
-  // 밀린 개수 = 오늘 due인 복습(이미 학습을 시작한 단어) 수
-  const overdue = Object.values(progress).filter((p) => isDue(p, today)).length;
+  // 밀린 개수 = 오늘 due이고 제외되지 않은 복습 수
+  const overdue = Object.values(progress).filter(
+    (p) => isDue(p, today) && !isRetired(p, profile.retireAfter),
+  ).length;
   const d = dday(profile.examDate, today);
 
   return (
