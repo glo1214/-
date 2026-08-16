@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 560" width="960" height="560">
+  <style>
+    text { font-family: "IBM Plex Sans KR", "Noto Sans KR", sans-serif; fill: #222; }
+    .t  { font-size: 19px; font-weight: 600; }
+    .s  { font-size: 15px; fill: #555; }
+    .lb { font-size: 15px; font-weight: 600; fill: #c2410c; }
+    .lead { stroke: #c2410c; stroke-width: 1.6; fill: none; }
+    .bad { font-size: 15px; font-weight: 600; fill: #9a3412; }
+  </style>
+
+  <rect width="960" height="560" fill="#ffffff"/>
+
+  <text class="t" x="40" y="46">실제 체조매트에서 꼭 나와야 하는 것</text>
+  <text class="s" x="40" y="72">그림체가 아니라 생김새를 보는 도식입니다. 색과 결은 사진을 보고 정하십시오.</text>
+
+  <!-- ===== 맞는 매트 ===== -->
+  <g>
+    <!-- 윗면 -->
+    <path d="M 150 250 L 700 250 L 760 205 L 210 205 Z"
+          fill="#2f7d4f" stroke="#111" stroke-width="3.5" stroke-linejoin="round"/>
+    <!-- 앞면 -->
+    <path d="M 150 250 h 550 a 16 16 0 0 1 16 16 v 62 a 16 16 0 0 1 -16 16 h -550
+             a 16 16 0 0 1 -16 -16 v -62 a 16 16 0 0 1 16 -16 z"
+          fill="#256b43" stroke="#111" stroke-width="3.5" stroke-linejoin="round"/>
+    <!-- 테두리 박음질 -->
+    <path d="M 152 262 h 546" stroke="#8fd0aa" stroke-width="2" stroke-dasharray="7 6" fill="none"/>
+    <path d="M 152 332 h 546" stroke="#8fd0aa" stroke-width="2" stroke-dasharray="7 6" fill="none"/>
+    <path d="M 156 250 L 214 209" stroke="#8fd0aa" stroke-width="2" stroke-dasharray="7 6" fill="none"/>
+    <!-- 손잡이 -->
+    <rect x="330" y="278" width="66" height="16" rx="7" fill="#1a1a1a"/>
+    <rect x="470" y="278" width="66" height="16" rx="7" fill="#1a1a1a"/>
+
+    <!-- 안내선 -->
+    <path class="lead" d="M 726 214 L 800 190"/>
+    <text class="lb" x="806" y="188">모든 각이 둥글다</text>
+    <path class="lead" d="M 600 262 L 660 150"/>
+    <text class="lb" x="596" y="142">테두리 박음질 한 줄</text>
+    <path class="lead" d="M 433 294 L 433 372"/>
+    <text class="lb" x="366" y="392">검은 천 손잡이 둘</text>
+    <path class="lead" d="M 128 250 L 128 344"/>
+    <path class="lead" d="M 120 250 h 16 M 120 344 h 16"/>
+    <text class="lb" x="20" y="302">두께는</text>
+    <text class="lb" x="20" y="322">무릎 높이</text>
+  </g>
+
+  <text class="s" x="150" y="432">짙은 초록 비닐 커버 · 넓은 색면으로 칠하고 명암과 무늬는 넣지 않습니다</text>
+
+  <!-- ===== 틀린 매트 ===== -->
+  <g transform="translate(0,20)">
+    <text class="bad" x="640" y="452">이렇게 나오면 다시 뽑습니다</text>
+    <path d="M 640 470 L 900 470 L 930 448 L 670 448 Z" fill="#c62828" stroke="#111" stroke-width="3"/>
+    <path d="M 640 470 h 260 v 44 h -260 z" fill="#b71c1c" stroke="#111" stroke-width="3"/>
+    <text class="s" x="640" y="540">각진 빨간 상자 · 손잡이 없음 · 박음질 없음</text>
+  </g>
+</svg>
