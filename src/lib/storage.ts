@@ -97,7 +97,51 @@ export function saveProgress(m: ProgressMap): void {
 
 /* ---------- 전체 초기화(테스트/재시작용) ---------- */
 export function resetAll(): void {
-  [K_PROFILE, K_DECKS, K_PROGRESS].forEach((k) => localStorage.removeItem(k));
+  [K_PROFILE, K_DECKS, K_PROGRESS, K_DAILY].forEach((k) => localStorage.removeItem(k));
+}
+
+/* ---------- 백업 (기기 간 이동) ---------- */
+/** 현재 상태 전체(단어·진도·설정)를 백업 문자열로 만든다. */
+export function makeBackup(profile: Profile, decks: Deck[], progress: ProgressMap): string {
+  const dailyRaw = localStorage.getItem(K_DAILY);
+  return JSON.stringify({
+    app: "word-reset",
+    v: 1,
+    profile,
+    decks,
+    progress,
+    daily: dailyRaw ? JSON.parse(dailyRaw) : null,
+  });
+}
+
+/** 백업 문자열을 읽어 상태로 복원한다. daily는 즉시 저장, 나머지는 반환. */
+export function readBackup(raw: string): { profile: Profile; decks: Deck[]; progress: ProgressMap } {
+  const b = JSON.parse(raw) as {
+    decks?: unknown;
+    progress?: unknown;
+    profile?: Partial<Profile>;
+    daily?: unknown;
+  };
+  if (!b || !Array.isArray(b.decks) || typeof b.progress !== "object" || b.progress === null) {
+    throw new Error("올바른 백업 데이터가 아니에요.");
+  }
+  if (b.daily) write(K_DAILY, b.daily);
+  const p = b.profile ?? {};
+  const profile: Profile = {
+    ...DEFAULT_PROFILE,
+    ...p,
+    cardsEnabled: { ...DEFAULT_PROFILE.cardsEnabled, ...(p.cardsEnabled ?? {}) },
+    timeThreshold: { ...DEFAULT_PROFILE.timeThreshold, ...(p.timeThreshold ?? {}) },
+  };
+  return {
+    profile,
+    decks: (b.decks as Deck[]).map((d) => ({
+      id: d.id,
+      name: d.name,
+      words: (d.words ?? []).map(normalizeWord),
+    })),
+    progress: b.progress as ProgressMap,
+  };
 }
 
 /* ---------- JSON 임포트 ----------

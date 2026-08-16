@@ -196,6 +196,30 @@ describe("완료 기준 — 저장 왕복 [6]", () => {
     } as Storage;
   });
 
+  it("백업 내보내기→가져오기가 단어·진도·설정을 그대로 옮긴다", async () => {
+    const { makeBackup, readBackup, DEFAULT_PROFILE } = await import("./storage");
+    const prof = { ...structuredClone(DEFAULT_PROFILE), dailyNew: 40, retireAfter: 7 };
+    const dks = [structuredClone(unit04) as Deck];
+    const prog: ProgressMap = {
+      "spare#1": {
+        box: 2,
+        nextDue: "2026-08-09",
+        wrongCount: 1,
+        avgMs: 2500,
+        weak: false,
+        lastSeen: "2026-08-06",
+        confusedWith: {},
+        reps: 2,
+      },
+    };
+    const backup = makeBackup(prof, dks, prog);
+    const restored = readBackup(backup);
+    expect(restored.profile.dailyNew).toBe(40);
+    expect(restored.profile.retireAfter).toBe(7);
+    expect(restored.decks[0].words.length).toBe(12);
+    expect(restored.progress["spare#1"]).toEqual(prog["spare#1"]);
+  });
+
   it("progress를 저장하면 다시 읽을 때 그대로 남는다", async () => {
     const { saveProgress, loadProgress } = await import("./storage");
     const m: ProgressMap = {

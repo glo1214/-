@@ -4,6 +4,8 @@ import {
   loadDecks,
   loadProfile,
   loadProgress,
+  makeBackup,
+  readBackup,
   saveDecks,
   saveProfile,
   saveProgress,
@@ -56,6 +58,14 @@ export default function App() {
     setScreen("study");
   };
 
+  const exportBackup = () => makeBackup(profile, decks, progress);
+  const importBackup = (raw: string) => {
+    const restored = readBackup(raw);
+    updateProfile(restored.profile);
+    updateDecks(restored.decks);
+    commitProgress(restored.progress);
+  };
+
   return (
     <div className="app">
       {screen === "home" && (
@@ -81,7 +91,12 @@ export default function App() {
         />
       )}
       {screen === "settings" && (
-        <Settings profile={profile} updateProfile={updateProfile} />
+        <Settings
+          profile={profile}
+          updateProfile={updateProfile}
+          exportBackup={exportBackup}
+          importBackup={importBackup}
+        />
       )}
       <Nav
         screen={screen}

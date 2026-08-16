@@ -1,3 +1,4 @@
+import { useState } from "react";
 import type { Profile } from "../types";
 import { DEFAULT_PROFILE, resetAll } from "../lib/storage";
 
@@ -6,11 +7,37 @@ import { DEFAULT_PROFILE, resetAll } from "../lib/storage";
 export function Settings({
   profile,
   updateProfile,
+  exportBackup,
+  importBackup,
 }: {
   profile: Profile;
   updateProfile: (p: Profile) => void;
+  exportBackup: () => string;
+  importBackup: (raw: string) => void;
 }) {
   const set = (patch: Partial<Profile>) => updateProfile({ ...profile, ...patch });
+
+  const [exp, setExp] = useState<string | null>(null);
+  const [imp, setImp] = useState("");
+  const [backupMsg, setBackupMsg] = useState<string | null>(null);
+
+  function doExport() {
+    const s = exportBackup();
+    setExp(s);
+    navigator.clipboard?.writeText(s).then(
+      () => setBackupMsg("백업이 클립보드에 복사됐어요. 다른 기기의 '가져오기'에 붙여넣으세요."),
+      () => setBackupMsg("아래 칸의 내용을 길게 눌러 전체 복사하세요."),
+    );
+  }
+  function doImport() {
+    try {
+      importBackup(imp.trim());
+      setBackupMsg("복원 완료! 잠시 후 새로고침합니다.");
+      setTimeout(() => location.reload(), 900);
+    } catch (e) {
+      setBackupMsg("실패: " + (e as Error).message);
+    }
+  }
 
   return (
     <div className="screen">
@@ -134,6 +161,45 @@ export function Settings({
         />
         한글 발음 표기 (박스 3부터는 자동 숨김)
       </label>
+
+      <h3 style={{ marginTop: 12 }}>데이터 백업 (기기 간 이동)</h3>
+      <div className="small muted" style={{ marginBottom: 10 }}>
+        단어·진도·설정을 통째로 옮겨요. 폰에서 <b>내보내기</b> → 복사 → 아이패드에서 <b>가져오기</b>에 붙여넣기.
+      </div>
+      <div className="row" style={{ marginBottom: 10 }}>
+        <button className="btn" onClick={doExport}>
+          내보내기(복사)
+        </button>
+      </div>
+      {exp && (
+        <textarea
+          readOnly
+          value={exp}
+          rows={4}
+          onFocus={(e) => e.currentTarget.select()}
+          style={{ marginBottom: 12, fontSize: 12 }}
+        />
+      )}
+      <label className="field">
+        <span>가져오기 — 백업 내용을 붙여넣고 복원</span>
+        <textarea
+          value={imp}
+          rows={4}
+          onChange={(e) => setImp(e.target.value)}
+          placeholder='{"app":"word-reset", ...}'
+          style={{ fontSize: 12 }}
+        />
+      </label>
+      <div className="row" style={{ marginBottom: 6 }}>
+        <button className="btn primary" onClick={doImport} disabled={!imp.trim()}>
+          복원하기
+        </button>
+      </div>
+      {backupMsg && (
+        <div className="small" style={{ color: "var(--muted)", marginBottom: 14 }}>
+          {backupMsg}
+        </div>
+      )}
 
       <div className="row" style={{ marginTop: 8 }}>
         <button className="btn" onClick={() => updateProfile({ ...DEFAULT_PROFILE })}>
