@@ -1,0 +1,6 @@
+{
+  "name": "dasibom",
+  "private": true,
+  "type": "commonjs",
+  "description": "다시봄 — 저장소 루트가 ES 모듈이라 check.js가 CommonJS로 실행되도록 표시만 해 둡니다. 설치할 의존성은 없습니다."
+}

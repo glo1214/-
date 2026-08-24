@@ -10,6 +10,38 @@ const TERMS = {
   'social-life'  : ['사회화','정체성','지위','역할','차별','갈등','편견','고정 관념']
 };
 
+/* 여섯 단계 카드 검사 — 학생용 6단계는 PROJECT_MASTER 18장에서 확정된 순서다.
+   순서가 바뀌면 학습할 때 쓴 단서와 인출할 때 쓸 단서가 어긋나므로 이름까지 고정해서 본다. */
+const SIX_ORDER = ['장면','이름','구조','비교','적용','설명'];
+const SIX_NEED = {
+  scene    : ['mission','watch','ask','ph'],
+  name     : ['items','note'],
+  structure: ['rows','fig','figcap','rule','caution'],
+  compare  : ['lead','ox'],
+  apply    : ['lead','cases'],
+  express  : ['say','cues','next']
+};
+function checkSix(c){
+  if (c.slots || c.subs) bad(`여섯 단계 카드에 slots/subs가 같이 있음: ${c.n}`);
+  if (!c.spec) bad(`AI 진단 기준(spec) 없음: ${c.n}`);
+  const S = c.steps || [];
+  if (S.length !== SIX_ORDER.length) bad(`단계가 여섯 개가 아님 (${S.length}개): ${c.n}`);
+  S.forEach((s,i)=>{
+    if (SIX_ORDER[i] && s.k !== SIX_ORDER[i])
+      bad(`${i+1}번 단계 이름이 확정 순서와 다름: ${c.n} — ${s.k} (${SIX_ORDER[i]} 이어야 함)`);
+    if (!s.t) bad(`단계 제목 없음: ${c.n} ${i+1}번`);
+    const need = SIX_NEED[s.type];
+    if (!need) { bad(`모르는 단계 유형: ${c.n} ${i+1}번 — ${s.type}`); return; }
+    need.forEach(k=>{ if (s[k] === undefined) bad(`${s.k} 단계에 ${k} 없음: ${c.n}`); });
+    if (s.type === 'name')    (s.items||[]).forEach(x=>{ if(!x.name||!x.d) bad(`이름 단계 항목이 비었음: ${c.n}`); });
+    if (s.type === 'compare') (s.ox||[]).forEach(x=>{
+      if (typeof x.a !== 'boolean') bad(`비교 단계 판단값이 없음: ${c.n} — ${x.q}`);
+      if (!x.w) bad(`비교 단계 해설 없음: ${c.n} — ${x.q}`);
+    });
+    if (s.type === 'apply')   (s.cases||[]).forEach(x=>{ if(!x.q||!x.a) bad(`적용 단계 사례가 비었음: ${c.n}`); });
+  });
+}
+
 let fail = 0;
 const bad = m => { console.log('  ✗ ' + m); fail++; };
 
@@ -25,13 +57,17 @@ for (const key of Object.keys(U)) {
 
   // 2) 개념 카드
   u.concepts.forEach(c=>{
-    const f = u.mode === 'slots' ? c.slots : c.subs;
-    if (!f || !f.length) bad(`필드 없음: ${c.n}`);
     if (!c.trigger) bad(`트리거 질문 없음: ${c.n}`);
     if (!c.loop)    bad(`되돌아오는 고리 없음: ${c.n}`);
     if (c.hanja && !c.hnote) bad(`한자만 있고 설명 없음: ${c.n}`);
-    if (u.mode === 'slots' && c.slots && !c.slots.some(s=>s.hl))
-      bad(`형광펜 표시가 하나도 없음: ${c.n}`);
+
+    if (c.card === 'six') checkSix(c);
+    else {
+      const f = u.mode === 'slots' ? c.slots : c.subs;
+      if (!f || !f.length) bad(`필드 없음: ${c.n}`);
+      if (u.mode === 'slots' && c.slots && !c.slots.some(s=>s.hl))
+        bad(`형광펜 표시가 하나도 없음: ${c.n}`);
+    }
   });
 
   // 3) 문항

@@ -8,192 +8,319 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@500;700&family=IBM+Plex+Sans+KR:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
+/* 색·크기 기준은 PROJECT_MASTER 16-1 */
 :root{
-  --paper:#F5F8F5; --card:#FFF; --ink:#12211A; --ink2:#3E5148; --ink3:#6E7E74;
-  --line:#B4C7BB; --green:#1C6746; --green2:#3B8763; --gbg:#E3EFE8; --gsoft:#EFF6F1;
-  --gold:#6E5209; --goldbg:#FAF1DA; --red:#A9382F; --redbg:#F8E7E4;
+  --paper:#FFF9EA;   /* 전체 배경 */
+  --card:#FFFFFF;    /* 학습 카드 */
+  --ink:#1D2B3A;     /* 기본 글자 */
+  --ink2:#4A5A69; --ink3:#7C8A96;
+  --key:#173A63;     /* 핵심 버튼·테두리·현재 단계 */
+  --green:#27846C;   /* 현재 개념·선택 상태 */
+  --gbg:#EAF6F1;     /* 개념 구조 영역 */
+  --gold:#F4C95D;    /* 질문·인출 단서 */
+  --goldbg:#FFF3C9;  /* 연한 질문 영역 */
+  --goldink:#7A5A12;
+  --line:#E0DCCB; --line2:#C4CDD6;
+  --red:#A9382F; --redbg:#F8E7E4;
   --hl:#FFF0A8;
 }
 *{box-sizing:border-box;}
 body{margin:0;background:var(--paper);color:var(--ink);
-  font-family:'IBM Plex Sans KR',sans-serif;font-size:15px;line-height:1.65;}
-h1,h2,h3{font-family:'Noto Serif KR',serif;margin:0;font-weight:500;line-height:1.4;}
-.wrap{max-width:660px;margin:0 auto;padding:18px 14px 80px;}
-.brand{text-align:center;margin-bottom:16px;}
-.brand .bname{font-family:'Noto Serif KR',serif;font-size:24px;letter-spacing:-.01em;}
-.brand .btag{font-size:11.5px;color:var(--ink2);margin-top:3px;letter-spacing:.02em;}
+  font-family:'Pretendard','SUIT','IBM Plex Sans KR','Apple SD Gothic Neo',sans-serif;
+  font-size:19px;line-height:1.7;-webkit-text-size-adjust:100%;}
+h1,h2,h3{font-family:'Noto Serif KR',serif;margin:0;font-weight:500;line-height:1.35;}
+.wrap{max-width:1280px;margin:0 auto;padding:26px 40px 96px;}
+.measure{max-width:760px;}
 
-/* 과목 탭 */
-.subj{display:flex;gap:6px;margin-bottom:12px;}
-.subj button{flex:1;padding:9px 6px;border:1.5px solid var(--line);background:var(--card);
-  border-radius:9px;font-family:inherit;font-size:13px;color:var(--ink2);cursor:pointer;font-weight:500;}
-.subj button[aria-pressed="true"]{background:var(--ink);color:#fff;border-color:var(--ink);}
+/* 상단 브랜드 — 작게 */
+.brand{display:flex;align-items:baseline;justify-content:center;gap:10px;margin-bottom:14px;}
+.brand .bname{font-family:'Noto Serif KR',serif;font-size:19px;letter-spacing:-.01em;color:var(--key);}
+.brand .btag{font-size:14px;color:var(--ink3);}
 
-.steps{display:flex;gap:5px;margin-bottom:16px;}
-.step{flex:1;text-align:center;padding:9px 2px;border-radius:9px;font-size:11px;letter-spacing:-0.02em;
-  border:1.5px solid var(--line);background:var(--card);color:var(--ink2);cursor:pointer;font-weight:500;
-  font-family:inherit;transition:.15s;}
-.step[aria-current="true"]{background:var(--green);color:#fff;border-color:var(--green);}
-.step:focus-visible,.subj button:focus-visible{outline:2px solid var(--green);outline-offset:2px;}
+/* 과목 탭 — 개념보다 커 보이지 않게 */
+.subj{display:flex;gap:8px;justify-content:center;margin-bottom:20px;flex-wrap:wrap;}
+.subj button{padding:7px 15px;border:1.4px solid var(--line2);background:var(--card);
+  border-radius:999px;font-family:inherit;font-size:15px;color:var(--ink2);cursor:pointer;}
+.subj button[aria-pressed="true"]{border-color:var(--key);color:var(--key);font-weight:600;}
+
+/* 네 단계 — 원형 번호 + 단계명 */
+.steps{display:flex;gap:8px;justify-content:center;max-width:840px;margin:0 auto 30px;}
+.step{flex:1;display:flex;flex-direction:column;align-items:center;gap:7px;
+  background:none;border:none;padding:4px 2px;cursor:pointer;font-family:inherit;}
+.step .num{width:40px;height:40px;border-radius:50%;background:var(--card);
+  border:1.6px solid var(--line2);color:var(--ink2);font-size:16px;
+  display:flex;align-items:center;justify-content:center;transition:.15s;}
+.step .nm{font-size:15px;color:var(--ink2);letter-spacing:-.02em;}
+.step[aria-current="true"] .num{background:var(--key);border-color:var(--key);color:#fff;}
+.step[aria-current="true"] .nm{color:var(--key);font-weight:600;}
+.step:hover .num{border-color:var(--key);}
+.step:focus-visible,.subj button:focus-visible{outline:2px solid var(--green);outline-offset:3px;}
 
 .deck{overflow:hidden;}
-.rail{display:flex;transition:transform .3s cubic-bezier(.4,0,.2,1);align-items:flex-start;}
+.rail{display:flex;align-items:flex-start;
+  transition:transform .3s cubic-bezier(.4,0,.2,1), height .28s ease;}
 .pane{flex:0 0 100%;min-width:100%;}
 @media (prefers-reduced-motion: reduce){.rail{transition:none;}}
 
-.hd{margin-bottom:14px;}
-.hd .k{font-size:11px;letter-spacing:.15em;color:var(--green);font-weight:600;}
-.hd h1{font-size:21px;margin-top:5px;}
-.hd p{font-size:13.5px;color:var(--ink);margin:7px 0 0;}
+.hd{max-width:1100px;margin:0 auto 18px;}
+.hd .k{font-size:14px;letter-spacing:.14em;color:var(--green);font-weight:600;}
+.hd h1{font-size:30px;margin-top:6px;}
+.hd p{font-size:17px;color:var(--ink2);margin:9px 0 0;max-width:780px;}
 
-/* 조직도 */
-.chart{overflow-x:auto;padding:4px 0 10px;-webkit-overflow-scrolling:touch;}
-.chart::-webkit-scrollbar{height:6px;}
-.chart::-webkit-scrollbar-thumb{background:var(--line);border-radius:3px;}
-.tree ul{display:flex;justify-content:center;position:relative;padding:16px 0 0;margin:0;}
-.tree li{list-style:none;position:relative;padding:16px 4px 0;text-align:center;}
+/* 위계형 지도 */
+.mapbox{max-width:1200px;margin:0 auto;}
+.chart{overflow-x:auto;padding:6px 0 14px;-webkit-overflow-scrolling:touch;}
+.chart::-webkit-scrollbar{height:7px;}
+.chart::-webkit-scrollbar-thumb{background:var(--line2);border-radius:4px;}
+.tree ul{display:flex;justify-content:center;position:relative;padding:22px 0 0;margin:0;}
+.tree li{list-style:none;position:relative;padding:22px 6px 0;text-align:center;}
 .tree li::before,.tree li::after{content:'';position:absolute;top:0;right:50%;
-  border-top:2px solid var(--line);width:50%;height:16px;}
-.tree li::after{right:auto;left:50%;border-left:2px solid var(--line);}
+  border-top:2px solid var(--line2);width:50%;height:22px;}
+.tree li::after{right:auto;left:50%;border-left:2px solid var(--line2);}
 .tree li:only-child{padding-top:0;}
 .tree li:only-child::after,.tree li:only-child::before{display:none;}
 .tree li:first-child::before,.tree li:last-child::after{border:0 none;}
-.tree li:last-child::before{border-right:2px solid var(--line);border-radius:0 6px 0 0;}
-.tree li:first-child::after{border-radius:6px 0 0 0;}
+.tree li:last-child::before{border-right:2px solid var(--line2);border-radius:0 8px 0 0;}
+.tree li:first-child::after{border-radius:8px 0 0 0;}
 .tree ul ul::before{content:'';position:absolute;top:0;left:50%;
-  border-left:2px solid var(--line);width:0;height:16px;}
+  border-left:2px solid var(--line2);width:0;height:22px;}
 .tree>ul{padding-top:0;}
-.nd{display:inline-block;border:1.5px solid var(--line);background:var(--card);
-  border-radius:10px;padding:8px 10px;font-family:inherit;font-size:12.5px;
+.nd{display:inline-block;border:1.5px solid var(--line2);background:var(--card);
+  border-radius:12px;padding:11px 15px;font-family:inherit;font-size:18px;
   color:var(--ink);cursor:pointer;white-space:nowrap;transition:.15s;}
-.nd:hover{border-color:var(--green2);}
-.nd:focus-visible{outline:2px solid var(--green);outline-offset:2px;}
-.nd.root{background:var(--green);color:#fff;border-color:var(--green);
-  font-family:'Noto Serif KR',serif;font-size:15px;padding:11px 16px;cursor:default;}
-.nd.on{background:var(--gbg);border-color:var(--green2);color:var(--green);font-weight:600;}
-.nd.leaf{background:var(--gsoft);font-size:12px;padding:7px 9px;cursor:default;}
-.nd .plus{color:var(--ink3);font-size:11px;margin-left:4px;}
+.nd:hover{border-color:var(--green);}
+.nd:focus-visible{outline:2px solid var(--green);outline-offset:3px;}
+.nd.root{background:var(--card);color:var(--key);border:2px solid var(--key);
+  font-family:'Noto Serif KR',serif;font-size:26px;padding:13px 26px;cursor:default;}
+.nd.on{background:var(--gbg);border-color:var(--green);color:var(--green);font-weight:600;}
+.nd.leaf{background:var(--gbg);border-color:#CFE5DC;font-size:17px;padding:9px 12px;cursor:default;}
+.nd .plus{color:var(--ink3);font-size:15px;margin-left:6px;}
 .nd.on .plus{color:var(--green);}
-.rootline{text-align:center;font-size:12.5px;color:var(--ink);margin:9px 0 2px;}
-.hint{font-size:12px;color:var(--ink2);text-align:center;margin-top:8px;}
-.guide{background:var(--gbg);border:1.5px solid var(--green2);border-radius:11px;
-  padding:13px 15px;margin-bottom:14px;font-size:13.5px;color:var(--ink);line-height:1.7;
-  position:relative;padding-right:56px;}
-.guide b{color:var(--green);}
-.guide .gx{position:absolute;top:11px;right:11px;background:none;border:none;
-  font-family:inherit;font-size:12px;color:var(--ink2);cursor:pointer;text-decoration:underline;}
-.rel{display:flex;align-items:center;gap:9px;justify-content:center;
-  margin-top:12px;font-size:12.5px;color:var(--gold);
-  background:var(--goldbg);border-radius:9px;padding:9px 13px;}
+.rootline{text-align:center;font-size:17px;color:var(--ink2);margin:12px 0 4px;}
+.rootline b{color:var(--ink);}
+.hint{font-size:15px;color:var(--ink3);text-align:center;margin-top:10px;}
+.guide{background:var(--goldbg);border-left:4px solid var(--gold);border-radius:12px;
+  padding:16px 60px 16px 20px;margin:0 auto 18px;max-width:1100px;font-size:17px;
+  color:var(--ink);line-height:1.75;position:relative;}
+.guide b{color:var(--key);}
+.guide .gx{position:absolute;top:13px;right:14px;background:none;border:none;
+  font-family:inherit;font-size:14px;color:var(--ink2);cursor:pointer;text-decoration:underline;}
+.rel{display:flex;align-items:center;justify-content:center;gap:9px;max-width:1100px;
+  margin:14px auto 0;font-size:16px;color:var(--goldink);
+  background:var(--goldbg);border-radius:11px;padding:12px 16px;}
 
-/* 개념 */
-.pick{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px;}
-.pick button{border:1.5px solid var(--line);background:var(--card);border-radius:20px;
-  padding:7px 13px;font-family:inherit;font-size:12.5px;cursor:pointer;color:var(--ink2);font-weight:500;}
-.pick button[aria-pressed="true"]{background:var(--green);color:#fff;border-color:var(--green);}
-.pick button .dot{display:inline-block;width:6px;height:6px;border-radius:50%;
-  background:var(--green2);margin-left:6px;vertical-align:middle;}
+/* 개념 고르기 */
+.pick{display:flex;gap:8px;flex-wrap:wrap;max-width:1100px;margin:0 auto 16px;}
+.pick button{border:1.5px solid var(--line2);background:var(--card);border-radius:999px;
+  padding:9px 17px;font-family:inherit;font-size:16px;cursor:pointer;color:var(--ink2);}
+.pick button[aria-pressed="true"]{background:var(--gbg);border-color:var(--green);
+  color:var(--green);font-weight:600;}
+.pick button .dot{display:inline-block;width:7px;height:7px;border-radius:50%;
+  background:var(--green);margin-left:7px;vertical-align:middle;}
 
-.card{background:var(--card);border:1.5px solid var(--line);border-radius:14px;padding:20px;margin-bottom:12px;}
-.card h2{font-size:18px;margin-bottom:4px;}
-.qbox{background:var(--gsoft);border-radius:11px;padding:15px;margin:12px 0;text-align:center;}
-.qbox .tag{display:block;font-size:10.5px;letter-spacing:.12em;color:var(--green);font-weight:600;margin-bottom:6px;}
-.qbox .q{font-family:'Noto Serif KR',serif;font-size:16px;color:var(--green);}
-.mission{background:var(--goldbg);border-radius:10px;padding:13px 15px;font-size:13.5px;
-  color:var(--gold);margin-bottom:14px;line-height:1.7;}
-.mission .tag{display:block;font-weight:600;font-size:10.5px;letter-spacing:.1em;margin-bottom:5px;}
+/* 학습 카드 */
+.card{background:var(--card);border:1.5px solid var(--line);border-radius:18px;
+  padding:34px 38px;margin:0 auto 16px;max-width:1100px;}
+.card.main{min-height:660px;}
+.cname{font-family:'Noto Serif KR',serif;font-size:42px;line-height:1.25;margin:0 0 4px;}
+.card h2{font-size:26px;margin-bottom:6px;}
+.qbox{background:var(--goldbg);border-left:4px solid var(--gold);border-radius:12px;
+  padding:20px 24px;margin:16px 0 24px;}
+.qbox .tag{display:block;font-size:14px;letter-spacing:.1em;color:var(--goldink);
+  font-weight:600;margin-bottom:7px;}
+.qbox .qq{font-family:'Noto Serif KR',serif;font-size:28px;color:var(--key);line-height:1.4;}
+.lead{font-size:22px;line-height:1.75;max-width:780px;}
+.mission{background:var(--gbg);border-radius:12px;padding:17px 20px;font-size:18px;
+  color:var(--ink);margin-bottom:18px;line-height:1.75;max-width:820px;}
+.mission .tag{display:block;font-weight:600;font-size:14px;letter-spacing:.08em;
+  color:var(--green);margin-bottom:6px;}
 
-.slots{display:flex;flex-direction:column;gap:11px;}
-.slot .lb{font-size:12.5px;color:var(--ink2);margin-bottom:5px;font-weight:500;}
-.slot .lb.strong{color:var(--ink2);font-weight:600;font-size:13px;}
-.slot input{width:100%;border:1.5px solid var(--line);border-radius:9px;padding:10px 12px;
-  font-family:inherit;font-size:14.5px;background:var(--paper);color:var(--ink);}
+.slots{display:flex;flex-direction:column;gap:14px;max-width:780px;}
+.slot .lb{font-size:16px;color:var(--ink2);margin-bottom:6px;font-weight:500;}
+.slot .lb.strong{font-weight:600;font-size:17px;color:var(--ink);}
+.slot input{width:100%;border:1.5px solid var(--line2);border-radius:10px;padding:13px 15px;
+  font-family:inherit;font-size:18px;background:var(--paper);color:var(--ink);}
 .slot input:focus{outline:2px solid var(--green);outline-offset:1px;border-color:var(--green);}
 
-.answer{font-size:15.5px;line-height:2;margin-top:4px;}
-.answer .hl{background:linear-gradient(transparent 55%, var(--hl) 55%);padding:0 2px;font-weight:600;}
-.subblock{margin-top:14px;}
-.subblock .st{font-size:13px;font-weight:600;color:var(--green);}
-.subblock .sd{font-size:14.5px;line-height:1.8;margin-top:3px;}
-.mine{font-size:12.5px;color:var(--ink2);margin-top:7px;line-height:1.6;}
-.mine b{color:var(--ink2);font-weight:500;}
+.answer{font-size:23px;line-height:2.1;margin-top:6px;max-width:820px;}
+.answer .hl{background:linear-gradient(transparent 55%, var(--hl) 55%);padding:0 3px;font-weight:600;}
+.subblock{margin-top:20px;max-width:820px;}
+.subblock .st{font-size:17px;font-weight:600;color:var(--green);}
+.subblock .sd{font-size:20px;line-height:1.8;margin-top:4px;}
+.mine{font-size:16px;color:var(--ink2);margin-top:9px;line-height:1.6;}
+.mine b{color:var(--ink);font-weight:500;}
 
-.hanja{display:flex;gap:9px;margin-top:14px;}
-.htile{flex:1;text-align:center;border:1.5px solid var(--line);border-radius:11px;
-  padding:12px 6px;background:var(--paper);}
-.htile .ch{font-family:'Noto Serif KR',serif;font-size:24px;}
-.htile .mn{font-size:12px;color:var(--ink);margin-top:3px;line-height:1.5;}
-.hnote{font-size:13px;color:var(--ink);margin-top:9px;line-height:1.75;}
-.row{display:flex;gap:9px;margin-top:12px;font-size:13.5px;}
-.row .k{flex:0 0 40px;color:var(--ink2);font-weight:500;}
-.loop{background:var(--goldbg);border-radius:10px;padding:11px 14px;margin-top:13px;
-  font-size:13.5px;color:var(--gold);}
-.loop .tag{display:block;font-weight:600;font-size:10.5px;letter-spacing:.1em;margin-bottom:4px;}
+.hanja{display:flex;gap:12px;margin-top:22px;max-width:620px;}
+.htile{flex:1;text-align:center;border:1.5px solid var(--line2);border-radius:12px;
+  padding:15px 8px;background:var(--paper);}
+.htile .ch{font-family:'Noto Serif KR',serif;font-size:30px;}
+.htile .mn{font-size:15px;color:var(--ink2);margin-top:4px;line-height:1.5;}
+.hnote{font-size:17px;color:var(--ink);margin-top:11px;line-height:1.8;max-width:780px;}
+.row{display:flex;gap:12px;margin-top:16px;font-size:18px;max-width:780px;}
+.row .k{flex:0 0 52px;color:var(--ink2);font-weight:500;}
+.loop{background:var(--goldbg);border-left:4px solid var(--gold);border-radius:11px;
+  padding:15px 18px;margin-top:20px;font-size:18px;color:var(--ink);max-width:820px;}
+.loop .tag{display:block;font-weight:600;font-size:14px;letter-spacing:.08em;
+  color:var(--goldink);margin-bottom:5px;}
 
-textarea{width:100%;min-height:110px;border:1.5px solid var(--line);border-radius:11px;
-  padding:13px;font-family:inherit;font-size:15px;line-height:1.7;resize:vertical;
+/* 여섯 단계 카드 */
+.six{display:flex;gap:6px;margin:4px 0 26px;flex-wrap:wrap;}
+.sixb{flex:1;min-width:92px;display:flex;flex-direction:column;align-items:center;gap:6px;
+  background:none;border:none;padding:4px 0;cursor:pointer;font-family:inherit;}
+.sixb .n{width:36px;height:36px;border-radius:50%;background:var(--card);
+  border:1.6px solid var(--line2);color:var(--ink2);font-size:15px;
+  display:flex;align-items:center;justify-content:center;transition:.15s;}
+.sixb .l{font-size:15px;color:var(--ink2);}
+.sixb[aria-current="true"] .n{background:var(--green);border-color:var(--green);color:#fff;}
+.sixb[aria-current="true"] .l{color:var(--green);font-weight:600;}
+.sixb.seen .n{border-color:var(--green);color:var(--green);}
+.sixb:focus-visible{outline:2px solid var(--green);outline-offset:3px;}
+.stept{font-family:'Noto Serif KR',serif;font-size:26px;margin-bottom:14px;}
+.watch{background:var(--paper);border:1.5px dashed var(--line2);border-radius:12px;
+  padding:16px 19px;font-size:18px;line-height:1.75;margin-bottom:18px;max-width:820px;}
+.watch .tag{display:block;font-size:14px;font-weight:600;letter-spacing:.08em;
+  color:var(--ink2);margin-bottom:5px;}
+.ask{font-size:20px;line-height:1.75;margin:18px 0 12px;max-width:780px;}
+.namebox{display:flex;gap:12px;flex-wrap:wrap;margin:8px 0 18px;}
+.ntile{flex:1;min-width:210px;background:var(--gbg);border-radius:13px;padding:18px 20px;}
+.ntile .nn{font-family:'Noto Serif KR',serif;font-size:24px;color:var(--green);}
+.ntile .nd2{font-size:17px;color:var(--ink);margin-top:6px;line-height:1.6;}
+.ntile .nmine{font-size:15px;color:var(--ink2);margin-top:9px;}
+.struct{background:var(--gbg);border-radius:14px;padding:22px 24px;margin:6px 0 18px;}
+.stable{width:100%;border-collapse:collapse;font-size:19px;}
+.stable th,.stable td{text-align:left;padding:11px 10px;border-bottom:1px solid #CFE5DC;}
+.stable th{font-size:15px;color:var(--green);font-weight:600;letter-spacing:.04em;}
+.stable td:first-child{font-weight:600;white-space:nowrap;}
+.stable tr:last-child td{border-bottom:none;}
+.fig{margin:8px 0 0;overflow-x:auto;}
+.fig svg{width:100%;height:auto;display:block;}
+.tscroll{overflow-x:auto;}
+.swipehint{display:none;font-size:14px;color:var(--ink3);margin-top:6px;}
+.figcap{font-size:15px;color:var(--ink2);margin-top:8px;}
+.note{font-size:18px;line-height:1.8;margin-top:16px;max-width:800px;}
+.note.warn{background:var(--goldbg);border-left:4px solid var(--gold);border-radius:11px;
+  padding:15px 18px;}
+.ox{border:1.5px solid var(--line2);border-radius:13px;padding:20px 22px;margin-bottom:14px;max-width:860px;}
+.ox .oq{font-size:20px;line-height:1.7;margin-bottom:14px;}
+.oxb{display:flex;gap:10px;}
+.oxb button{flex:0 0 110px;border:1.5px solid var(--line2);background:var(--card);
+  border-radius:10px;padding:11px;font-family:inherit;font-size:18px;cursor:pointer;color:var(--ink);}
+.oxb button:hover:not(:disabled){border-color:var(--key);}
+.oxb button:disabled{cursor:default;}
+.oxb button.pickedok{border-color:var(--green);background:var(--gbg);color:var(--green);font-weight:600;}
+.oxb button.pickedno{border-color:var(--red);background:var(--redbg);color:var(--red);}
+.oxw{margin-top:14px;background:var(--gbg);border-radius:11px;padding:15px 18px;
+  font-size:18px;line-height:1.8;}
+.case{border:1.5px solid var(--line2);border-radius:13px;padding:20px 22px;margin-bottom:14px;max-width:860px;}
+.case .cq{font-size:20px;line-height:1.7;margin-bottom:12px;}
+.case textarea{min-height:74px;}
+.case .ca{margin-top:14px;background:var(--gbg);border-radius:11px;padding:15px 18px;
+  font-size:18px;line-height:1.8;}
+.cues{margin:14px 0 0;padding:0;list-style:none;max-width:820px;}
+.cues li{background:var(--goldbg);border-radius:11px;padding:13px 17px;margin-bottom:9px;
+  font-size:19px;color:var(--ink);}
+.sixnav{display:flex;gap:10px;margin-top:26px;max-width:520px;}
+
+textarea{width:100%;min-height:130px;border:1.5px solid var(--line2);border-radius:12px;
+  padding:15px;font-family:inherit;font-size:19px;line-height:1.75;resize:vertical;
   background:var(--paper);color:var(--ink);}
 textarea:focus{outline:2px solid var(--green);outline-offset:1px;border-color:var(--green);}
 
-.band{border-radius:11px;padding:16px;margin-bottom:12px;}
-.band.pass{background:var(--gbg);border-left:3px solid var(--green2);}
-.band.partial{background:var(--goldbg);border-left:3px solid var(--gold);}
-.band.alert{background:var(--redbg);border-left:3px solid var(--red);}
-.band .v{font-family:'Noto Serif KR',serif;font-size:16px;margin-bottom:6px;}
-.chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:11px;}
-.chip{font-size:12px;border-radius:20px;padding:4px 11px;border:1.5px solid;background:#fff;}
-.chip.have{color:var(--green);border-color:var(--green2);}
+.band{border-radius:13px;padding:20px 22px;margin-bottom:14px;max-width:1100px;}
+.band.pass{background:var(--gbg);border-left:4px solid var(--green);}
+.band.partial{background:var(--goldbg);border-left:4px solid var(--gold);}
+.band.alert{background:var(--redbg);border-left:4px solid var(--red);}
+.band .v{font-family:'Noto Serif KR',serif;font-size:22px;margin-bottom:8px;}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px;}
+.chip{font-size:15px;border-radius:999px;padding:5px 13px;border:1.5px solid;background:#fff;}
+.chip.have{color:var(--green);border-color:var(--green);}
 .chip.miss{color:var(--ink2);border-color:var(--ink3);}
-.spin{text-align:center;color:var(--ink2);font-size:14px;padding:26px 0;}
-.prev{background:var(--paper);border:1.5px dashed var(--line);border-radius:10px;
-  padding:12px 14px;margin-bottom:12px;font-size:13.5px;line-height:1.75;}
-.prev .tag{display:block;font-size:10.5px;letter-spacing:.1em;color:var(--ink2);
-  font-weight:600;margin-bottom:5px;}
+.spin{text-align:center;color:var(--ink2);font-size:18px;padding:40px 0;}
+.prev{background:var(--paper);border:1.5px dashed var(--line2);border-radius:12px;
+  padding:16px 19px;margin:0 auto 14px;max-width:1100px;font-size:18px;line-height:1.8;}
+.prev .tag{display:block;font-size:14px;letter-spacing:.08em;color:var(--ink2);
+  font-weight:600;margin-bottom:6px;}
 
-/* 문항 */
-.q{background:var(--card);border:1.5px solid var(--line);border-radius:14px;padding:20px;margin-bottom:12px;}
-.q .no{display:flex;align-items:baseline;gap:8px;margin-bottom:10px;}
-.q .no .num{font-family:'Noto Serif KR',serif;font-size:15px;color:var(--green);font-weight:600;}
-.q .no .unit{font-size:13.5px;font-weight:600;color:var(--green);
-  background:var(--gbg);border-radius:6px;padding:2px 9px;}
-.q .txt{font-size:15.5px;font-weight:500;margin-bottom:13px;line-height:1.75;}
+/* 확인 문항 */
+.qcard{background:var(--card);border:1.5px solid var(--line);border-radius:16px;
+  padding:28px 32px;margin:0 auto 14px;max-width:1100px;}
+.qcard .no{display:flex;align-items:baseline;gap:11px;margin-bottom:12px;}
+.qcard .no .num{font-family:'Noto Serif KR',serif;font-size:19px;color:var(--key);font-weight:600;}
+.qcard .no .unit{font-size:15px;font-weight:600;color:var(--green);
+  background:var(--gbg);border-radius:999px;padding:3px 12px;}
+.qcard .txt{font-size:21px;font-weight:500;margin-bottom:16px;line-height:1.75;max-width:820px;}
 .opt{display:block;width:100%;text-align:left;background:var(--card);
-  border:1.5px solid var(--line);border-radius:10px;padding:11px 14px;margin-bottom:8px;
-  font-family:inherit;font-size:14px;cursor:pointer;color:var(--ink);line-height:1.6;}
-.opt:hover:not(:disabled){border-color:var(--green2);}
+  border:1.5px solid var(--line2);border-radius:11px;padding:14px 17px;margin-bottom:9px;
+  font-family:inherit;font-size:18px;cursor:pointer;color:var(--ink);line-height:1.6;max-width:860px;}
+.opt:hover:not(:disabled){border-color:var(--key);}
 .opt:disabled{cursor:default;}
-.opt.ok{border-color:var(--green2);background:var(--gbg);}
+.opt.ok{border-color:var(--green);background:var(--gbg);}
 .opt.no{border-color:var(--red);background:var(--redbg);}
-.fb{border-radius:10px;padding:13px;font-size:13.5px;margin-top:4px;line-height:1.75;}
-.fb.ok{background:var(--gbg);border-left:3px solid var(--green2);}
-.fb.no{background:var(--redbg);border-left:3px solid var(--red);}
-.fb .tag{display:block;font-size:10.5px;font-weight:600;letter-spacing:.08em;margin-bottom:5px;}
+.fb{border-radius:11px;padding:16px 18px;font-size:18px;margin-top:6px;line-height:1.8;max-width:860px;}
+.fb.ok{background:var(--gbg);border-left:4px solid var(--green);}
+.fb.no{background:var(--redbg);border-left:4px solid var(--red);}
+.fb .tag{display:block;font-size:14px;font-weight:600;letter-spacing:.06em;margin-bottom:6px;}
 .fb.ok .tag{color:var(--green);} .fb.no .tag{color:var(--red);}
-.lblwhy{font-size:12.5px;color:var(--green);font-weight:600;margin:13px 0 6px;}
-.done{background:var(--card);border:1.5px solid var(--line);border-radius:14px;padding:20px;text-align:center;}
-.done h2{font-size:17px;margin-bottom:8px;}
-.done p{font-size:13.5px;color:var(--ink);margin:0;}
+.lblwhy{font-size:16px;color:var(--green);font-weight:600;margin:16px 0 7px;}
+.done{background:var(--card);border:1.5px solid var(--line);border-radius:16px;
+  padding:28px;text-align:center;max-width:1100px;margin:0 auto;}
+.done h2{font-size:23px;margin-bottom:9px;}
+.done p{font-size:18px;color:var(--ink2);margin:0;}
 
-.nav{display:flex;gap:8px;margin-top:16px;}
-.btn{flex:1;background:var(--green);color:#fff;border:1.5px solid var(--green);
-  border-radius:10px;padding:12px;font-family:inherit;font-size:14px;cursor:pointer;}
-.btn.ghost{background:transparent;color:var(--ink2);border-color:var(--line);}
+.nav{display:flex;gap:10px;margin:22px auto 0;max-width:1100px;}
+.btn{background:var(--key);color:#fff;border:1.6px solid var(--key);
+  border-radius:11px;padding:14px 22px;font-family:inherit;font-size:17px;cursor:pointer;}
+.btn.wide{flex:1;}
+.btn.ghost{background:transparent;color:var(--ink2);border-color:var(--line2);}
+.btn.ghost:hover{border-color:var(--key);color:var(--key);}
 .btn:disabled{opacity:.4;cursor:not-allowed;}
-.btn:focus-visible{outline:2px solid var(--green);outline-offset:2px;}
+.btn:focus-visible{outline:2px solid var(--green);outline-offset:3px;}
+.err{color:var(--red);font-size:16px;margin-top:10px;}
+
+/* 작은 노트북 */
+@media (max-width:1200px){
+  body{font-size:18px;}
+  .wrap{padding:22px 28px 84px;}
+  .card{padding:28px 30px;}
+  .cname{font-size:36px;}
+  .qbox .qq{font-size:25px;}
+  .lead{font-size:20px;}
+  .nd{font-size:17px;} .nd.root{font-size:23px;}
+}
+/* 태블릿·휴대폰 */
+@media (max-width:820px){
+  body{font-size:16px;}
+  .wrap{padding:16px 16px 72px;}
+  .card,.qcard{padding:22px 18px;border-radius:14px;}
+  .card.main{min-height:0;}
+  .cname{font-size:29px;}
+  .qbox{padding:16px 17px;} .qbox .qq{font-size:21px;}
+  .lead{font-size:18px;} .hd h1{font-size:24px;}
+  .step .num{width:34px;height:34px;font-size:15px;} .step .nm{font-size:13px;}
+  .sixb{min-width:74px;} .sixb .l{font-size:13px;}
+  .nd{font-size:16px;padding:9px 11px;} .nd.root{font-size:20px;padding:11px 18px;}
+  .stept{font-size:22px;} .answer{font-size:19px;}
+  .ntile{min-width:100%;}
+  .stable{font-size:17px;min-width:430px;}
+  .fig svg{min-width:560px;}
+  .swipehint{display:block;}
+  .nav{flex-wrap:wrap;}
+}
 </style>
 </head>
 <body>
 <div class="wrap">
   <div class="brand">
-    <div class="bname">다시봄</div>
-    <div class="btag">글로온 &middot; 글로, 생각을 켜다</div>
+    <span class="bname">다시봄</span>
+    <span class="btag">글로온 · 글로, 생각을 켜다</span>
   </div>
   <div class="subj" id="subj"></div>
-  <div class="steps">
-    <button class="step" aria-current="true" onclick="go(0)">지도 보기</button>
-    <button class="step" onclick="go(1)">개념 읽기</button>
-    <button class="step" onclick="go(2)">개념 말하기</button>
-    <button class="step" onclick="go(3)">개념 확인하기</button>
+
+  <div class="steps" id="steps">
+    <button class="step" aria-current="true" onclick="go(0)"><span class="num">1</span><span class="nm">지도 보기</span></button>
+    <button class="step" onclick="go(1)"><span class="num">2</span><span class="nm">개념 읽기</span></button>
+    <button class="step" onclick="go(2)"><span class="num">3</span><span class="nm">개념 말하기</span></button>
+    <button class="step" onclick="go(3)"><span class="num">4</span><span class="nm">개념 확인하기</span></button>
   </div>
 
   <div class="deck"><div class="rail" id="rail">
@@ -208,9 +335,11 @@ textarea:focus{outline:2px solid var(--green);outline-offset:1px;border-color:va
         네 단계를 차례로 지나면 오늘 배운 것이 정리됩니다. 20분쯤 걸립니다.
         <button class="gx" onclick="document.getElementById('guide').style.display='none'">닫기</button>
       </div>
-      <div class="chart"><div class="tree" id="tree"></div></div>
-      <div class="rel" id="rel" style="display:none"></div>
-      <p class="hint">한 번에 한 갈래만 열립니다. 넓으면 옆으로 넘겨서 볼 수 있어요.</p>
+      <div class="mapbox">
+        <div class="chart"><div class="tree" id="tree"></div></div>
+        <div class="rel" id="rel" style="display:none"></div>
+        <p class="hint">한 번에 한 갈래만 열립니다. 넓으면 옆으로 넘겨서 볼 수 있어요.</p>
+      </div>
       <div class="nav"><button class="btn" onclick="go(1)">개념 읽으러 →</button></div>
     </section>
 
@@ -291,6 +420,78 @@ window.UNITS["science-force"] = {
   },
 
   concepts: [
+    /* 여섯 단계 카드 시범 — 장면 · 이름 · 구조 · 비교 · 적용 · 설명.
+       문제 검증은 6단계 안에 넣지 않고 4단계 「개념 확인하기」가 맡습니다.
+       장면은 앱에 그림을 새로 넣지 않고 교과서 그림과 실물 관찰로 대신합니다. */
+    { n: "힘의 표현", short: "힘의 표현", card: "six",
+      trigger: "힘을 어떻게 표시하는가?",
+      spec: [
+        "[정답 뼈대] 힘의 크기 = 화살표의 길이 · 힘의 방향 = 화살표가 향하는 쪽 · 작용점 = 화살표의 시작점",
+        "[단위] 힘의 크기는 N(뉴턴)으로 나타낸다",
+        "[필수 요소]",
+        "- 세 가지를 화살표 하나로 함께 나타낸다는 것",
+        "- 크기: 화살표가 길수록 큰 힘이고, 한 그림 안에서는 같은 비율로 그린다",
+        "- 방향: 화살촉이 향하는 쪽이며, 물체가 움직이는 방향과 반드시 같지는 않다",
+        "- 작용점: 힘이 실제로 작용하는 자리이고 화살표는 그 자리에서 시작한다"
+      ].join("\n"),
+
+      steps: [
+        { k: "장면", type: "scene", t: "같은 물체를 밀어도 달라지는 것",
+          mission: "교과서에서 <b>힘을 화살표로 나타낸 그림</b>이 있는 곳을 펴세요. 설명을 먼저 읽지 말고, 화살표가 <b>어디에서 시작해 어디를 향하는지</b>만 봅니다.",
+          watch: "책상 위에 지우개를 놓고 한 번은 살짝, 한 번은 세게 밀어 보세요. 이번에는 옆면을 밀어 보고, 같은 세기로 위쪽 모서리도 밀어 보세요.",
+          ask: "같은 지우개를 밀었는데 <b>달라진 것</b>은 무엇이었나요? 짐작해서 세 가지를 적어 보세요. 지금은 틀려도 괜찮습니다.",
+          ph: ["달라진 것 하나", "또 하나", "나머지 하나"] },
+
+        { k: "이름", type: "name", t: "달라진 것에 이름 붙이기",
+          items: [
+            { name: "힘의 크기", d: "얼마나 세게 미는가" },
+            { name: "힘의 방향", d: "어느 쪽으로 미는가" },
+            { name: "작용점",    d: "물체의 어느 자리에 미는가" }
+          ],
+          note: "이 셋을 묶어 <b>힘의 세 가지 요소</b>라고 합니다. 셋 가운데 하나만 달라져도 물체에 일어나는 일이 달라지기 때문에, 힘을 나타낼 때는 세 가지를 함께 말해야 합니다. 힘의 크기는 <b>N(뉴턴)</b>이라는 단위로 나타냅니다." },
+
+        { k: "구조", type: "structure", t: "화살표 하나가 세 가지를 한꺼번에 나타낸다",
+          rows: [
+            ["힘의 크기", "화살표의 길이",      "길수록 큰 힘"],
+            ["힘의 방향", "화살표가 향하는 쪽", "화살촉이 가리키는 방향"],
+            ["작용점",    "화살표의 시작점",    "힘이 실제로 작용하는 자리"]
+          ],
+          fig: "arrow3",
+          figcap: "화살표 하나 안에 길이 · 향하는 쪽 · 시작점이 함께 들어 있습니다.",
+          rule: "한 그림 안에서는 <b>같은 비율</b>로 그립니다. 2 N을 1 cm로 그렸다면 4 N은 2 cm입니다. 그래서 화살표 두 개를 나란히 놓으면 어느 힘이 더 큰지 길이만으로 알 수 있습니다.",
+          caution: "화살표를 그릴 때 <b>시작점을 빠뜨리기</b> 쉽습니다. 손으로 미는 힘은 <b>손이 닿은 자리</b>에서 시작합니다. 다만 중력처럼 물체 전체에 작용하는 힘은 물체의 <b>가운데</b>에서 시작하는 화살표로 나타냅니다." },
+
+        { k: "비교", type: "compare", t: "내가 알던 것과 맞춰 보기",
+          lead: "먼저 스스로 판단해 보세요. 고른 뒤에 설명이 열립니다.",
+          ox: [
+            { q: "화살표의 방향은 <b>물체가 움직이는 방향</b>을 나타낸다.", a: false,
+              w: "화살표는 <b>힘이 작용하는 방향</b>을 나타냅니다. 달리던 자전거가 브레이크를 잡으면 자전거는 앞으로 나아가지만 자전거가 받는 힘은 <b>뒤쪽</b>입니다. 움직이는 쪽과 힘이 작용하는 쪽은 같을 때도 있고 반대일 때도 있습니다." },
+            { q: "화살표는 물체의 어디에서 시작해도 상관없다.", a: false,
+              w: "시작점이 곧 <b>작용점</b>이라 아무 자리에나 그릴 수 없습니다. 상자의 옆면을 밀었다면 화살표는 옆면에서, 위 모서리를 밀었다면 위 모서리에서 시작합니다. 같은 크기로 밀어도 미는 자리가 달라지면 상자가 미끄러지기만 할 수도 있고 기울어질 수도 있습니다." }
+          ] },
+
+        { k: "적용", type: "apply", t: "다른 장면에서도 같은가",
+          lead: "짧게 판단하고 한 줄로 쓰세요. 문제집을 푸는 시간이 아니라, 방금 만든 개념을 꺼내 보는 시간입니다.",
+          cases: [
+            { q: "같은 상자를 같은 자리에서 같은 쪽으로 밀었는데, 한 사람은 2 N으로 다른 사람은 4 N으로 밀었습니다. 두 화살표에서 <b>무엇이</b> 어떻게 달라질까요?",
+              ph: "한 줄로",
+              a: "달라지는 것은 <b>화살표의 길이</b>입니다. 4 N으로 민 화살표가 두 배로 깁니다. 미는 자리와 미는 쪽이 같으므로 시작점과 향하는 쪽은 그대로입니다." },
+            { q: "물컵의 옆면을 손가락으로 밀었습니다. 화살표는 물컵의 <b>어디에서</b> 시작해야 할까요? 그렇게 생각한 까닭도 함께 쓰세요.",
+              ph: "어디에서 시작하는지 + 그 까닭",
+              a: "<b>손가락이 닿은 옆면</b>에서 시작합니다. 힘이 실제로 작용한 자리가 작용점이고 화살표는 그 자리에서 출발하기 때문입니다. 물컵의 가운데에서 그리면 실제로 힘을 준 자리와 달라집니다." }
+          ] },
+
+        { k: "설명", type: "express", t: "책을 덮고 말해 보기",
+          say: "교과서와 화면을 덮고, 옆 사람에게 설명하듯 소리 내어 말해 보세요. 아래 세 가지가 모두 나오면 됩니다.",
+          cues: [
+            "화살표의 길이는 무엇을 나타내는가?",
+            "화살표가 향하는 쪽은 무엇을 나타내는가?",
+            "화살표의 시작점은 무엇을 나타내는가?"
+          ],
+          next: "말로 해 본 뒤 <b>개념 말하기</b> 단계에서 두세 문장으로 쓰면 진단을 받을 수 있습니다." }
+      ],
+      loop: "지도의 맨 위에서 힘은 무엇을 바꾸는 원인이라고 했나? 화살표가 향하는 쪽이 달라지면 물체에는 무엇이 달라질까?" },
+
     { n: "중력", short: "중력",
       trigger: "무엇이 · 무엇을 · 어느 쪽으로 당기는가?",
       mission: "교과서에서 <b>중력</b>을 다루는 부분을 펴세요. 목차에서 직접 찾아보세요.",
@@ -565,7 +766,7 @@ const KEYS = Object.keys(window.UNITS);
 if(!KEYS.length){
   document.body.innerHTML =
     '<div style="max-width:560px;margin:60px auto;padding:24px;font-family:sans-serif;'+
-    'border:1.5px solid #CBD9D0;border-radius:14px;background:#fff;line-height:1.8">'+
+    'border:1.5px solid #C4CDD6;border-radius:14px;background:#fff;line-height:1.8">'+
     '<b>단원 데이터를 불러오지 못했습니다.</b><br>'+
     'app 폴더에서 <code>python3 build_app.py</code> 를 실행해 index.html 을 다시 만들어 주세요.</div>';
   throw new Error("no unit data");
@@ -576,7 +777,7 @@ let stage = 0, ci = 0;
 let o1 = null, o2 = null;
 
 /* 학습 기록 — HANDOVER 8장 스키마 */
-let REC = {};                  // REC[과목][개념명] = {상태, 자기설명[], 오답[], 틀린횟수, 궁금한점[]}
+let REC = {};                  // REC[과목][개념명] = {상태, 자기설명[], 오답[], 틀린횟수}
 let mem = {};
 const rec = (name) => {
   REC[SK] = REC[SK] || {};
@@ -610,7 +811,19 @@ function go(i){
   document.getElementById("rail").style.transform = `translateX(-${i*100}%)`;
   document.querySelectorAll(".step").forEach((b,j)=>b.setAttribute("aria-current", j===i));
   if(i===2) drawSelf();
+  syncH();
   window.scrollTo({top:0,behavior:"smooth"});
+}
+
+/* 네 화면이 한 줄에 붙어 있어서, 레일 높이를 지금 보고 있는 화면에 맞춘다.
+   맞추지 않으면 가장 긴 화면(확인 문항) 높이만큼 아래가 비어 보인다. */
+let hTick = 0;
+function syncH(){
+  cancelAnimationFrame(hTick);
+  hTick = requestAnimationFrame(()=>{
+    const pane = document.querySelectorAll(".pane")[stage];
+    if(pane) document.getElementById("rail").style.height = pane.offsetHeight + "px";
+  });
 }
 
 /* ===== 트리 ===== */
@@ -637,13 +850,60 @@ function drawTree(){
 function t1(i){ o1 = (o1===i?null:i); o2 = null; drawTree(); }
 function t2(j){ o2 = (o2===j?null:j); drawTree(); }
 
+/* ===== 도식 — 교재 그림을 따르지 않고 새로 그린 SVG ===== */
+const FIGS = {
+  arrow3: () => `
+<svg viewBox="0 0 760 400" role="img" aria-label="화살표 하나가 힘의 크기·방향·작용점을 함께 나타내는 도식">
+  <defs>
+    <marker id="ah" viewBox="0 0 12 12" refX="10" refY="6" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0,0 L12,6 L0,12 z" fill="#173A63"/>
+    </marker>
+  </defs>
+  <g font-family="inherit" fill="#1D2B3A">
+    <rect x="120" y="62" width="110" height="106" rx="8" fill="#FFFFFF" stroke="#1D2B3A" stroke-width="2"/>
+    <text x="175" y="122" font-size="17" text-anchor="middle" fill="#4A5A69">물체</text>
+    <line x1="230" y1="115" x2="462" y2="115" stroke="#173A63" stroke-width="5" marker-end="url(#ah)"/>
+    <circle cx="230" cy="115" r="7" fill="#27846C"/>
+    <line x1="230" y1="74" x2="230" y2="52" stroke="#C4CDD6" stroke-width="1.5"/>
+    <line x1="470" y1="104" x2="470" y2="52" stroke="#C4CDD6" stroke-width="1.5"/>
+    <line x1="230" y1="52" x2="470" y2="52" stroke="#4A5A69" stroke-width="1.5"/>
+    <text x="350" y="40" font-size="17" text-anchor="middle" fill="#4A5A69">길이 = 힘의 크기</text>
+    <line x1="230" y1="128" x2="230" y2="196" stroke="#27846C" stroke-width="1.5" stroke-dasharray="4 4"/>
+    <text x="230" y="220" font-size="17" text-anchor="middle" fill="#27846C">시작점 = 작용점</text>
+    <text x="486" y="108" font-size="17" fill="#4A5A69">화살촉이 향하는 쪽</text>
+    <text x="486" y="134" font-size="17" fill="#4A5A69">= 힘의 방향</text>
+    <line x1="20" y1="256" x2="740" y2="256" stroke="#CFE5DC" stroke-width="2"/>
+    <text x="20" y="292" font-size="17" fill="#4A5A69">같은 그림 안에서는 같은 비율로 — 힘이 2배면 화살표도 2배</text>
+    <line x1="230" y1="306" x2="230" y2="380" stroke="#C4CDD6" stroke-width="1.5" stroke-dasharray="4 4"/>
+    <line x1="230" y1="326" x2="322" y2="326" stroke="#173A63" stroke-width="5" marker-end="url(#ah)"/>
+    <circle cx="230" cy="326" r="6" fill="#27846C"/>
+    <text x="352" y="332" font-size="17" fill="#1D2B3A">2 N</text>
+    <line x1="230" y1="368" x2="422" y2="368" stroke="#173A63" stroke-width="5" marker-end="url(#ah)"/>
+    <circle cx="230" cy="368" r="6" fill="#27846C"/>
+    <text x="452" y="374" font-size="17" fill="#1D2B3A">4 N</text>
+  </g>
+</svg>`
+};
+
 /* ===== 개념 ===== */
 let filled = {};
-function drawConc(){
-  const u = U(), C = u.concepts, c = C[ci], f = filled[SK+":"+c.n];
-  document.getElementById("pick").innerHTML = C.map((x,i)=>
-    `<button aria-pressed="${i===ci}" onclick="ci=${i};drawConc()">${x.short}${filled[SK+":"+x.n]?'<span class="dot"></span>':''}</button>`).join("");
 
+function drawConc(){
+  const u = U(), C = u.concepts, c = C[ci];
+  document.getElementById("pick").innerHTML = C.map((x,i)=>{
+    const k = SK+":"+x.n;
+    const on = x.card==="six" ? (SIX[k] && SIX[k].i>=x.steps.length-1) : !!filled[k];
+    return `<button aria-pressed="${i===ci}" onclick="pickC(${i})">${x.short}${on?'<span class="dot"></span>':''}</button>`;
+  }).join("");
+
+  document.getElementById("conc").innerHTML =
+    (c.card === "six") ? sixCard(u,c) : plainCard(u,c);
+}
+function pickC(i){ ci = i; drawConc(); }
+
+/* --- 기존 카드(빈칸 → 대조) : 과학 힘의 종류 · 사회 소제목 --- */
+function plainCard(u,c){
+  const f = filled[SK+":"+c.n];
   const isSlots = u.mode === "slots";
   const fields  = isSlots ? c.slots : c.subs;
 
@@ -674,10 +934,10 @@ function drawConc(){
     <div class="nav"><button class="btn" onclick="fillC()">채웠어요</button></div>
   `;
 
-  document.getElementById("conc").innerHTML = `
-    <div class="card">
-      <h2>${c.n}</h2>
-      <div class="qbox"><span class="tag">${isSlots?"이 개념의 질문":"이 주제의 질문"}</span><div class="q">${c.trigger}</div></div>
+  return `<div class="card main">
+      <h2 class="cname">${c.n}</h2>
+      <div class="qbox"><span class="tag">${u.mode==="slots"?"이 개념의 질문":"이 주제의 질문"}</span>
+        <div class="qq">${c.trigger}</div></div>
       ${body}
     </div>`;
 }
@@ -690,6 +950,110 @@ function fillC(){
   drawConc();
 }
 function resetC(){ delete filled[SK+":"+U().concepts[ci].n]; drawConc(); }
+
+/* --- 여섯 단계 카드 (시범: 과학 「힘의 표현」) ---
+   장면 → 이름 → 구조 → 비교 → 적용 → 설명. 문제 검증은 4단계가 맡습니다. */
+let SIX = {};
+function sixS(){
+  const k = SK+":"+U().concepts[ci].n;
+  SIX[k] = SIX[k] || { i:0, pre:{}, ox:{}, cs:{}, show:{} };
+  return SIX[k];
+}
+function sixGo(i){
+  const s = sixS(), n = U().concepts[ci].steps.length;
+  s.i = Math.max(0, Math.min(n-1, i));
+  drawConc();
+  const el = document.querySelector("#conc .card");
+  if(el) window.scrollTo({top: el.getBoundingClientRect().top + window.scrollY - 16, behavior:"smooth"});
+}
+function sixPre(j,v){ sixS().pre[j] = v; }
+function sixOx(i,v){ sixS().ox[i] = v; drawConc(); }
+function sixCs(i,v){ sixS().cs[i] = v; }
+function sixShow(i){ sixS().show[i] = true; drawConc(); }
+
+function sixCard(u,c){
+  const s = sixS(), st = c.steps[s.i];
+  const rail = c.steps.map((x,i)=>
+    `<button class="sixb ${i<s.i?'seen':''}" aria-current="${i===s.i}" onclick="sixGo(${i})">
+       <span class="n">${i+1}</span><span class="l">${x.k}</span></button>`).join("");
+
+  let body = "";
+  if(st.type === "scene"){
+    body = `
+      <div class="mission"><span class="tag">교과서에서 보기</span>${st.mission}</div>
+      <div class="watch"><span class="tag">직접 해 보기</span>${st.watch}</div>
+      <div class="ask">${st.ask}</div>
+      <div class="slots">${st.ph.map((p,j)=>`<div class="slot">
+        <input value="${esc(s.pre[j]||"")}" placeholder="${p}" oninput="sixPre(${j},this.value)">
+      </div>`).join("")}</div>`;
+  }
+  else if(st.type === "name"){
+    const mine = Object.keys(s.pre).length ? st.items.map((_,j)=>esc(s.pre[j]||"")) : [];
+    body = `
+      <div class="namebox">${st.items.map((it,j)=>`<div class="ntile">
+        <div class="nn">${it.name}</div><div class="nd2">${it.d}</div>
+        <div class="nmine">내가 짐작해 쓴 것 — <b>${mine[j]||"(빈칸)"}</b></div>
+      </div>`).join("")}</div>
+      <div class="note measure">${st.note}</div>`;
+  }
+  else if(st.type === "structure"){
+    body = `
+      <div class="struct">
+        <div class="tscroll"><table class="stable">
+          <tr><th>힘에서 무엇을</th><th>화살표의 무엇으로</th><th>어떻게 읽는가</th></tr>
+          ${st.rows.map(r=>`<tr><td>${r[0]}</td><td>${r[1]}</td><td>${r[2]}</td></tr>`).join("")}
+        </table></div>
+        <div class="fig">${FIGS[st.fig] ? FIGS[st.fig]() : ""}</div>
+        <div class="figcap">${st.figcap}</div>
+        <div class="swipehint">표와 그림은 옆으로 넘겨서 볼 수 있어요.</div>
+      </div>
+      <div class="note measure">${st.rule}</div>
+      <div class="note warn measure">${st.caution}</div>`;
+  }
+  else if(st.type === "compare"){
+    body = `<div class="ask">${st.lead}</div>` + st.ox.map((x,i)=>{
+      const p = s.ox[i];
+      const cls = v => p===undefined ? "" : (p===v ? (v===x.a ? "pickedok" : "pickedno") : "");
+      return `<div class="ox">
+        <div class="oq">${x.q}</div>
+        <div class="oxb">
+          <button class="${cls(true)}" ${p!==undefined?"disabled":""} onclick="sixOx(${i},true)">맞다</button>
+          <button class="${cls(false)}" ${p!==undefined?"disabled":""} onclick="sixOx(${i},false)">아니다</button>
+        </div>
+        ${p!==undefined?`<div class="oxw">${x.w}</div>`:""}
+      </div>`;
+    }).join("");
+  }
+  else if(st.type === "apply"){
+    body = `<div class="ask">${st.lead}</div>` + st.cases.map((x,i)=>`
+      <div class="case">
+        <div class="cq">${x.q}</div>
+        <textarea placeholder="${x.ph}" oninput="sixCs(${i},this.value)">${esc(s.cs[i]||"")}</textarea>
+        ${s.show[i] ? `<div class="ca">${x.a}</div>`
+                    : `<div class="nav" style="margin-top:12px"><button class="btn ghost" onclick="sixShow(${i})">쓴 뒤에 맞춰 보기</button></div>`}
+      </div>`).join("");
+  }
+  else if(st.type === "express"){
+    body = `
+      <div class="ask">${st.say}</div>
+      <ul class="cues">${st.cues.map(q=>`<li>${q}</li>`).join("")}</ul>
+      <div class="note measure">${st.next}</div>
+      <div class="loop"><span class="tag">맨 위로 돌아가기</span>${c.loop}</div>
+      <div class="nav" style="max-width:340px"><button class="btn" onclick="go(2)">개념 말하러 →</button></div>`;
+  }
+
+  return `<div class="card main">
+    <h2 class="cname">${c.n}</h2>
+    <div class="qbox"><span class="tag">이 개념의 질문</span><div class="qq">${c.trigger}</div></div>
+    <div class="six">${rail}</div>
+    <div class="stept">${s.i+1}. ${st.t}</div>
+    ${body}
+    <div class="sixnav">
+      <button class="btn ghost wide" ${s.i===0?"disabled":""} onclick="sixGo(${s.i-1})">← 이전</button>
+      <button class="btn wide" ${s.i===c.steps.length-1?"disabled":""} onclick="sixGo(${s.i+1})">다음 →</button>
+    </div>
+  </div>`;
+}
 
 /* ===== 내 말로 + 진단 ===== */
 let diagState = null;
@@ -705,13 +1069,13 @@ function drawSelf(){
     box.innerHTML = `
       <div class="band ${lv}">
         <div class="v">${esc(d.v)}</div>
-        <div style="font-size:14px">${esc(d.comment)}</div>
+        <div style="font-size:18px">${esc(d.comment)}</div>
         <div class="chips">
           ${(d.have||[]).map(h=>`<span class="chip have">${esc(h)} 있음</span>`).join("")}
           ${(d.missing||[]).map(m=>`<span class="chip miss">${esc(m)} 빠짐</span>`).join("")}
         </div>
       </div>
-      ${d.followup?`<div class="loop"><span class="tag">다시 생각해 보기</span>${esc(d.followup)}</div>`:""}
+      ${d.followup?`<div class="loop" style="max-width:1100px;margin:0 auto"><span class="tag">다시 생각해 보기</span>${esc(d.followup)}</div>`:""}
       <div class="nav"><button class="btn ghost" onclick="diagState=null;drawSelf()">고쳐 쓰기</button></div>`;
     return;
   }
@@ -724,9 +1088,9 @@ function drawSelf(){
   box.innerHTML = `
     ${prev}
     <div class="card">
-      <div class="qbox"><span class="tag">이 주제의 질문</span><div class="q">${c.trigger}</div></div>
+      <div class="qbox"><span class="tag">이 개념의 질문</span><div class="qq">${c.trigger}</div></div>
       <textarea id="ans" placeholder="자기 말로 두세 문장"></textarea>
-      <div id="err" style="color:var(--red);font-size:13px;margin-top:8px"></div>
+      <div id="err" class="err"></div>
       <div class="nav"><button class="btn" onclick="diagnose()">진단받기</button></div>
     </div>`;
 }
@@ -737,9 +1101,10 @@ async function diagnose(){
   const u = U(), c = u.concepts[ci];
   diagState = "loading"; drawSelf();
 
-  const spec = u.mode==="slots"
-    ? `[정답 뼈대] ${c.slots.map(s=>s.v).join(" · ")}\n[크기] ${c.size}\n[필수 요소]\n${c.slots.map(s=>`- ${s.k}: ${s.v}`).join("\n")}`
-    : `[이 주제의 질문] ${c.trigger}\n[교과서가 다루는 소제목과 핵심]\n${c.subs.map(s=>`- ${s.t}: ${s.d}`).join("\n")}`;
+  const spec = c.spec ? c.spec
+    : (u.mode==="slots"
+      ? `[정답 뼈대] ${c.slots.map(s=>s.v).join(" · ")}\n[크기] ${c.size}\n[필수 요소]\n${c.slots.map(s=>`- ${s.k}: ${s.v}`).join("\n")}`
+      : `[이 주제의 질문] ${c.trigger}\n[교과서가 다루는 소제목과 핵심]\n${c.subs.map(s=>`- ${s.t}: ${s.d}`).join("\n")}`);
 
   const sys = `너는 중학교 1학년 ${u.subject} 개념 진단 전문가다. 학생이 '${c.short}'에 대해 자기 말로 쓴 글을 진단한다.
 
@@ -783,12 +1148,12 @@ function drawQuiz(){
   if(A.length !== Q.length){ A = Array(Q.length).fill(null); W = Array(Q.length).fill(""); }
   document.getElementById("quiz").innerHTML = Q.map((q,i)=>{
     const a = A[i];
-    return `<div class="q"><div class="no"><span class="num">${i+1}</span><span class="unit">${q.unit}</span></div><div class="txt">${q.t}</div>
+    return `<div class="qcard"><div class="no"><span class="num">${i+1}</span><span class="unit">${q.unit}</span></div><div class="txt">${q.t}</div>
       ${q.o.map((o,j)=>{ let c="opt"; if(a!==null){ if(o.ok) c+=" ok"; else if(a===j) c+=" no"; }
         return `<button class="${c}" ${a!==null?"disabled":""} onclick="pk(${i},${j})">${o.s}</button>`;}).join("")}
       ${a!==null?`<div class="fb ${q.o[a].ok?'ok':'no'}"><span class="tag">${q.o[a].ok?"맞았어요":"여기서 갈렸어요"}</span>${q.o[a].w}</div>`:""}
       ${(a!==null && q.why)?`<div class="lblwhy">그렇게 생각한 까닭을 한 줄로 써 보세요</div>
-        <textarea id="wy${i}" style="min-height:60px" placeholder="${q.o[a].ok?'왜 그렇게 판단했나요?':'어디서 헷갈렸나요?'}">${esc(W[i])}</textarea>`:""}
+        <textarea id="wy${i}" style="min-height:70px" placeholder="${q.o[a].ok?'왜 그렇게 판단했나요?':'어느 부분이 헷갈렸나요?'}">${esc(W[i])}</textarea>`:""}
     </div>`;}).join("")
     + (A.every(x=>x!==null) ? `<div class="done"><h2>여기까지</h2>
       <p>틀린 것이 있다면 그 카드로 한 번만 돌아가 보세요.<br>본 문제는 이틀 뒤에 종이로 풉니다.</p></div>` : "");
@@ -820,7 +1185,12 @@ function drawAll(){
   document.getElementById("qN").textContent = u.quiz.length;
   drawTree(); drawConc(); drawQuiz();
 }
-(async ()=>{ await load(); drawAll(); })();
+(async ()=>{
+  await load(); drawAll(); syncH();
+  const ro = new ResizeObserver(syncH);
+  document.querySelectorAll(".pane").forEach(p=>ro.observe(p));
+  window.addEventListener("resize", syncH);
+})();
 </script>
 </body>
 </html>
