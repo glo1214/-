@@ -1,8 +1,15 @@
 /* 데이터 검수 스크립트 — 새 과목을 추가한 뒤 반드시 실행할 것
    실행:  node check.js                                        */
 global.window = {};
-require('./app/data/science-force.js');
-require('./app/data/social-life.js');
+/* app/data/ 는 앱에 실리는 과목, app/data-archived/ 는 화면에서 뺐지만 버리지 않은 과목.
+   검수는 두 곳 모두 본다 — 보관 중인 데이터도 깨진 채로 두지 않기 위해서다. */
+const fs = require('fs'), path = require('path');
+for (const dir of ['app/data', 'app/data-archived']) {
+  const d = path.join(__dirname, dir);
+  if (!fs.existsSync(d)) continue;
+  for (const f of fs.readdirSync(d).filter(x => x.endsWith('.js')).sort())
+    require(path.join(d, f));
+}
 const U = global.window.UNITS;
 
 const TERMS = {

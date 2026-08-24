@@ -32,11 +32,6 @@ h1,h2,h3{font-family:'Noto Serif KR',serif;margin:0;font-weight:500;line-height:
 .wrap{max-width:1280px;margin:0 auto;padding:26px 40px 96px;}
 .measure{max-width:760px;}
 
-/* 상단 브랜드 — 작게 */
-.brand{display:flex;align-items:baseline;justify-content:center;gap:10px;margin-bottom:14px;}
-.brand .bname{font-family:'Noto Serif KR',serif;font-size:19px;letter-spacing:-.01em;color:var(--key);}
-.brand .btag{font-size:14px;color:var(--ink3);}
-
 /* 과목 탭 — 개념보다 커 보이지 않게 */
 .subj{display:flex;gap:8px;justify-content:center;margin-bottom:20px;flex-wrap:wrap;}
 .subj button{padding:7px 15px;border:1.4px solid var(--line2);background:var(--card);
@@ -44,13 +39,13 @@ h1,h2,h3{font-family:'Noto Serif KR',serif;margin:0;font-weight:500;line-height:
 .subj button[aria-pressed="true"]{border-color:var(--key);color:var(--key);font-weight:600;}
 
 /* 네 단계 — 원형 번호 + 단계명 */
-.steps{display:flex;gap:8px;justify-content:center;max-width:840px;margin:0 auto 30px;}
-.step{flex:1;display:flex;flex-direction:column;align-items:center;gap:7px;
-  background:none;border:none;padding:4px 2px;cursor:pointer;font-family:inherit;}
-.step .num{width:40px;height:40px;border-radius:50%;background:var(--card);
-  border:1.6px solid var(--line2);color:var(--ink2);font-size:16px;
+.steps{display:flex;gap:4px;justify-content:center;max-width:620px;margin:0 auto 26px;}
+.step{flex:1;display:flex;flex-direction:column;align-items:center;gap:5px;
+  background:none;border:none;padding:3px 2px;cursor:pointer;font-family:inherit;}
+.step .num{width:28px;height:28px;border-radius:50%;background:var(--card);
+  border:1.5px solid var(--line2);color:var(--ink2);font-size:13px;
   display:flex;align-items:center;justify-content:center;transition:.15s;}
-.step .nm{font-size:15px;color:var(--ink2);letter-spacing:-.02em;}
+.step .nm{font-size:13px;color:var(--ink2);letter-spacing:-.02em;}
 .step[aria-current="true"] .num{background:var(--key);border-color:var(--key);color:#fff;}
 .step[aria-current="true"] .nm{color:var(--key);font-weight:600;}
 .step:hover .num{border-color:var(--key);}
@@ -63,7 +58,6 @@ h1,h2,h3{font-family:'Noto Serif KR',serif;margin:0;font-weight:500;line-height:
 @media (prefers-reduced-motion: reduce){.rail{transition:none;}}
 
 .hd{max-width:1100px;margin:0 auto 18px;}
-.hd .k{font-size:14px;letter-spacing:.14em;color:var(--green);font-weight:600;}
 .hd h1{font-size:30px;margin-top:6px;}
 .hd p{font-size:17px;color:var(--ink2);margin:9px 0 0;max-width:780px;}
 
@@ -72,7 +66,7 @@ h1,h2,h3{font-family:'Noto Serif KR',serif;margin:0;font-weight:500;line-height:
 .chart{overflow-x:auto;padding:6px 0 14px;-webkit-overflow-scrolling:touch;}
 .chart::-webkit-scrollbar{height:7px;}
 .chart::-webkit-scrollbar-thumb{background:var(--line2);border-radius:4px;}
-.tree ul{display:flex;justify-content:center;position:relative;padding:22px 0 0;margin:0;}
+.tree ul{display:flex;justify-content:safe center;position:relative;padding:22px 0 0;margin:0;}
 .tree li{list-style:none;position:relative;padding:22px 6px 0;text-align:center;}
 .tree li::before,.tree li::after{content:'';position:absolute;top:0;right:50%;
   border-top:2px solid var(--line2);width:50%;height:22px;}
@@ -98,16 +92,6 @@ h1,h2,h3{font-family:'Noto Serif KR',serif;margin:0;font-weight:500;line-height:
 .nd.on .plus{color:var(--green);}
 .rootline{text-align:center;font-size:17px;color:var(--ink2);margin:12px 0 4px;}
 .rootline b{color:var(--ink);}
-.hint{font-size:15px;color:var(--ink3);text-align:center;margin-top:10px;}
-.guide{background:var(--goldbg);border-left:4px solid var(--gold);border-radius:12px;
-  padding:16px 60px 16px 20px;margin:0 auto 18px;max-width:1100px;font-size:17px;
-  color:var(--ink);line-height:1.75;position:relative;}
-.guide b{color:var(--key);}
-.guide .gx{position:absolute;top:13px;right:14px;background:none;border:none;
-  font-family:inherit;font-size:14px;color:var(--ink2);cursor:pointer;text-decoration:underline;}
-.rel{display:flex;align-items:center;justify-content:center;gap:9px;max-width:1100px;
-  margin:14px auto 0;font-size:16px;color:var(--goldink);
-  background:var(--goldbg);border-radius:11px;padding:12px 16px;}
 
 /* 개념 고르기 */
 .pick{display:flex;gap:8px;flex-wrap:wrap;max-width:1100px;margin:0 auto 16px;}
@@ -296,7 +280,7 @@ textarea:focus{outline:2px solid var(--green);outline-offset:1px;border-color:va
   .cname{font-size:29px;}
   .qbox{padding:16px 17px;} .qbox .qq{font-size:21px;}
   .lead{font-size:18px;} .hd h1{font-size:24px;}
-  .step .num{width:34px;height:34px;font-size:15px;} .step .nm{font-size:13px;}
+  .step .num{width:26px;height:26px;font-size:12px;} .step .nm{font-size:12px;}
   .sixb{min-width:74px;} .sixb .l{font-size:13px;}
   .nd{font-size:16px;padding:9px 11px;} .nd.root{font-size:20px;padding:11px 18px;}
   .stept{font-size:22px;} .answer{font-size:19px;}
@@ -310,14 +294,10 @@ textarea:focus{outline:2px solid var(--green);outline-offset:1px;border-color:va
 </head>
 <body>
 <div class="wrap">
-  <div class="brand">
-    <span class="bname">다시봄</span>
-    <span class="btag">글로온 · 글로, 생각을 켜다</span>
-  </div>
   <div class="subj" id="subj"></div>
 
   <div class="steps" id="steps">
-    <button class="step" aria-current="true" onclick="go(0)"><span class="num">1</span><span class="nm">지도 보기</span></button>
+    <button class="step" aria-current="true" onclick="go(0)"><span class="num">1</span><span class="nm">개념 지도</span></button>
     <button class="step" onclick="go(1)"><span class="num">2</span><span class="nm">개념 읽기</span></button>
     <button class="step" onclick="go(2)"><span class="num">3</span><span class="nm">개념 말하기</span></button>
     <button class="step" onclick="go(3)"><span class="num">4</span><span class="nm">개념 확인하기</span></button>
@@ -326,31 +306,18 @@ textarea:focus{outline:2px solid var(--green);outline-offset:1px;border-color:va
   <div class="deck"><div class="rail" id="rail">
 
     <section class="pane">
-      <div class="hd">
-        <div class="k">지도 보기</div><h1 id="mapTitle"></h1>
-        <p>가지를 하나씩 눌러 펼쳐 보세요. 누르기 전에 <b>무엇이 들어갈지 먼저 짐작</b>해 보면 더 오래 남습니다.</p>
-      </div>
-      <div class="guide" id="guide">
-        <b>교과서를 옆에 펴 두고 시작하세요.</b>
-        네 단계를 차례로 지나면 오늘 배운 것이 정리됩니다. 20분쯤 걸립니다.
-        <button class="gx" onclick="document.getElementById('guide').style.display='none'">닫기</button>
-      </div>
+      <div class="hd"><h1 id="mapTitle"></h1></div>
       <div class="mapbox">
         <div class="chart"><div class="tree" id="tree"></div></div>
-        <div class="rel" id="rel" style="display:none"></div>
-        <p class="hint">한 번에 한 갈래만 열립니다. 넓으면 옆으로 넘겨서 볼 수 있어요.</p>
       </div>
       <div class="nav"><button class="btn" onclick="go(1)">개념 읽으러 →</button></div>
     </section>
 
     <section class="pane">
-      <div class="hd">
-        <div class="k">개념 읽기</div><h1 id="concTitle"></h1>
-        <p id="concLead"></p>
-      </div>
+      <div class="hd"><p id="concLead"></p></div>
       <div class="pick" id="pick"></div>
       <div id="conc"></div>
-      <div class="nav">
+      <div class="nav" id="concNav">
         <button class="btn ghost" onclick="go(0)">← 지도</button>
         <button class="btn" onclick="go(2)">개념 말하러 →</button>
       </div>
@@ -358,8 +325,8 @@ textarea:focus{outline:2px solid var(--green);outline-offset:1px;border-color:va
 
     <section class="pane">
       <div class="hd">
-        <div class="k">개념 말하기</div><h1 id="selfTitle"></h1>
-        <p>교과서 문장을 그대로 옮기지 말고, 아래 질문에 답한다고 생각하고 두세 문장으로 쓰세요.</p>
+        <h1 id="selfTitle"></h1>
+        <p>교과서 문장을 옮기지 말고, 질문에 답하듯 두세 문장으로 쓰세요.</p>
       </div>
       <div id="selfBox"></div>
       <div class="nav">
@@ -370,8 +337,8 @@ textarea:focus{outline:2px solid var(--green);outline-offset:1px;border-color:va
 
     <section class="pane">
       <div class="hd">
-        <div class="k">개념 확인하기</div><h1 id="quizTitle">개념 확인하기</h1>
-        <p>소단원마다 한 문제씩, 모두 <span id="qN"></span>문제입니다. 맞히려고 푸는 게 아니라, <b>어디가 흔들리는지 보려고</b> 푸는 문제예요.</p>
+        <h1 id="quizTitle">개념 확인하기</h1>
+        <p>모두 <span id="qN"></span>문제. 맞히려고가 아니라 <b>어디가 흔들리는지 보려고</b> 푸는 문제예요.</p>
       </div>
       <div id="quiz"></div>
       <div class="nav"><button class="btn ghost" onclick="go(0)">← 지도로</button></div>
@@ -411,13 +378,9 @@ window.UNITS["science-force"] = {
     ]
   },
 
-  /* 트리로는 그릴 수 없는 관계. 해당 갈래를 열었을 때만 표시 */
-  /* showOn: [1층 index, 2층 index] — 2층까지 지정하면 그 노드를 열었을 때만 표시.
-     [2] 처럼 하나만 쓰면 그 갈래 전체에서 표시 */
-  relation: {
-    text: "모양 ┈┈ 탄성력 — 모양이 변해야 탄성력이 생깁니다",
-    showOn: [[0, 0], [2, 1]]
-  },
+  /* '모양이 변해야 탄성력이 생긴다'는 관계는 지도에 띄우지 않고
+     탄성력 카드(누가 칸 · 되돌아오는 고리)에서 다룬다. */
+  relation: null,
 
   concepts: [
     /* 여섯 단계 카드 시범 — 장면 · 이름 · 구조 · 비교 · 적용 · 설명.
@@ -516,7 +479,7 @@ window.UNITS["science-force"] = {
       size: "변형된 정도가 클수록 크다",
       hanja: [{ c: "彈", m: "튈 탄" }, { c: "性", m: "성질 성" }],
       hnote: "彈은 <b>튄다</b>는 뜻입니다. 눌렀다 놓으면 튀어 오르는 그 성질이 글자에 그대로 있습니다.",
-      loop: "탄성력은 지도의 어느 가지와 점선으로 이어져 있었나?" },
+      loop: "탄성력이 생기려면 물체에 먼저 무슨 일이 일어나야 하나?" },
 
     { n: "마찰력", short: "마찰력",
       trigger: "어디에서 생기고 · 어느 쪽으로 작용하는가?",
@@ -599,166 +562,6 @@ window.UNITS["science-force"] = {
 };
 
 </script>
-<!-- social-life.js -->
-<script>
-/* 중1 사회 · VII. 인간과 사회생활
-   mode:"subs" — 개념 카드가 소제목 N칸
-   교과서 표현을 쓰지 않고 새로 쓴 문장입니다. */
-
-window.UNITS = window.UNITS || {};
-window.UNITS["social-life"] = {
-  subject: "사회",
-  unit: "인간과 사회생활",
-  mode: "subs",
-
-  tree: {
-    label: "인간과 사회생활",
-    line: "사회 속에서 나는 <b>어떻게 만들어지고</b>, <b>어떻게 어울려 사는가</b>",
-    kids: [
-      { label: "나는 어떻게 지금의 내가 되었나", kids: [
-        { label: "사회화", kids: [{ label: "의미와 기능" }, { label: "사회화 기관" }, { label: "재사회화" }] },
-        { label: "자아 정체성", kids: [{ label: "무엇인가" }, { label: "어떻게 형성되나" }] }
-      ]},
-      { label: "나는 사회에서 어디에 서 있나", kids: [
-        { label: "지위와 역할", kids: [{ label: "사회적 지위" }, { label: "역할" }, { label: "역할 행동" }] },
-        { label: "역할 갈등", kids: [{ label: "왜 생기나" }, { label: "어떻게 대응하나" }] }
-      ]},
-      { label: "다른 사람과 부딪힐 때는", kids: [
-        { label: "갈등", kids: [{ label: "의미와 양상" }, { label: "대처 방안" }] },
-        { label: "차별", kids: [{ label: "차이와 차별" }, { label: "원인" }, { label: "대처 방안" }] }
-      ]}
-    ]
-  },
-
-  relation: null,
-
-  concepts: [
-    { n: "사회화란 무엇일까?", short: "사회화",
-      trigger: "사람은 어떻게 사회의 구성원이 되는가?",
-      mission: "교과서에서 <b>사회화</b>를 다루는 부분을 펴세요.",
-      subs: [
-        { t: "사회화의 의미와 기능", d: "사회에서 살아가는 데 필요한 언어·행동 양식·가치관을 배워 나가는 과정. 이를 통해 개성과 정체성이 만들어지고, 사회는 문화를 다음 세대로 이어 간다." },
-        { t: "사회화 기관", d: "가족 → 또래 집단 → 학교 → 직장, 그리고 대중 매체. 자라면서 영향을 주는 곳이 넓어진다." },
-        { t: "재사회화", d: "달라진 환경에 맞추려고 새 지식과 기술을 다시 배우는 것. 변화가 빠른 사회일수록 중요해진다." }
-      ],
-      hanja: [{ c: "社會", m: "사람들이 모인 곳" }, { c: "化", m: "되어 가다" }],
-      hnote: "化는 <b>되어 간다</b>는 뜻입니다. 사회화가 한 번에 끝나는 일이 아니라 <b>평생 이어지는 과정</b>이라는 것이 글자에 들어 있습니다.",
-      loop: "사회화 기관은 왜 가족에서 시작해 점점 넓어질까?" },
-
-    { n: "자아 정체성은 어떻게 형성될까?", short: "자아 정체성",
-      trigger: "‘나는 어떤 사람인가’에 답하려면 무엇이 필요한가?",
-      mission: "교과서에서 <b>자아 정체성</b>을 다루는 부분을 펴세요.",
-      subs: [
-        { t: "자아 정체성의 뜻", d: "자신의 성격·가치관·능력·관심·목표를 알고 분명히 한 상태." },
-        { t: "무엇을 통해 형성되나", d: "나만의 모습을 찾으려는 노력, 그리고 가족·또래 집단·학교·대중 매체와 주고받는 영향." },
-        { t: "청소년기가 중요한 까닭", d: "자아 정체성이 자리 잡는 시기. 이때 자신을 돌아보는 습관이 어른이 된 뒤의 삶의 자세로 이어진다." }
-      ],
-      hanja: [{ c: "正體", m: "본디 모습" }, { c: "性", m: "성질" }],
-      hnote: "正體는 <b>본디 모습</b>입니다. 남이 정해 주는 것이 아니라 <b>내가 찾아내는 것</b>이라는 뜻이 담겨 있습니다.",
-      loop: "자아 정체성은 혼자 만드는 것일까, 다른 사람과의 관계 속에서 만들어지는 것일까?" },
-
-    { n: "나의 사회적 지위와 역할은?", short: "지위와 역할",
-      trigger: "내가 있는 자리는 어디이고, 그 자리는 무엇을 기대하는가?",
-      mission: "교과서에서 <b>사회적 지위와 역할</b>을 다루는 부분을 펴세요.",
-      subs: [
-        { t: "사회적 지위", d: "한 사람이 사회적 관계 속에서 차지하는 위치. 한 사람이 여러 지위를 함께 가진다." },
-        { t: "귀속 지위와 성취 지위", d: "귀속 지위는 내 뜻과 상관없이 갖게 되는 것(딸·아들). 성취 지위는 노력으로 얻는 것(학생·교사). 오늘날에는 성취 지위가 더 중요해졌다." },
-        { t: "역할과 역할 행동", d: "역할은 그 지위에 기대되는 행동 양식. 역할 행동은 그것을 실제로 해내는 모습이며 사람마다 다르다." }
-      ],
-      hanja: [{ c: "歸屬", m: "딸려 있음" }, { c: "成就", m: "이루어 냄" }],
-      hnote: "歸屬은 <b>딸려 있다</b>, 成就는 <b>이루어 낸다</b>는 뜻입니다. 태어나면서 딸려 온 것과 내가 이뤄 낸 것 — 글자만 봐도 갈립니다.",
-      loop: "같은 지위인데 사람마다 다르게 나타나는 것은 역할일까, 역할 행동일까?" },
-
-    { n: "역할 갈등에 어떻게 대응해야 할까?", short: "역할 갈등",
-      trigger: "여러 자리가 한꺼번에 나를 부를 때 무엇을 먼저 해야 하는가?",
-      mission: "교과서에서 <b>역할 갈등</b>을 다루는 부분을 펴세요.",
-      subs: [
-        { t: "역할 갈등이란", d: "한 사람이 가진 여러 지위의 역할이 서로 부딪혀 생기는 갈등." },
-        { t: "왜 늘어나고 있나", d: "사회가 복잡해지면서 한 사람이 가지는 지위가 많아졌기 때문." },
-        { t: "대응하는 방법", d: "원인과 부딪히는 역할을 따져 본다 → 우선순위를 정한다 → 타협점을 찾는다. 여러 사람이 함께 겪는 갈등이면 제도를 고쳐야 한다." }
-      ],
-      hanja: [{ c: "葛", m: "칡" }, { c: "藤", m: "등나무" }],
-      hnote: "칡은 왼쪽으로, 등나무는 오른쪽으로 감아 올라갑니다. 서로 <b>다른 방향</b>이라 엉킨다는 것이 갈등이라는 말에 그대로 들어 있습니다.",
-      loop: "많은 사람이 똑같은 역할 갈등을 겪는다면, 개인이 참는 것으로 풀릴까?" },
-
-    { n: "우리 사회에는 어떤 갈등과 차별이 있을까?", short: "갈등과 차별",
-      trigger: "다름은 자연스러운데, 무엇부터가 잘못된 것인가?",
-      mission: "교과서에서 <b>갈등과 차별</b>을 다루는 부분을 펴세요.",
-      subs: [
-        { t: "갈등의 의미와 양상", d: "가치나 신념, 목표나 이해관계가 부딪쳐 충돌하는 현상. 남녀·지역·계층 등 여러 모습으로 나타난다." },
-        { t: "차이와 차별은 어떻게 다른가", d: "차이는 서로 같지 않고 다르다는 뜻으로, 사람이 모이면 자연스럽게 생긴다. 그 차이를 이유로 부당하게 대우하면 차별이 된다." },
-        { t: "차별의 원인", d: "다른 사람이나 집단에 대한 편견과 고정 관념." }
-      ],
-      hanja: [{ c: "差異", m: "다름" }, { c: "差別", m: "가려 나눔" }],
-      hnote: "둘 다 差(다를 차)로 시작하지만 뒤가 다릅니다. 異는 <b>다르다</b>, 別은 <b>갈라놓는다</b> — 다름을 이유로 갈라놓는 순간 차별이 됩니다.",
-      loop: "키가 다른 것은 차이인데, 키를 이유로 뽑지 않는 것은 무엇일까?" },
-
-    { n: "갈등과 차별에 어떻게 대처해야 할까?", short: "대처 방안",
-      trigger: "나 혼자 할 수 있는 일과, 함께 바꿔야 하는 일은 무엇인가?",
-      mission: "교과서에서 <b>갈등과 차별의 대처</b>를 다루는 부분을 펴세요.",
-      subs: [
-        { t: "갈등에 대처하는 자세", d: "양보와 타협으로 서로의 이익을 조율한다. 평화롭게 풀면 서로를 이해하는 폭이 넓어진다." },
-        { t: "개인적 차원의 노력", d: "다양성을 존중하고 차이를 인정한다. 편견과 고정 관념을 버리고, 차별을 보면 방관하지 않는다." },
-        { t: "사회적 차원의 노력", d: "법과 제도를 갖춘다. 사회적 약자를 위한 법률과 복지 제도가 여기에 해당한다." }
-      ],
-      hanja: null, hnote: null,
-      loop: "편견을 버리는 것만으로 차별이 사라질까? 법이 필요한 까닭은 무엇일까?" }
-  ],
-
-  quiz: [
-    { unit: "사회화", why: true,
-      t: "다음 설명이 맞으면 O, 틀리면 X를 고르세요.<br><b>“사회화는 주로 어린 시절에 이루어지고, 어른이 되면 거의 끝난다.”</b>",
-      o: [
-        { s: "O", ok: false, w: "사회화는 태어나서 죽을 때까지 이어집니다. 어른이 된 뒤에도 달라진 환경에 맞추려고 새로 배우는 일을 <b>재사회화</b>라고 합니다." },
-        { s: "X", ok: true,  w: "맞습니다. 평생에 걸쳐 이루어지고, 어른이 되어 다시 배우는 것을 재사회화라고 합니다." }
-      ]},
-
-    { unit: "자아 정체성",
-      t: "다음 중 <b>자아 정체성</b>이 뚜렷한 사람에 가장 가까운 것은?",
-      o: [
-        { s: "친구들이 좋다고 하는 것을 따라 고른다", ok: false, w: "남의 기준을 그대로 따르는 것은 자아 정체성이 뚜렷한 모습이 아닙니다." },
-        { s: "내가 무엇을 잘하고 무엇을 중요하게 여기는지 말할 수 있다", ok: true, w: "성격·가치관·능력·관심·목표를 알고 분명히 한 상태가 자아 정체성입니다." },
-        { s: "주변 사람의 영향을 전혀 받지 않는다", ok: false, w: "자아 정체성은 혼자 만드는 것이 아니라 가족·또래·학교와 주고받는 영향 속에서 만들어집니다." },
-        { s: "장래 희망을 한 번도 바꾸지 않았다", ok: false, w: "바꾸지 않는 것이 곧 뚜렷한 것은 아닙니다. 자신을 돌아보며 찾아가는 과정이 더 중요합니다." }
-      ]},
-
-    { unit: "지위와 역할",
-      t: "다음 중 <b>성취 지위</b>끼리 바르게 묶은 것은?",
-      o: [
-        { s: "맏딸 · 아들", ok: false, w: "둘 다 태어나면서 갖게 되는 귀속 지위입니다." },
-        { s: "학생 · 동아리 회장", ok: true, w: "둘 다 자신의 의지나 노력으로 얻은 성취 지위입니다." },
-        { s: "막내 · 학급 회장", ok: false, w: "막내는 귀속 지위, 학급 회장은 성취 지위라 섞여 있습니다." },
-        { s: "딸 · 손녀", ok: false, w: "둘 다 귀속 지위입니다." }
-      ]},
-
-    { unit: "역할 갈등",
-      t: "다음 상황에서 <b>역할 갈등</b>을 겪고 있는 사람은?",
-      o: [
-        { s: "동아리 연습이 힘들어 그만두고 싶은 지호", ok: false, w: "하나의 역할이 힘든 것이지, 두 역할이 부딪히는 상황은 아닙니다." },
-        { s: "가족 여행 날과 동아리 공연 날이 겹친 수아", ok: true, w: "가족 구성원이라는 지위의 역할과 동아리 회원이라는 지위의 역할이 부딪히고 있습니다." },
-        { s: "친구와 사이가 나빠져 속상한 민준", ok: false, w: "사람 사이의 다툼이지 역할끼리의 충돌은 아닙니다." },
-        { s: "학급 회장인데 반 아이들이 말을 안 들어 힘든 서연", ok: false, w: "역할을 해내기 어려운 것이지, 두 역할이 충돌하는 것은 아닙니다." }
-      ]},
-
-    { unit: "갈등과 차별", why: true,
-      t: "다음은 <b>차이</b>일까요, <b>차별</b>일까요?<br><b>“같은 일을 하는데 비정규직이라는 이유로 임금을 훨씬 적게 받았다.”</b>",
-      o: [
-        { s: "차이", ok: false, w: "고용 형태가 다른 것 자체는 차이지만, 같은 일을 하는데 임금을 적게 주는 것은 <b>부당한 대우</b>입니다. 차이를 이유로 부당하게 대우하면 차별이 됩니다." },
-        { s: "차별", ok: true, w: "맞습니다. 차이는 자연스럽지만, 그 차이를 이유로 부당하게 대우하는 순간 차별이 됩니다." }
-      ]},
-
-    { unit: "대처 방안",
-      t: "차별을 줄이기 위한 <b>사회적 차원</b>의 노력에 해당하는 것은?",
-      o: [
-        { s: "편견과 고정 관념을 버리려고 노력한다", ok: false, w: "개인적 차원의 노력입니다." },
-        { s: "차별을 목격하면 방관하지 않는다", ok: false, w: "개인적 차원의 노력입니다." },
-        { s: "장애인 차별을 금지하는 법률을 만든다", ok: true, w: "법과 제도를 갖추는 것이 사회적 차원의 노력입니다." },
-        { s: "다양성을 존중하는 태도를 갖는다", ok: false, w: "개인적 차원의 노력입니다." }
-      ]}
-  ]
-};
-
-</script>
 <script>
 /* ===== 상태 ===== */
 window.UNITS = window.UNITS || {};
@@ -774,7 +577,7 @@ if(!KEYS.length){
 let SK = KEYS[0];              // 현재 과목 키
 const U = () => window.UNITS[SK];
 let stage = 0, ci = 0;
-let o1 = null, o2 = null;
+let OPEN = {};                 // OPEN[과목] = Set("0","0.1",…) — 학생이 연 노드가 쌓인다
 
 /* 학습 기록 — HANDOVER 8장 스키마 */
 let REC = {};                  // REC[과목][개념명] = {상태, 자기설명[], 오답[], 틀린횟수}
@@ -797,11 +600,14 @@ const today = () => new Date().toLocaleDateString("ko-KR",{month:"numeric",day:"
 
 /* ===== 과목 탭 ===== */
 function drawSubj(){
-  document.getElementById("subj").innerHTML = KEYS.map(k=>
+  const el = document.getElementById("subj");
+  if(KEYS.length < 2){ el.style.display = "none"; return; }   /* 과목이 하나면 탭을 그리지 않는다 */
+  el.style.display = "";
+  el.innerHTML = KEYS.map(k=>
     `<button aria-pressed="${k===SK}" onclick="switchSubj('${k}')">${window.UNITS[k].subject} · ${window.UNITS[k].unit}</button>`).join("");
 }
 function switchSubj(k){
-  SK = k; ci = 0; o1 = o2 = null; A = []; W = []; diagState = null;
+  SK = k; ci = 0; A = []; W = []; diagState = null;
   drawAll(); go(0);
 }
 
@@ -826,29 +632,29 @@ function syncH(){
   });
 }
 
-/* ===== 트리 ===== */
+/* ===== 트리 =====
+   누르기 전에 짐작하도록 접힌 채로 시작하되, 연 갈래는 닫히지 않고 쌓인다.
+   하나씩 열다 보면 마지막에는 단원 전체가 한 화면에 남는다. 다시 누르면 그 갈래만 접힌다. */
+const open = () => (OPEN[SK] = OPEN[SK] || new Set());
 function drawTree(){
-  const T = U().tree;
-  const b1 = T.kids.map((k,i)=>{
-    const on = o1===i;
-    const sub = on ? `<ul>${k.kids.map((k2,j)=>{
-      const on2 = o2===j;
-      const s2 = (on2 && k2.kids) ? `<ul>${k2.kids.map(k3=>
-        `<li><span class="nd leaf">${k3.label}</span></li>`).join("")}</ul>` : "";
-      return `<li><button class="nd ${on2?'on':''}" onclick="t2(${j})">${k2.label}${k2.kids?`<span class="plus">${on2?'−':'+'}</span>`:""}</button>${s2}</li>`;
-    }).join("")}</ul>` : "";
-    return `<li><button class="nd ${on?'on':''}" onclick="t1(${i})">${k.label}<span class="plus">${on?'−':'+'}</span></button>${sub}</li>`;
-  }).join("");
+  const T = U().tree, O = open();
+  const node = (k, id) => {
+    if(!k.kids || !k.kids.length)                       /* 자식이 없으면 층과 상관없이 말단 */
+      return `<li><span class="nd leaf">${k.label}</span></li>`;
+    const on = O.has(id);
+    const sub = on ? `<ul>${k.kids.map((c,j)=>node(c, id+"."+j)).join("")}</ul>` : "";
+    return `<li><button class="nd ${on?'on':''}" onclick="tg('${id}')">${k.label}<span class="plus">${on?'−':'+'}</span></button>${sub}</li>`;
+  };
   document.getElementById("tree").innerHTML =
-    `<ul><li><span class="nd root">${T.label}</span><div class="rootline">${T.line}</div><ul>${b1}</ul></li></ul>`;
-
-  const R = U().relation, el = document.getElementById("rel");
-  const hit = R && R.showOn.some(x => x[0]===o1 && (x[1]===undefined || x[1]===o2));
-  if(hit){ el.style.display="flex"; el.innerHTML = `<span>${R.text}</span>`; }
-  else el.style.display = "none";
+    `<ul><li><span class="nd root">${T.label}</span><div class="rootline">${T.line}</div><ul>${T.kids.map((k,i)=>node(k,String(i))).join("")}</ul></li></ul>`;
 }
-function t1(i){ o1 = (o1===i?null:i); o2 = null; drawTree(); }
-function t2(j){ o2 = (o2===j?null:j); drawTree(); }
+function tg(id){
+  const O = open();
+  if(O.has(id)){                                        /* 접을 때는 그 아래 열림도 함께 정리 */
+    for(const x of [...O]) if(x===id || x.startsWith(id+".")) O.delete(x);
+  } else O.add(id);
+  drawTree();
+}
 
 /* ===== 도식 — 교재 그림을 따르지 않고 새로 그린 SVG ===== */
 const FIGS = {
@@ -898,6 +704,8 @@ function drawConc(){
 
   document.getElementById("conc").innerHTML =
     (c.card === "six") ? sixCard(u,c) : plainCard(u,c);
+  const nav = document.getElementById("concNav");
+  if(nav) nav.style.display = (c.card === "six") ? "none" : "";
 }
 function pickC(i){ ci = i; drawConc(); }
 
@@ -1176,12 +984,10 @@ async function pk(i,j){
 function drawAll(){
   const u = U();
   drawSubj();
-  document.getElementById("mapTitle").textContent  = u.unit;
-  document.getElementById("concTitle").textContent = u.mode==="slots" ? "교과서에서 찾아 채우기" : "소제목별로 정리하기";
-  document.getElementById("concLead").innerHTML    = u.mode==="slots"
-    ? "먼저 짐작해서 쓰고, 교과서로 확인하세요. 틀려도 괜찮습니다 — 짐작한 뒤에 읽어야 더 잘 남습니다."
-    : "교과서를 읽고 소제목마다 핵심을 채우세요. 먼저 짐작해서 쓴 뒤 확인하면 더 잘 남습니다.";
-  document.getElementById("quizTitle").textContent = "개념 확인하기";
+  document.getElementById("mapTitle").textContent = u.unit;
+  document.getElementById("concLead").innerHTML   = u.mode==="slots"
+    ? "먼저 짐작해서 쓰고, 교과서로 확인하세요. 틀려도 괜찮습니다."
+    : "교과서를 읽고 소제목마다 핵심을 채우세요.";
   document.getElementById("qN").textContent = u.quiz.length;
   drawTree(); drawConc(); drawQuiz();
 }
