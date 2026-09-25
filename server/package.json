@@ -1,0 +1,17 @@
+{
+  "name": "word-reset-server",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "description": "영단어 앱 백엔드 — 로그인 + 학생별 진도 저장 + 선생님 대시보드",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "cors": "^2.8.5",
+    "express": "^4.21.2",
+    "jsonwebtoken": "^9.0.2"
+  }
+}
