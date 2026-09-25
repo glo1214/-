@@ -151,38 +151,38 @@ export function judge(p: Progress, input: JudgeInput): JudgeResult {
 */
 type Enabled = { card1: boolean; card2: boolean; card3: boolean };
 
-function candidates(box: number, word: Word): CardType[] {
+function candidates(box: number): CardType[] {
   const out: CardType[] = [];
   const push = (c: CardType) => {
     if (!out.includes(c)) out.push(c);
   };
+  // 예문(카드3)이 있으면 항상 우선 → '예문 속 단어 → 뜻 고르기'
   if (box <= 1) {
+    push(3);
     push(1);
     push(2);
-  } else if (box === 2) {
-    push(2);
-    push(1);
   } else {
-    if (word.splitBox) push(3);
+    push(3);
     push(2);
     push(1);
   }
   return out;
 }
 
-function cardUsable(c: CardType, word: Word, meaning: Meaning, en: Enabled): boolean {
+function cardUsable(c: CardType, meaning: Meaning, en: Enabled): boolean {
   if (c === 1) return en.card1;
   if (c === 2) return en.card2 && meaning.koSentence.includes("____");
-  return en.card3 && word.splitBox;
+  // 카드3(예문 속 뜻): 예문(____ 포함)만 있으면 splitBox 아니어도 사용
+  return en.card3 && meaning.koSentence.includes("____");
 }
 
-export function pickCard(box: number, word: Word, meaning: Meaning, en: Enabled): CardType {
-  for (const c of candidates(box, word)) {
-    if (cardUsable(c, word, meaning, en)) return c;
+export function pickCard(box: number, _word: Word, meaning: Meaning, en: Enabled): CardType {
+  for (const c of candidates(box)) {
+    if (cardUsable(c, meaning, en)) return c;
   }
   // 폴백: 활성화된 아무 카드
   for (const c of [1, 2, 3] as CardType[]) {
-    if (cardUsable(c, word, meaning, en)) return c;
+    if (cardUsable(c, meaning, en)) return c;
   }
   return 1;
 }

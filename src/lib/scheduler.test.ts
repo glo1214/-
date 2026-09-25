@@ -181,12 +181,24 @@ describe("박스별 출제 카드", () => {
       { def: "희미한", pos: "a", koSentence: "기억이 ____" },
     ],
   };
-  it("box1→카드1, box2→카드2, splitBox box3→카드3", () => {
-    expect(pickCard(1, split, split.meanings[0], en)).toBe(1);
-    expect(pickCard(2, split, split.meanings[0], en)).toBe(2);
+  const noExample: Word = {
+    word: "solid",
+    ipa: "",
+    ko: [],
+    koStress: 0,
+    splitBox: false,
+    meanings: [{ def: "고체; 단단한", pos: "n", koSentence: "" }],
+  };
+  it("예문(____)이 있으면 모든 박스에서 카드3(예문 속 뜻) 우선", () => {
+    expect(pickCard(1, split, split.meanings[0], en)).toBe(3);
+    expect(pickCard(2, split, split.meanings[0], en)).toBe(3);
     expect(pickCard(3, split, split.meanings[0], en)).toBe(3);
   });
-  it("카드3을 끄면 splitBox box3도 카드2로 폴백", () => {
-    expect(pickCard(3, split, split.meanings[0], { ...en, card3: false })).toBe(2);
+  it("카드3을 끄면 예문은 카드2로 폴백", () => {
+    expect(pickCard(2, split, split.meanings[0], { ...en, card3: false })).toBe(2);
+  });
+  it("예문이 없으면 카드1(영단어→뜻)로 출제", () => {
+    expect(pickCard(1, noExample, noExample.meanings[0], en)).toBe(1);
+    expect(pickCard(3, noExample, noExample.meanings[0], en)).toBe(1);
   });
 });

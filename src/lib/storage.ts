@@ -149,7 +149,12 @@ export function readBackup(raw: string): { profile: Profile; decks: Deck[]; prog
    시드 JSON과 동일한 { id, name, words[] } 구조를 받는다.
    같은 id의 덱이 있으면 단어를 병합(중복 word는 갱신)한다. */
 export function importDeckJSON(raw: string, decks: Deck[]): Deck[] {
-  const parsed = JSON.parse(raw) as Partial<Deck>;
+  const parsed = JSON.parse(raw) as Partial<Deck> & { sentences?: Record<string, string> };
+  // 예문 전용 가져오기: { "sentences": { "단어": "예문 ____ ..." } }
+  // 기존 뜻/진도는 건드리지 않고, 예문이 비어 있는 뜻에만 채운다(비파괴적).
+  if (parsed && parsed.sentences && typeof parsed.sentences === "object") {
+    return applyExampleSentences(parsed.sentences, decks);
+  }
   if (!parsed || !Array.isArray(parsed.words)) {
     throw new Error("올바른 단어장 JSON이 아닙니다 (words 배열이 필요).");
   }
@@ -165,6 +170,28 @@ export function importDeckJSON(raw: string, decks: Deck[]): Deck[] {
   deck.words.forEach((w) => byWord.set(w.word, w));
   merged[idx] = { ...merged[idx], name: deck.name, words: [...byWord.values()] };
   return merged;
+}
+
+/** 예문만 채워 넣는다(비파괴적). 단어명은 대소문자 무시로 매칭,
+ *  예문이 이미 있는 뜻은 건드리지 않고 비어 있는 뜻에만 넣는다.
+ *  카드2/카드3가 쓰도록 예문에 빈칸 "____"이 없으면 끝에 붙여 준다. */
+function applyExampleSentences(map: Record<string, string>, decks: Deck[]): Deck[] {
+  const norm: Record<string, string> = {};
+  Object.entries(map).forEach(([k, v]) => {
+    if (typeof v === "string" && v.trim()) norm[k.trim().toLowerCase()] = v.trim();
+  });
+  return decks.map((d) => ({
+    ...d,
+    words: d.words.map((w) => {
+      const raw = norm[w.word.trim().toLowerCase()];
+      if (!raw) return w;
+      const sentence = raw.includes("____") ? raw : `${raw} ____`;
+      return {
+        ...w,
+        meanings: w.meanings.map((m) => (m.koSentence ? m : { ...m, koSentence: sentence })),
+      };
+    }),
+  }));
 }
 
 /** 느슨한 입력을 안전한 Word로 보정한다. */
