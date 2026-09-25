@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { Deck, Profile, ProgressMap } from "./types";
 import {
   loadDecks,
@@ -11,11 +11,14 @@ import {
   saveProgress,
 } from "./lib/storage";
 import { todayKey } from "./lib/date";
+import { clearAuth, fetchState, getStoredUser, health, pushState, type User } from "./lib/api";
 import { Nav } from "./components/Nav";
 import { Home } from "./screens/Home";
 import { Study } from "./screens/Study";
 import { DeckScreen } from "./screens/Deck";
 import { Settings } from "./screens/Settings";
+import { Login } from "./screens/Login";
+import { Teacher } from "./screens/Teacher";
 
 export type Screen = "home" | "study" | "deck" | "settings";
 
@@ -24,8 +27,20 @@ export default function App() {
   const [decks, setDecks] = useState<Deck[]>(loadDecks);
   const [progress, setProgress] = useState<ProgressMap>(loadProgress);
   const [screen, setScreen] = useState<Screen>("home");
-  // 학습 세션을 새로 시작할 때마다 Study를 리마운트시키는 키
   const [sessionKey, setSessionKey] = useState(0);
+
+  // 인증
+  const [user, setUser] = useState<User | null>(getStoredUser);
+  const [skipped, setSkipped] = useState(false);
+  const [backendUp, setBackendUp] = useState<boolean | null>(getStoredUser() ? true : null);
+  const syncReady = useRef(false);
+  const pushTimer = useRef<number | undefined>(undefined);
+
+  // 백엔드 존재 여부 감지 (없으면 로그인 화면 건너뛰고 단독 동작)
+  useEffect(() => {
+    if (user) return;
+    health().then(setBackendUp);
+  }, [user]);
 
   const updateProfile = (p: Profile) => {
     setProfile(p);
@@ -40,7 +55,6 @@ export default function App() {
     saveProgress(m);
   };
 
-  // 제외된 단어를 다시 학습으로 (reps 초기화 + 오늘 due)
   const restoreWord = (word: string) => {
     const next: ProgressMap = { ...progress };
     let changed = false;
@@ -66,6 +80,79 @@ export default function App() {
     commitProgress(restored.progress);
   };
 
+  /* ---------- 학생 로그인 시: 서버와 동기화 ---------- */
+  useEffect(() => {
+    syncReady.current = false;
+    if (!user || user.role !== "student") return;
+    let cancelled = false;
+    (async () => {
+      try {
+        const remote = await fetchState();
+        if (cancelled) return;
+        if (remote && Array.isArray(remote.decks)) {
+          // 서버에 저장된 상태를 우선 적용
+          updateProfile(remote.profile);
+          updateDecks(remote.decks);
+          commitProgress(remote.progress);
+        } else {
+          // 서버가 비어 있으면 현재 기기 상태를 업로드(계정으로 이전)
+          await pushState({ profile, decks, progress });
+        }
+      } catch (e) {
+        console.error("동기화 실패:", (e as Error).message);
+      } finally {
+        if (!cancelled) syncReady.current = true;
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+    // eslint-disable-next-line
+  }, [user?.id]);
+
+  /* ---------- 변경 시: 디바운스로 서버 저장 ---------- */
+  useEffect(() => {
+    if (!user || user.role !== "student" || !syncReady.current) return;
+    clearTimeout(pushTimer.current);
+    pushTimer.current = window.setTimeout(() => {
+      pushState({ profile, decks, progress }).catch((e) =>
+        console.error("저장 실패:", (e as Error).message),
+      );
+    }, 1500);
+    return () => clearTimeout(pushTimer.current);
+    // eslint-disable-next-line
+  }, [profile, decks, progress]);
+
+  const onLogout = () => {
+    clearAuth();
+    setUser(null);
+    setSkipped(false);
+    syncReady.current = false;
+    setScreen("home");
+  };
+
+  // 로그인 안 됨: 백엔드가 있으면 로그인 화면, 없으면(정적) 단독 동작
+  if (!user) {
+    if (backendUp === null) return <div className="app" />; // 감지 중(깜빡임 방지)
+    if (backendUp && !skipped) {
+      return (
+        <div className="app">
+          <Login onAuth={(u) => setUser(u)} onSkip={() => setSkipped(true)} />
+        </div>
+      );
+    }
+  }
+
+  // 선생님 → 대시보드
+  if (user?.role === "teacher") {
+    return (
+      <div className="app">
+        <Teacher me={user} onLogout={onLogout} />
+      </div>
+    );
+  }
+
+  // 학생 또는 오프라인 사용 → 학습 앱
   return (
     <div className="app">
       {screen === "home" && (
@@ -96,12 +183,12 @@ export default function App() {
           updateProfile={updateProfile}
           exportBackup={exportBackup}
           importBackup={importBackup}
+          user={user}
+          onLogout={user ? onLogout : undefined}
+          onLoginScreen={!user && backendUp ? () => setSkipped(false) : undefined}
         />
       )}
-      <Nav
-        screen={screen}
-        go={(s) => (s === "study" ? startStudy() : setScreen(s))}
-      />
+      <Nav screen={screen} go={(s) => (s === "study" ? startStudy() : setScreen(s))} />
     </div>
   );
 }

@@ -24,6 +24,9 @@ app.use(express.json({ limit: "5mb" }));
 
 const uid = () => Math.random().toString(36).slice(2, 10) + Date.now().toString(36);
 
+/* 헬스체크 — 프론트가 백엔드 존재 여부를 감지해 로그인 화면 노출 결정 */
+app.get("/api/health", (_req, res) => res.json({ ok: true }));
+
 function sign(user) {
   return jwt.sign({ id: user.id, role: user.role }, JWT_SECRET, { expiresIn: TOKEN_TTL });
 }

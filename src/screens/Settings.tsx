@@ -1,5 +1,6 @@
 import { useState } from "react";
 import type { Profile } from "../types";
+import type { User } from "../lib/api";
 import { DEFAULT_PROFILE, resetAll } from "../lib/storage";
 
 /** 설정 — profile 항목 전부를 화면에서 수정. v1의 숨은 목표:
@@ -9,11 +10,17 @@ export function Settings({
   updateProfile,
   exportBackup,
   importBackup,
+  user,
+  onLogout,
+  onLoginScreen,
 }: {
   profile: Profile;
   updateProfile: (p: Profile) => void;
   exportBackup: () => string;
   importBackup: (raw: string) => void;
+  user?: User | null;
+  onLogout?: () => void;
+  onLoginScreen?: () => void;
 }) {
   const set = (patch: Partial<Profile>) => updateProfile({ ...profile, ...patch });
 
@@ -42,6 +49,34 @@ export function Settings({
   return (
     <div className="screen">
       <h2>설정</h2>
+
+      <div className="card">
+        {user ? (
+          <>
+            <div className="small">
+              <b>{user.name}</b> · {user.role === "teacher" ? "선생님" : "학생"}
+            </div>
+            <div className="small muted" style={{ marginTop: 2 }}>{user.email}</div>
+            <div className="small muted" style={{ marginTop: 6 }}>
+              진도가 계정에 자동 저장돼요 (다른 기기에서 로그인하면 이어서).
+            </div>
+            {onLogout && (
+              <button className="btn small" style={{ marginTop: 10, width: "auto" }} onClick={onLogout}>
+                로그아웃
+              </button>
+            )}
+          </>
+        ) : (
+          <>
+            <div className="small muted">이 기기에서만 저장 중 (로그인 안 함).</div>
+            {onLoginScreen && (
+              <button className="btn small primary" style={{ marginTop: 10, width: "auto" }} onClick={onLoginScreen}>
+                로그인 / 가입하기
+              </button>
+            )}
+          </>
+        )}
+      </div>
 
       <label className="field">
         <span>시험일 (D-day 역산 표시용)</span>
