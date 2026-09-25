@@ -9,6 +9,7 @@ import type {
 } from "../types";
 import { judge, newProgress } from "../lib/scheduler";
 import {
+  buildReviewQueue,
   buildSession,
   makeQuestion,
   makeReviewTail,
@@ -35,18 +36,29 @@ export function Study({
   progress,
   commitProgress,
   onHome,
+  reviewKeys,
 }: {
   profile: Profile;
   decks: Deck[];
   progress: ProgressMap;
   commitProgress: (m: ProgressMap) => void;
   onHome: () => void;
+  reviewKeys?: string[] | null; // 있으면 '안 외워진 단어' 복습 모드 (이 단어들만 출제)
 }) {
   const today = todayKey();
+  const reviewMode = !!(reviewKeys && reviewKeys.length);
 
   // 세션 1회 구성. 새 단어는 '하루' 상한을 지킨다(세션마다 새로 쏟아지지 않게).
+  //  복습 모드면 buildSession 대신 고른 단어들로만 큐를 만든다.
   const initial = useMemo(
-    () => buildSession(decks, progress, profile, today, newWordsToday(today)),
+    () =>
+      reviewMode
+        ? {
+            queue: buildReviewQueue(decks, reviewKeys!, progress, profile.cardsEnabled),
+            seeded: {},
+            newWords: 0,
+          }
+        : buildSession(decks, progress, profile, today, newWordsToday(today)),
     [],
   ); // eslint-disable-line
   const workRef = useRef<ProgressMap>({ ...progress, ...initial.seeded });

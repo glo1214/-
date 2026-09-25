@@ -28,6 +28,7 @@ export default function App() {
   const [progress, setProgress] = useState<ProgressMap>(loadProgress);
   const [screen, setScreen] = useState<Screen>("home");
   const [sessionKey, setSessionKey] = useState(0);
+  const [reviewKeys, setReviewKeys] = useState<string[] | null>(null); // '안 외워진 단어' 복습 모드
 
   // 인증
   const [user, setUser] = useState<User | null>(getStoredUser);
@@ -81,6 +82,15 @@ export default function App() {
   };
 
   const startStudy = () => {
+    setReviewKeys(null);
+    setSessionKey((k) => k + 1);
+    setScreen("study");
+  };
+
+  // '안 외워진 단어' 목록에서 고른 단어들만 복습
+  const startReview = (keys: string[]) => {
+    if (!keys.length) return;
+    setReviewKeys(keys);
     setSessionKey((k) => k + 1);
     setScreen("study");
   };
@@ -178,7 +188,11 @@ export default function App() {
           decks={decks}
           progress={progress}
           commitProgress={commitProgress}
-          onHome={() => setScreen("home")}
+          onHome={() => {
+            setReviewKeys(null);
+            setScreen(reviewKeys ? "deck" : "home");
+          }}
+          reviewKeys={reviewKeys}
         />
       )}
       {screen === "deck" && (
@@ -189,6 +203,7 @@ export default function App() {
           retireAfter={profile.retireAfter}
           restoreWord={restoreWord}
           clearWrong={clearWrong}
+          startReview={startReview}
         />
       )}
       {screen === "settings" && (

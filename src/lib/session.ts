@@ -120,6 +120,33 @@ export function makeQuestion(decks: Deck[], it: QueueItem, progress: ProgressMap
   return { ...it, prompt, choices };
 }
 
+/** '안 외워진 단어' 목록에서 직접 고른 단어들로 복습 큐를 만든다.
+ *  due/park 여부와 무관하게 강제로 출제하며, 승급도 가능(isReinsert:false). */
+export function buildReviewQueue(
+  decks: Deck[],
+  keys: string[],
+  progress: ProgressMap,
+  en: Profile["cardsEnabled"],
+): QueueItem[] {
+  const refs = allWords(decks);
+  const out: QueueItem[] = [];
+  for (const key of keys) {
+    const [w, miStr] = key.split("#");
+    const mi = Number(miStr);
+    const ref = refs.find((r) => r.word.word === w);
+    if (!ref || !ref.word.meanings[mi]) continue;
+    const box = progress[key]?.box ?? 1;
+    out.push({
+      key,
+      word: ref.word,
+      meaningIndex: mi,
+      card: pickCard(box, ref.word, ref.word.meanings[mi], en),
+      isReinsert: false,
+    });
+  }
+  return out;
+}
+
 /** 세션 마지막 채움용: 오늘 틀린 key들 중 존재하는 것으로 복습 아이템 생성. */
 export function makeReviewTail(
   decks: Deck[],

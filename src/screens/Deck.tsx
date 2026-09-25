@@ -27,6 +27,7 @@ export function DeckScreen({
   retireAfter,
   restoreWord,
   clearWrong,
+  startReview,
 }: {
   decks: Deck[];
   updateDecks: (d: Deck[]) => void;
@@ -34,7 +35,10 @@ export function DeckScreen({
   retireAfter: number;
   restoreWord: (word: string) => void;
   clearWrong: (word: string) => void;
+  startReview: (keys: string[]) => void;
 }) {
+  // 단어의 progress 키들(뜻별)
+  const keysOf = (w: Word): string[] => meaningIndices(w).map((mi) => progressKey(w.word, mi));
   // 단어가 '제외됨'인지: 뜻 인덱스 중 하나라도 reps 상한 도달
   const wordRetired = (w: Word): boolean =>
     meaningIndices(w).some((mi) => isRetired(progress[progressKey(w.word, mi)], retireAfter));
@@ -158,7 +162,20 @@ export function DeckScreen({
             안 외워진 단어 ({wrongRows.length})
           </button>
         </div>
-        <WrongList rows={wrongRows} clearWrong={clearWrong} />
+        {wrongRows.length > 0 && (
+          <button
+            className="btn primary"
+            style={{ marginBottom: 14 }}
+            onClick={() => startReview(wrongRows.flatMap((r) => keysOf(r.w)))}
+          >
+            ▶ 이 목록 전체 복습하기 ({wrongRows.length})
+          </button>
+        )}
+        <WrongList
+          rows={wrongRows}
+          clearWrong={clearWrong}
+          onReview={(w) => startReview(keysOf(w))}
+        />
       </div>
     );
   }
@@ -272,9 +289,11 @@ function speak(text: string) {
 function WrongList({
   rows,
   clearWrong,
+  onReview,
 }: {
   rows: { w: Word; count: number; weak: boolean }[];
   clearWrong: (word: string) => void;
+  onReview: (w: Word) => void;
 }) {
   const [q, setQ] = useState("");
   const query = q.trim().toLowerCase();
@@ -330,13 +349,18 @@ function WrongList({
               🔊
             </button>
           </div>
-          <button
-            className="btn small"
-            style={{ marginTop: 10, width: "100%" }}
-            onClick={() => clearWrong(r.w.word)}
-          >
-            외웠어요 (목록에서 빼기)
-          </button>
+          <div className="row" style={{ marginTop: 10, gap: 8 }}>
+            <button
+              className="btn small primary"
+              style={{ flex: 1 }}
+              onClick={() => onReview(r.w)}
+            >
+              ▶ 복습
+            </button>
+            <button className="btn small" style={{ flex: 1 }} onClick={() => clearWrong(r.w.word)}>
+              외웠어요
+            </button>
+          </div>
         </div>
       ))}
       {filtered.length === 0 && <div className="small muted">검색 결과 없음</div>}
