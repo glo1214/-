@@ -67,6 +67,19 @@ export default function App() {
     if (changed) commitProgress(next);
   };
 
+  // '안 외워진 단어' 목록에서 외웠다고 표시 → 틀림 기록만 지운다(진도는 유지).
+  const clearWrong = (word: string) => {
+    const next: ProgressMap = { ...progress };
+    let changed = false;
+    Object.keys(next).forEach((k) => {
+      if (k.startsWith(word + "#") && (next[k].wrongCount > 0 || next[k].weak)) {
+        next[k] = { ...next[k], wrongCount: 0, weak: false };
+        changed = true;
+      }
+    });
+    if (changed) commitProgress(next);
+  };
+
   const startStudy = () => {
     setSessionKey((k) => k + 1);
     setScreen("study");
@@ -175,6 +188,7 @@ export default function App() {
           progress={progress}
           retireAfter={profile.retireAfter}
           restoreWord={restoreWord}
+          clearWrong={clearWrong}
         />
       )}
       {screen === "settings" && (

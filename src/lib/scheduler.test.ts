@@ -75,6 +75,17 @@ describe("오답 / 모름", () => {
     expect(r.next.wrongCount).toBe(1);
   });
 
+  it("자동반복 OFF → 오답이어도 재삽입 안 함, 박스 유지, wrongCount만 증가(park)", () => {
+    const p = base();
+    p.box = 3;
+    const r = judge(p, { ...common, answer: "wrong", ms: 3000, chosenWord: "spare", autoRepeat: false });
+    expect(r.requeue).toBe(false); // 세션 내 재드릴 없음
+    expect(r.next.box).toBe(3); // 박스 그대로
+    expect(r.next.weak).toBe(true);
+    expect(r.next.wrongCount).toBe(1); // '안 외워진 단어' 목록 집계용
+    expect(r.next.nextDue).not.toBe(addDays(TODAY, BOX_INTERVAL[1])); // 자동으로 다시 안 뜨게 미룸
+  });
+
   it("자기 자신을 고른 오답은 confusedWith에 넣지 않는다", () => {
     const r = judge(base(), {
       ...common,

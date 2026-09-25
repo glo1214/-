@@ -122,6 +122,20 @@ export function Settings({
         (단어장에서 언제든 다시 학습으로 되돌릴 수 있어요.) 설정은 자동 저장되고 다음 학습부터 적용됩니다.
       </div>
 
+      <h3 style={{ marginTop: 12 }}>틀린 단어 처리</h3>
+      <label className="toggle" style={{ marginBottom: 6 }}>
+        <input
+          type="checkbox"
+          checked={profile.autoRepeatWrong}
+          onChange={(e) => set({ autoRepeatWrong: e.target.checked })}
+        />
+        틀린 단어 자동 반복 (학습 중 다시 출제)
+      </label>
+      <div className="small muted" style={{ marginBottom: 16 }}>
+        끄면(기본) 틀리거나 "모르겠어요" 한 단어는 학습 중 자동으로 다시 뜨지 않고,
+        <b> 단어장 → 안 외워진 단어</b> 목록에 모여요. 거기서 직접 확인하고 외웠으면 빼면 됩니다.
+      </div>
+
       <h3 style={{ marginTop: 12 }}>응답시간 판정 (ms)</h3>
       <div className="small muted" style={{ marginBottom: 10 }}>
         fast 미만이면 바로 승급, fast~slow는 승급하되 weak 표시, slow 초과면 승급 보류.

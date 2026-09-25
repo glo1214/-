@@ -26,16 +26,32 @@ export function DeckScreen({
   progress,
   retireAfter,
   restoreWord,
+  clearWrong,
 }: {
   decks: Deck[];
   updateDecks: (d: Deck[]) => void;
   progress: ProgressMap;
   retireAfter: number;
   restoreWord: (word: string) => void;
+  clearWrong: (word: string) => void;
 }) {
   // 단어가 '제외됨'인지: 뜻 인덱스 중 하나라도 reps 상한 도달
   const wordRetired = (w: Word): boolean =>
     meaningIndices(w).some((mi) => isRetired(progress[progressKey(w.word, mi)], retireAfter));
+  // 단어의 '안 외워진' 정도: 뜻별 wrongCount 합 + weak 여부
+  const wrongInfo = (w: Word): { count: number; weak: boolean; isWrong: boolean } => {
+    let count = 0;
+    let weak = false;
+    meaningIndices(w).forEach((mi) => {
+      const p = progress[progressKey(w.word, mi)];
+      if (p) {
+        count += p.wrongCount || 0;
+        if (p.weak) weak = true;
+      }
+    });
+    return { count, weak, isWrong: count > 0 || weak };
+  };
+  const [view, setView] = useState<"all" | "wrong">("all");
   const [query, setQuery] = useState("");
   const [edit, setEdit] = useState<EditTarget | null>(null);
   const [draft, setDraft] = useState<Word>(emptyWord);
@@ -124,9 +140,40 @@ export function DeckScreen({
     );
   }
 
+  // '안 외워진 단어' 목록 (틀림 횟수 많은 순)
+  const wrongRows = decks
+    .flatMap((deck, di) => deck.words.map((w, wi) => ({ w, wi, di, ...wrongInfo(w) })))
+    .filter((r) => r.isWrong)
+    .sort((a, b) => b.count - a.count);
+
+  if (view === "wrong") {
+    return (
+      <div className="screen">
+        <h2 style={{ marginBottom: 10 }}>단어장</h2>
+        <div className="row" style={{ marginBottom: 14, gap: 8 }}>
+          <button className="btn small" onClick={() => setView("all")}>
+            전체
+          </button>
+          <button className="btn small primary" onClick={() => setView("wrong")}>
+            안 외워진 단어 ({wrongRows.length})
+          </button>
+        </div>
+        <WrongList rows={wrongRows} clearWrong={clearWrong} />
+      </div>
+    );
+  }
+
   return (
     <div className="screen">
       <h2 style={{ marginBottom: 10 }}>단어장</h2>
+      <div className="row" style={{ marginBottom: 12, gap: 8 }}>
+        <button className="btn small primary" onClick={() => setView("all")}>
+          전체
+        </button>
+        <button className="btn small" onClick={() => setView("wrong")}>
+          안 외워진 단어 ({wrongRows.length})
+        </button>
+      </div>
       <div className="row wrap" style={{ marginBottom: 12, gap: 8 }}>
         <button className="btn small primary" onClick={startNew}>
           + 추가
@@ -205,6 +252,95 @@ export function DeckScreen({
         );
       })}
     </div>
+  );
+}
+
+/** 발음 읽기 (TTS) — 기기 지원 시. */
+function speak(text: string) {
+  try {
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang = "en-US";
+    speechSynthesis.cancel();
+    speechSynthesis.speak(u);
+  } catch {
+    /* 미지원 기기는 조용히 무시 */
+  }
+}
+
+/** '안 외워진 단어' 목록 — 틀리거나 헷갈린 단어를 모아 직접 확인·복습.
+ *  뜻이 바로 보이고, 외웠으면 '외웠어요'로 목록에서 뺀다. */
+function WrongList({
+  rows,
+  clearWrong,
+}: {
+  rows: { w: Word; count: number; weak: boolean }[];
+  clearWrong: (word: string) => void;
+}) {
+  const [q, setQ] = useState("");
+  const query = q.trim().toLowerCase();
+  const filtered = query
+    ? rows.filter(
+        (r) =>
+          r.w.word.toLowerCase().includes(query) ||
+          r.w.meanings.some((m) => m.def.toLowerCase().includes(query)),
+      )
+    : rows;
+
+  if (rows.length === 0) {
+    return (
+      <div className="card" style={{ textAlign: "center", padding: 28 }}>
+        <div style={{ fontSize: 20, fontWeight: 800, marginBottom: 6 }}>아직 없어요 👍</div>
+        <div className="muted small">
+          학습 중 틀리거나 "모르겠어요" 한 단어가 여기에 모여요.
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <>
+      <div className="small muted" style={{ marginBottom: 10 }}>
+        틀리거나 헷갈린 단어 {rows.length}개 — 확인하고 외웠으면 <b>외웠어요</b>를 눌러 빼세요.
+      </div>
+      <input
+        placeholder="검색 (영단어 · 뜻)"
+        value={q}
+        onChange={(e) => setQ(e.target.value)}
+        style={{ marginBottom: 12 }}
+      />
+      {filtered.map((r) => (
+        <div className="card" key={r.w.word} style={{ padding: 14 }}>
+          <div className="row" style={{ alignItems: "flex-start" }}>
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <div className="row" style={{ gap: 8, marginBottom: 4 }}>
+                <span className="en" style={{ fontWeight: 800, fontSize: 18 }}>
+                  {r.w.word}
+                </span>
+                {r.count > 0 && <span className="badge">틀림 {r.count}회</span>}
+                {r.count === 0 && r.weak && <span className="badge">헷갈림</span>}
+              </div>
+              <div className="small">{r.w.meanings.map((m) => m.def).join(" / ")}</div>
+            </div>
+            <button
+              className="tts"
+              title="발음 듣기"
+              onClick={() => speak(r.w.word)}
+              style={{ flex: "0 0 auto" }}
+            >
+              🔊
+            </button>
+          </div>
+          <button
+            className="btn small"
+            style={{ marginTop: 10, width: "100%" }}
+            onClick={() => clearWrong(r.w.word)}
+          >
+            외웠어요 (목록에서 빼기)
+          </button>
+        </div>
+      ))}
+      {filtered.length === 0 && <div className="small muted">검색 결과 없음</div>}
+    </>
   );
 }
 

@@ -59,6 +59,7 @@ export interface JudgeInput {
   isReinsert: boolean; // 세션 내 재삽입분 → 승급 금지
   threshold: { fast: number; slow: number };
   today: string;
+  autoRepeat?: boolean; // 틀린/모르는 단어를 자동 재반복할지(기본 true). 끄면 '안 외워진 단어' 목록에만 모임
 }
 
 export interface JudgeResult {
@@ -77,6 +78,7 @@ function avg(prev: number, ms: number): number {
  */
 export function judge(p: Progress, input: JudgeInput): JudgeResult {
   const { answer, ms, selfWord, chosenWord, isReinsert, threshold, today } = input;
+  const autoRepeat = input.autoRepeat !== false; // 기본 true
   const avgMs = avg(p.avgMs, ms);
   const reps = (p.reps ?? 0) + 1; // 등장 횟수 누적
   const canPromote = !isReinsert && p.lastSeen !== today;
@@ -87,20 +89,24 @@ export function judge(p: Progress, input: JudgeInput): JudgeResult {
     if (answer === "wrong" && chosenWord && chosenWord !== selfWord) {
       confusedWith[chosenWord] = (confusedWith[chosenWord] ?? 0) + 1;
     }
+    // 자동반복 OFF: 세션 재삽입 없이 '안 외워진 단어' 목록에만 모은다.
+    //   → 학습 큐에 자동으로 다시 뜨지 않도록 nextDue를 멀리 미뤄 park 한다.
+    //     (단어장의 '안 외워진 단어' 목록 / '외웠어요'로 사용자가 직접 관리)
+    const nextDue = autoRepeat ? addDays(today, BOX_INTERVAL[1]) : addDays(today, 3650);
     return {
       next: {
         ...p,
-        box: 1,
+        box: autoRepeat ? 1 : p.box, // 자동반복 OFF면 박스는 그대로 두고 park만
         weak: true,
         wrongCount: p.wrongCount + 1,
         avgMs,
         reps,
         confusedWith,
         lastSeen: today,
-        nextDue: addDays(today, BOX_INTERVAL[1]),
+        nextDue,
       },
       promoted: false,
-      requeue: true, // 4~6문제 뒤 재삽입 (위치는 session 계층)
+      requeue: autoRepeat, // OFF면 세션 내 재삽입 안 함
     };
   }
 

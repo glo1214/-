@@ -117,6 +117,7 @@ export function Study({
       isReinsert: item.isReinsert,
       threshold: profile.timeThreshold,
       today,
+      autoRepeat: profile.autoRepeatWrong,
     });
 
     workRef.current = { ...workRef.current, [item.key]: res.next };
@@ -138,8 +139,8 @@ export function Study({
   function next() {
     const ni = idx + 1;
     if (ni >= queueRef.current.length) {
-      // 세션 마지막 3문제는 오늘 틀린 것으로 채운다
-      if (!tailAddedRef.current) {
+      // 세션 마지막 3문제는 오늘 틀린 것으로 채운다 (자동반복 OFF면 생략)
+      if (!tailAddedRef.current && profile.autoRepeatWrong) {
         tailAddedRef.current = true;
         const tail = makeReviewTail(
           decks,

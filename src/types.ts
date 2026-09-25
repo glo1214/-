@@ -57,6 +57,7 @@ export interface Profile {
   useKoPron: boolean; // 한글 발음 표기 표시
   timeThreshold: { fast: number; slow: number }; // ms 판정 임계값
   retireAfter: number; // 반복(reps) 이 값 이상이면 자동 제외. 0이면 끔
+  autoRepeatWrong: boolean; // 틀린/모르는 단어를 학습 세션에서 자동 재반복할지. 끄면 '안 외워진 단어' 목록에만 모임
 }
 
 /* ---------- 학습 세션 ---------- */

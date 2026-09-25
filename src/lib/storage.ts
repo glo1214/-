@@ -21,6 +21,7 @@ export const DEFAULT_PROFILE: Profile = {
   useKoPron: true,
   timeThreshold: { fast: 2000, slow: 6000 },
   retireAfter: 10,
+  autoRepeatWrong: false, // 기본: 자동 반복 끔 → 틀린 단어는 '안 외워진 단어' 목록에 모임
 };
 
 /** 시드 덱 (어휘끝 Unit04). JSON 구조를 그대로 쓴다. */
